@@ -2,6 +2,18 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+enum Level{
+    Processor,
+    L1,
+    L2,
+    L3,
+    L4
+}
+enum Intake_Mode{
+    Cl_intake,
+    Algae_intake
+}
+
 public class MIntake extends SubsystemBase{
     public MIntake() {
         // instantiate the 4 motors
