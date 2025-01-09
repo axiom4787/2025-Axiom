@@ -18,23 +18,24 @@ public class MIntake extends SubsystemBase{
     
     public class Actions {
         public static void Intake_Algae(){
-
+            
         }
         public static void Outtake_Algae(){
-    
+            
         }
         public static void Angle_Arm(float angle){
-    
+            
         }
         public static void Intake_Coral(){
-    
+            
         }
         public static void Outtake_Coral(){
-    
+            
         }
     }
     public void periodic(){
         switch(mState){
+
             case L1:
                 Actions.Angle_Arm(Arm_Angles.arm_angle_l1);
                 Actions.Outtake_Coral();
@@ -57,9 +58,6 @@ public class MIntake extends SubsystemBase{
             
             case Processor:
                 Actions.Outtake_Coral();
-
-            
-
         }
     }
     

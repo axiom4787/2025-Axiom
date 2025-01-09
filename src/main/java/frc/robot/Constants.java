@@ -22,4 +22,10 @@ public class Constants {
         public static final float arm_angle_l3 = 0; // Check
         public static final float arm_angle_l4 = 0; // Check
     }
+    public static class m_Intake_Motors{
+        public static final int intake_motor_algae = 0; // Check
+        public static final int outtake_motor_algae = 0; // Check
+        public static final int intake_motor_coral = 0; // Check
+        public static final int outtake_motor_coral = 0; // Check  
+    }
 }
