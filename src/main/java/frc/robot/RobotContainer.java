@@ -7,14 +7,23 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.subsystems.MIntake;
+
 public class RobotContainer {
+  private final MIntake mIntake = new MIntake();
+
   public RobotContainer() {
-    configureBindings();
+    // Configure the button bindings
+    configureButtonBindings();
   }
 
-  private void configureBindings() {}
+  private void configureButtonBindings() {
+    // Example: Bind a command to a button
+  }
 
-  public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+  public Command getTeleopCommand() {
+    // Example command to run in teleop mode
+    return new InstantCommand(() -> mIntake.mState = Constants.Machine.CoralOuttake, mIntake);
   }
 }

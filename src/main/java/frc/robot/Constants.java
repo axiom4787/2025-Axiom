@@ -4,7 +4,7 @@ import org.ejml.equation.Variable;
 
 public class Constants {
 
-    public static Machine state = Machine.Robot_off;
+    public static Machine state = Machine.CoralOuttake;
 
     public static final float m_default_speed = 1.0f;
 
@@ -25,17 +25,15 @@ public class Constants {
         public static float m_default_speed = 1.0f;
 
         public static class m_Intake_Motors{
-
-            public static final int motor_algae_arm = 0; // Check
-            public static final int motor_coral_1 = 0; // Check  
-            public static final int motor_coral_2 = 0; // Check  
-            public static final int motor_rot_coral = 0; // Check  
+            public static final int motor_coral_1 = 1; // Check  
+            public static final int motor_coral_2 = 2; // Check  
+            public static final int motor_rot_coral = 3; // Check  
     
-            public static final int motor_arm_algae_1 = 0; // Check
-            public static final int motor_arm_algae_2 = 0; // Fix & Check
+            public static final int motor_arm_algae_1 = 4; // Check
+            public static final int motor_arm_algae_2 = 5; // Fix & Check
     
-            public static final int motor_right_algae = 0; // Check
-            public static final int motor_left_algae = 0; // Check
+            public static final int motor_right_algae = 6; // Check
+            public static final int motor_left_algae = 7; // Check
         }
         public static class m_limits{
             public static final int m_left_coral_limit = 40; // Check limit; should be in amps
@@ -111,16 +109,16 @@ public class Constants {
 
         public static final class AngleReferences {
             public static final double CORAL_ANGLE_PROCESSOR = 0.0; // Check. In rotations
-            public static final double CORAL_ANGLE_L1 = 0.0; // Check. In rotations
+            public static final double CORAL_ANGLE_L1 = 0.5; // Check. In rotations
 
             public static final double ALGAE_ANGLE_DOWN = 0.0; // Check. In rotations
-            public static final double ALGAE_ANGLE_UP = 0.0; // Check. In rotations
+            public static final double ALGAE_ANGLE_UP = 1; // Check. In rotations
         }
         public static class Arm_Angles{
             public static final float arm_angle_l1 = 0; // Check
-            public static final float arm_angle_l2 = 0; // Check
-            public static final float arm_angle_l3 = 0; // Check
-            public static final float arm_angle_l4 = 0; // Check
+            public static final float arm_angle_l2 = 1; // Check
+            public static final float arm_angle_l3 = 2; // Check
+            public static final float arm_angle_l4 = 3; // Check
         }
     }
 }
