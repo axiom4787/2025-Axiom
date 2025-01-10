@@ -67,10 +67,10 @@ public class MIntake extends SubsystemBase{
     }
     public void periodic(){
 
-        m_left_algae.disable();
-        m_right_algae.disable();
-        m_left_coral.disable();
-        m_right_coral.disable();
+        m_left_algae.set(0.0f);
+        m_right_algae.set(0.0f);
+        m_left_coral.set(0.0f);
+        m_right_coral.set(0.0f);
 
         switch(mState){
 
