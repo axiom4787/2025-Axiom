@@ -4,14 +4,14 @@ public class Constants {
     public enum Machine{
         L1,
         L2,
-        L3,
-        L4,
+        L3AlgaeIntake,
+        L3CoralOuttake,
+        L4AlgaeIntake,
+        L4CoralOuttake,
         CoralIntake,
-        AlgaeIntake,
+        AlgaeGroundIntake,
         Processor,
-        Ground,
-        Climbing_on,
-        Climbing_off,
-        Robot_off
+        ClimbingOn,
+        ElevatorOff
     }
 }
