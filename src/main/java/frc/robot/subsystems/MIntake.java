@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.Machine;
-import frc.robot.Constants.Arm_Angles;
 import frc.robot.Constants.m_Intake_Motors;
+import frc.robot.Constants.m_default_speed;
 
 public class MIntake extends SubsystemBase{
 
@@ -18,7 +18,6 @@ public class MIntake extends SubsystemBase{
 
     private final PWMSparkMax m_left_algae, m_right_algae, m_left_coral, m_right_coral;
     private final PWMSparkMax m_arm_angle;
-    private final float m_default_speed = 1.0f;
 
     public MIntake() {
         // instantiate the 4 motors
@@ -53,7 +52,7 @@ public class MIntake extends SubsystemBase{
             m_left_algae.set(m_default_speed);
             m_right_algae.set(m_default_speed);
         }
-        public static void Angle_Arm(float angle, PWMSparkMax m_arm_angle){
+        public static void Angle_Arm(float angle, PWMSparkMax m_arm_angle) {
             // Do this!
         }
         public static void Intake_Coral(PWMSparkMax m_left_coral, PWMSparkMax m_right_coral, float m_default_speed){
@@ -71,27 +70,17 @@ public class MIntake extends SubsystemBase{
         m_right_algae.set(0.0f);
         m_left_coral.set(0.0f);
         m_right_coral.set(0.0f);
+        m_arm_angle.set(0.0f);
 
         switch(mState){
 
-            case L1:
-                Actions.Angle_Arm(Arm_Angles.arm_angle_l1);
+            case CoralOuttake:
                 Actions.Outtake_Coral(m_left_coral, m_right_coral, m_default_speed);
-            case L2:
-                Actions.Angle_Arm(Arm_Angles.arm_angle_l2);
-                Actions.Outtake_Coral(m_left_coral, m_right_coral, m_default_speed);
-                Actions.Intake_Algae(m_left_algae, m_right_algae, m_default_speed);
-            case L3:
-                Actions.Angle_Arm(Arm_Angles.arm_angle_l3);
-                Actions.Outtake_Coral(m_left_coral, m_right_coral, m_default_speed);
-                Actions.Intake_Algae(m_left_algae, m_right_algae, m_default_speed);
-            case L4:
-                Actions.Angle_Arm(Arm_Angles.arm_angle_l4, m_arm_angle);
-                Actions.Intake_Algae(m_left_algae, m_right_algae, m_default_speed);
             
             case CoralIntake:
                 Actions.Intake_Coral(m_left_algae, m_right_algae, m_default_speed);
             case AlgaeIntake:
+                Actions.Angle_Arm(0.0f, m_arm_angle);
                 Actions.Intake_Algae(m_left_algae, m_right_algae, m_default_speed);
             
             case Processor:
@@ -102,6 +91,7 @@ public class MIntake extends SubsystemBase{
                 m_right_algae.disable();
                 m_left_coral.disable();
                 m_right_coral.disable();
+                m_arm_angle.disable();
         }
     }
     

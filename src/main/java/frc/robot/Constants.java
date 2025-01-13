@@ -4,10 +4,7 @@ import org.ejml.equation.Variable;
 
 public class Constants {
     public enum Machine{
-        L1,
-        L2,
-        L3,
-        L4,
+        CoralOuttake,
         CoralIntake,
         AlgaeIntake,
         Processor,
@@ -16,18 +13,13 @@ public class Constants {
         Climbing_off,
         Robot_off
     }
-    public static class Arm_Angles{
-        public static final float arm_angle_l1 = 0; // Check
-        public static final float arm_angle_l2 = 0; // Check
-        public static final float arm_angle_l3 = 0; // Check
-        public static final float arm_angle_l4 = 0; // Check
-    }
+    
     public static class m_Intake_Motors{
         public static final int motor_algae_1 = 0; // Check
         public static final int motor_algae_2 = 0; // Check
         public static final int motor_coral_1 = 0; // Check  
         public static final int motor_coral_2 = 0; // Check  
 
-        public static final int motor_arm_angle = 0; // Check
+        public static final int motor_algae_angle = 0; // Check
     }
 }
