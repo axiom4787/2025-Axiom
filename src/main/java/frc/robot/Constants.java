@@ -28,4 +28,17 @@ public class Constants {
         public static final int motor_right_algae = 0; // Check
         public static final int motor_left_algae = 0; // Check
     }
+    public static class m_limits{
+        public static final int m_left_coral_limit = 0; // Check limit; should be in amps
+        public static final int m_right_coral_limit = 0; // Check limit; should be in amps
+
+        public static final int m_left_algae_limit = 0; // Check limit; should be in amps
+        public static final int m_right_algae_limit = 0; // Check limit; should be in amps
+
+        public static final int m_arm_algae_limit = 0; // Check limit; should be in amps
+        public static final int m_rot_coral_limit = 0; // Check limit; should be in amps
+
+        public static final int m_arm_algae_1_limit = 0; // Check limit; should be in amps
+        public static final int m_arm_algae_2_limit = 0; // Check limit; should be in amps
+    }
 }
