@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.Machine;
 import frc.robot.Constants.m_Intake_Motors;
+import frc.robot.Constants.m_limits;
 import frc.robot.Constants;
 
 public class MIntake extends SubsystemBase{
@@ -37,39 +38,39 @@ public class MIntake extends SubsystemBase{
     public MIntake() {
         m_left_coral = new CANSparkMax(m_Intake_Motors.motor_coral_1, MotorType.kBrushless);
         m_left_coral.setInverted(false);
-        m_left_coral.setSafetyEnabled(true);
+        m_left_coral.setSmartCurrentLimit(m_limits.m_left_coral_limit);
         m_left_coral_pid = m_left_coral.getPIDController();
 
         m_right_coral = new CANSparkMax(m_Intake_Motors.motor_coral_1, MotorType.kBrushless);
         m_right_coral.setInverted(true);
-        m_right_coral.setSafetyEnabled(true);
+        m_right_coral.setSmartCurrentLimit(m_limits.m_right_coral_limit);
         m_right_coral_pid = m_right_coral.getPIDController();
 
         m_left_algae = new CANSparkMax(m_Intake_Motors.motor_left_algae, MotorType.kBrushless);
         m_left_algae.setInverted(false);
-        m_left_algae.setSafetyEnabled(true);
+        m_left_algae.setSmartCurrentLimit(m_limits.m_left_algae_limit);
         m_left_algae_pid = m_left_algae.getPIDController();
 
         m_right_algae = new CANSparkMax(m_Intake_Motors.motor_right_algae, MotorType.kBrushless);
         m_right_algae.setInverted(true);
-        m_right_algae.setSafetyEnabled(true);
+        m_right_algae.setSmartCurrentLimit(m_limits.m_right_algae_limit);
         m_right_algae_pid = m_right_algae.getPIDController();
 
         // Setup rot coral motor
         m_rot_coral = new CANSparkMax(m_Intake_Motors.motor_coral_2, MotorType.kBrushless);
         m_rot_coral.setInverted(true);
-        m_rot_coral.setSafetyEnabled(true);
+        m_rot_coral.setSmartCurrentLimit(m_limits.m_rot_coral_limit);
         m_rot_coral_pid = m_rot_coral.getPIDController();
 
         // instantiate arm angle motors
         m_arm_algae_1 = new CANSparkMax(m_Intake_Motors.motor_arm_algae, MotorType.kBrushless);
         m_arm_algae_1.setInverted(false);
-        m_arm_algae_1.setSafetyEnabled(true);
+        m_arm_algae_1.setSmartCurrentLimit(m_limits.m_arm_algae_1_limit);
         m_arm_algae_1_pid = m_arm_algae_1.getPIDController();
 
         m_arm_algae_2 = new CANSparkMax(m_Intake_Motors.motor_arm_algae, MotorType.kBrushless);
         m_arm_algae_2.setInverted(false);
-        m_arm_algae_2.setSafetyEnabled(true);
+        m_arm_algae_2.setSmartCurrentLimit(m_limits.m_arm_algae_2_limit);
         m_arm_algae_2_pid = m_arm_algae_2.getPIDController();
 
         // Configure PID coefficients
@@ -162,6 +163,8 @@ public class MIntake extends SubsystemBase{
         m_arm_algae_1.set(0.0f);
         m_arm_algae_2.set(0.0f);
 
+        m_rot_coral.set(0.0f);
+
         switch(mState){
             // Review reqs, update constants, etc
 
@@ -190,6 +193,7 @@ public class MIntake extends SubsystemBase{
                 m_right_coral.disable();
                 m_arm_algae_1.disable();
                 m_arm_algae_2.disable();
+                m_rot_coral.disable();
         }
     }
     
