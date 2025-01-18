@@ -72,7 +72,7 @@ public class LEDCommand extends Command{
             break;
 
           default:
-            pattern = LEDPattern.solid(Color.kMagenta); // (Magenta:rgb(255, 0, 255))
+            pattern = LEDPattern.solid(Color.kMagenta); // (Magenta: #FF00FF)
 
         }
         break;
