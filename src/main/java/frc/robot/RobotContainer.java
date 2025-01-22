@@ -23,7 +23,7 @@ public class RobotContainer {
   private void configureBindings() {}
 
   public Command getTeleopCommand() {
-    return m_driveSubsystem.driveCommand(() -> -m_controller.getLeftY(), () -> -m_controller.getLeftX(), () -> -m_controller.getRightX());
+    return m_driveSubsystem.driveCommand(() -> -m_controller.getLeftY()*0.2, () -> -m_controller.getLeftX()*0.2, () -> -m_controller.getRightX()*0.2);
   }
 
   public Command getAutonomousCommand() {

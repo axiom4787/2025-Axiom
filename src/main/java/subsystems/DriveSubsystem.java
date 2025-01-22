@@ -10,6 +10,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import swervelib.parser.SwerveParser;
 import swervelib.SwerveDrive;
@@ -21,6 +22,7 @@ import frc.robot.Constants.DriveConstants;
 
 public class DriveSubsystem extends SubsystemBase {
   private final SwerveDrive swerveDrive;
+  private final Field2d m_field = new Field2d();
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -32,15 +34,17 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     swerveDrive.setHeadingCorrection(false);
-//    swerveDrive.setCosineCompensator(true);
+    swerveDrive.setCosineCompensator(true);
 
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+    SmartDashboard.putData("Field", m_field);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Gyro Rotation", swerveDrive.getYaw().getDegrees());
+    m_field.setRobotPose(swerveDrive.getPose());
   }
 
   /**
@@ -58,7 +62,7 @@ public class DriveSubsystem extends SubsystemBase {
       swerveDrive.drive(new Translation2d(translationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(),
                                           translationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()),
                         angularRotationX.getAsDouble() * swerveDrive.getMaximumChassisAngularVelocity(),
-                        false,
+                        true,
                         false);
     });
   }
