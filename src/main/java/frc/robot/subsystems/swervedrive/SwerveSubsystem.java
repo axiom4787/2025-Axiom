@@ -190,7 +190,7 @@ public class SwerveSubsystem extends SubsystemBase {
             var alliance = DriverStation.getAlliance();
             if (alliance.isPresent())
             {
-              return alliance.get() == DriverStation.Alliance.Red;
+              return alliance.get() == DriverStation.Alliance.Blue;
             }
             return false;
           },
@@ -333,7 +333,7 @@ public class SwerveSubsystem extends SubsystemBase {
     return SwerveDriveTest.generateSysIdCommand(
         SwerveDriveTest.setDriveSysIdRoutine(
             new Config(),
-            this, swerveDrive, 12.0),
+            this, swerveDrive, 12.0, false),
         3.0, 5.0, 3.0);
   }
 
