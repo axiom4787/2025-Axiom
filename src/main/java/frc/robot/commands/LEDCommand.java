@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+
 import static edu.wpi.first.units.Units.Percent;
 import static edu.wpi.first.units.Units.Second;
 
@@ -29,7 +30,7 @@ public class LEDCommand extends Command{
     TEAM_COLOR,
     OFF,
     RAINBOW,
-  }
+  };
 
     /**
    * Creates a command that runs a pattern on the entire LED strip.
@@ -51,59 +52,67 @@ public class LEDCommand extends Command{
 
   @Override
   public void execute() {
-    LEDPattern pattern;
     switch (m_pattern) {
       //syncronizes the LEDS with the RSL (Coral: #FF7F50)
-      case RSL_SYNC:
-        pattern = LEDPattern.solid(Color.kCoral)
-                            .synchronizedBlink(RobotController::getRSLState);
-        break;
+      case RSL_SYNC -> LedRSLSync();
 
       //sets the LEDS to the team color
-      case TEAM_COLOR:
-        switch (allianceColor) {
-
-          case Blue:
-            pattern = LEDPattern.solid(Color.kBlue); // (Blue: #0000FF)
-            break;
-
-          case Red:
-            pattern = LEDPattern.solid(Color.kRed); // (Red: #FF0000)
-            break;
-
-          default:
-            pattern = LEDPattern.solid(Color.kMagenta); // (Magenta: #FF00FF)
-
-        }
-        break;
+      case TEAM_COLOR -> LedTeamColor();
 
       //sets the LEDS to a scrolling rainbow pattern  
-      case RAINBOW:
-        LEDPattern base = LEDPattern.rainbow(255,255);
-        pattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(25));
-        
-        break;
+      case RAINBOW -> LedRainbow();
         
       //turns the LEDS off by default
-      default:
-        pattern = LEDPattern.kOff;
-        break;
+      default -> LedOff();
     }
-
-    //apply the pattern to the buffer
-    pattern.applyTo(m_buffer);
-    m_LEDSubsystem.setBuffer(m_buffer);
   }
 
   @Override
   public void end(boolean interrupted) {
-    LEDPattern.kOff.applyTo(m_buffer);
-    m_LEDSubsystem.setBuffer(m_buffer);
+    LedOff();
   }
 
   @Override
   public boolean isFinished() {
     return false;
+  }
+
+  public void LedRSLSync() {
+    LEDPattern
+    .solid(Color.kCoral)
+    .synchronizedBlink(RobotController::getRSLState)
+    .applyTo(m_buffer);
+
+    m_LEDSubsystem.setBuffer(m_buffer);
+  }
+
+  public void LedRainbow() {
+    LEDPattern
+    .rainbow(255,255)
+    .scrollAtRelativeSpeed(Percent.per(Second).of(25))
+    .applyTo(m_buffer);
+
+    m_LEDSubsystem.setBuffer(m_buffer);
+  }
+
+  public void LedTeamColor() {
+    LEDPattern pattern = switch (allianceColor) {
+      case Blue -> LEDPattern.solid(Color.kBlue); // (Blue: #0000FF)
+      case Red  -> LEDPattern.solid(Color.kRed); // (Red: #FF0000)
+      default   -> LEDPattern.solid(Color.kMagenta); // (Magenta: #FF00FF)
+    };
+
+    pattern.applyTo(m_buffer);
+
+    m_LEDSubsystem.setBuffer(m_buffer);
+  }
+
+  public void LedOff() {
+    LEDPattern
+    .kOff
+    .applyTo(m_buffer);
+
+    m_LEDSubsystem.setBuffer(m_buffer);
   }
 
 }
