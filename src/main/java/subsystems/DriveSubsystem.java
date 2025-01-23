@@ -8,7 +8,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -44,26 +46,62 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Gyro Rotation", swerveDrive.getYaw().getDegrees());
+    SmartDashboard.putNumber("Heading", swerveDrive.getOdometryHeading().getDegrees());
     m_field.setRobotPose(swerveDrive.getPose());
   }
 
-  /**
-   * Command to drive the robot using translative values and heading as angular velocity.
-   *
-   * @param translationX     Translation in the X direction.
-   * @param translationY     Translation in the Y direction.
-   * @param angularRotationX Rotation of the robot to set
-   * @return Drive command.
-   */
+  public void zeroGyro() {
+    swerveDrive.zeroGyro();
+  }
+
+  // /**
+  //  * Command to drive the robot using translative values and heading as angular velocity.
+  //  *
+  //  * @param translationX     Translation in the X direction.
+  //  * @param translationY     Translation in the Y direction.
+  //  * @param angularRotationX Rotation of the robot to set
+  //  * @return Drive command.
+  //  */
+  // public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX)
+  // {
+  //   return run(() -> {
+  //     // Make the robot move
+  //     swerveDrive.drive(new Translation2d(translationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(),
+  //                                         translationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()),
+  //                       angularRotationX.getAsDouble() * swerveDrive.getMaximumChassisAngularVelocity(),
+  //                       true,
+  //                       false);
+  //   });
+  // }
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX)
   {
-    return run(() -> {
-      // Make the robot move
-      swerveDrive.drive(new Translation2d(translationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(),
-                                          translationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()),
-                        angularRotationX.getAsDouble() * swerveDrive.getMaximumChassisAngularVelocity(),
-                        true,
-                        false);
-    });
+      return run(() -> {
+          Translation2d translation = new Translation2d(
+              translationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(),
+              translationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()
+          );
+          double rotation = angularRotationX.getAsDouble() * swerveDrive.getMaximumChassisAngularVelocity();
+
+          Rotation2d heading = swerveDrive.getYaw(); // Get the gyro angle
+
+          // Manually apply field-relative transformation
+          ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+              translation.getX(),
+              translation.getY(),
+              rotation,
+              heading
+          );
+
+          // Debug output
+          System.out.println("ChassisSpeeds: " + chassisSpeeds);
+
+          // Pass transformed values as if robot-relative
+          swerveDrive.drive(
+              new Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond),
+              chassisSpeeds.omegaRadiansPerSecond,
+              false, // Already transformed manually, so pass false
+              false
+          );
+      });
   }
 }
