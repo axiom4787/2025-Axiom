@@ -24,12 +24,13 @@ public class LEDCommand extends Command{
 
   private final AddressableLEDBuffer m_buffer;
 
-
+  //TODO: Add more patterns and see if i can put everything in this enum 🤔
   public static enum LEDPatterns {
-    RSL_SYNC,
-    TEAM_COLOR,
     OFF,
     RAINBOW,
+    RSL_SYNC,
+    TEAM_COLOR,
+
   };
 
     /**
@@ -53,17 +54,12 @@ public class LEDCommand extends Command{
   @Override
   public void execute() {
     switch (m_pattern) {
-      //syncronizes the LEDS with the RSL (Coral: #FF7F50)
-      case RSL_SYNC -> LedRSLSync();
 
-      //sets the LEDS to the team color
-      case TEAM_COLOR -> LedTeamColor();
+      case RSL_SYNC -> LedRSLSync(); //syncronizes the LEDS with the RSL (Coral: #FF7F50)
+      case TEAM_COLOR -> LedTeamColor(); //sets the LEDS to the team color
+      case RAINBOW -> LedRainbow(); //sets the LEDS to a scrolling rainbow pattern  
+      default -> LedOff(); //turns the LEDS off by default
 
-      //sets the LEDS to a scrolling rainbow pattern  
-      case RAINBOW -> LedRainbow();
-        
-      //turns the LEDS off by default
-      default -> LedOff();
     }
   }
 
@@ -96,13 +92,11 @@ public class LEDCommand extends Command{
   }
 
   public void LedTeamColor() {
-    LEDPattern pattern = switch (allianceColor) {
+    (switch (allianceColor) {
       case Blue -> LEDPattern.solid(Color.kBlue); // (Blue: #0000FF)
       case Red  -> LEDPattern.solid(Color.kRed); // (Red: #FF0000)
       default   -> LEDPattern.solid(Color.kMagenta); // (Magenta: #FF00FF)
-    };
-
-    pattern.applyTo(m_buffer);
+    }).applyTo(m_buffer);
 
     m_LEDSubsystem.setBuffer(m_buffer);
   }
