@@ -20,9 +20,13 @@ public class LEDSubsystem extends SubsystemBase {
 
             buffer = new AddressableLEDBuffer(LEDConstants.kBufferLength);
             
-            setBuffer(buffer);
 
-            leds.start();
+            setBuffer(buffer);
+            System.out.println("ledsubsystem set buffer");
+
+            startLEDS();
+            System.out.println("ledsubsystem started leds");
+            
       }
 
       public AddressableLEDBuffer getBuffer() {
@@ -31,6 +35,10 @@ public class LEDSubsystem extends SubsystemBase {
 
       public void setBuffer(AddressableLEDBuffer buffer) {
             leds.setData(buffer);
+      }
+
+      public void startLEDS() {
+            leds.start();
       }
 
 }

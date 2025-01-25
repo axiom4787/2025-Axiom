@@ -42,7 +42,7 @@ public class LEDCommand extends Command{
     m_pattern = pattern;
     m_LEDSubsystem = subsystem;
     m_buffer = m_LEDSubsystem.getBuffer();
-    allianceColor = DriverStation.getAlliance().get();
+    allianceColor = Alliance.Blue;
     addRequirements(m_LEDSubsystem);
   }
 
@@ -61,6 +61,8 @@ public class LEDCommand extends Command{
       default -> LedOff(); //turns the LEDS off by default
 
     }
+
+    System.out.println("ledcommand chose: " + m_pattern.toString());
   }
 
   @Override
