@@ -43,4 +43,49 @@ public class Constants {
         public static final int m_arm_algae_1_limit = 40; // Check limit; should be in amps
         public static final int m_arm_algae_2_limit = 40; // Check limit; should be in amps
     }
+
+    // for motor controllers for intake
+    public static final class PIDConstants {
+        public static final double LEFT_CORAL_KP = 0.1;
+        public static final double LEFT_CORAL_KI = 0.0;
+        public static final double LEFT_CORAL_KD = 0.0;
+        public static final double LEFT_CORAL_KFF = 0.0;
+        public static final double LEFT_CORAL_KMAX_OUTPUT = 1.0;
+        public static final double LEFT_CORAL_KMIN_OUTPUT = -1.0;
+
+        public static final double RIGHT_CORAL_KP = 0.1;
+        public static final double RIGHT_CORAL_KI = 0.0;
+        public static final double RIGHT_CORAL_KD = 0.0;
+        public static final double RIGHT_CORAL_KFF = 0.0;
+        public static final double RIGHT_CORAL_KMAX_OUTPUT = 1.0;
+        public static final double RIGHT_CORAL_KMIN_OUTPUT = -1.0;
+
+        public static final double ALGAE_KP = 0.1;
+        public static final double ALGAE_KI = 0.0;
+        public static final double ALGAE_KD = 0.0;
+        public static final double ALGAE_KFF = 0.0;
+        public static final double ALGAE_KMAX_OUTPUT = 1.0;
+        public static final double ALGAE_KMIN_OUTPUT = -1.0;
+
+        public static final double ROT_CORAL_KP = 0.1;
+        public static final double ROT_CORAL_KI = 0.0;
+        public static final double ROT_CORAL_KD = 0.0;
+        public static final double ROT_CORAL_KFF = 0.0;
+        public static final double ROT_CORAL_KMAX_OUTPUT = 1.0;
+        public static final double ROT_CORAL_KMIN_OUTPUT = -1.0;
+
+        public static final double ARM_ALGAE_KP = 0.1;
+        public static final double ARM_ALGAE_KI = 0.0;
+        public static final double ARM_ALGAE_KD = 0.0;
+        public static final double ARM_ALGAE_KFF = 0.0;
+        public static final double ARM_ALGAE_KMAX_OUTPUT = 1.0;
+        public static final double ARM_ALGAE_KMIN_OUTPUT = -1.0;
+
+        public static final double ARM_ALGAE_2_KP = 0.1;
+        public static final double ARM_ALGAE_2_KI = 0.0;
+        public static final double ARM_ALGAE_2_KD = 0.0;
+        public static final double ARM_ALGAE_2_KFF = 0.0;
+        public static final double ARM_ALGAE_2_KMAX_OUTPUT = 1.0;
+        public static final double ARM_ALGAE_2_KMIN_OUTPUT = -1.0;
+    }
 }

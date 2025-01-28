@@ -3,13 +3,17 @@ package frc.robot.subsystems;
 import java.util.concurrent.TimeUnit;
 import javax.accessibility.AccessibleRelation;
 
-import com.revrobotics.CANPIDController;
+import com.revrobotics.PIDController;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.CANPIDController;
-import com.revrobotics.CANEncoder;
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMax;
+import com.revrobotics.SparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxConfig;
+import com.revrobotics.FeedbackSensor;
+import com.revrobotics.IdleMode;
+import com.revrobotics.ResetMode;
+import com.revrobotics.PersistMode;
 
 // Import set saftey enabled
 
@@ -19,6 +23,7 @@ import frc.robot.Constants.Machine;
 import frc.robot.Constants.m_Intake_Motors;
 import frc.robot.Constants.m_limits;
 import frc.robot.Constants;
+import frc.robot.Constants.PIDConstants;
 
 public class MIntake extends SubsystemBase{
 
@@ -28,13 +33,13 @@ public class MIntake extends SubsystemBase{
     // Set our default speed
     public float m_default_speed = Constants.m_default_speed;
 
-    private final CANPIDController m_left_coral_pid, m_right_coral_pid;
-    private final CANPIDController m_rot_coral_pid;
-    private final CANPIDController m_arm_algae_1_pid, m_arm_algae_2_pid, m_left_algae_pid, m_right_algae_pid;
+    private final PIDController m_left_coral_pid, m_right_coral_pid;
+    private final PIDController m_rot_coral_pid;
+    private final PIDController m_arm_algae_1_pid, m_arm_algae_2_pid, m_left_algae_pid, m_right_algae_pid;
 
-    private final CANSparkMax m_left_coral, m_right_coral;
-    private final CANSparkMax m_rot_coral;
-    private final CANSparkMax m_arm_algae_1, m_arm_algae_2, m_left_algae, m_right_algae;
+    private final SparkMax m_left_coral, m_right_coral;
+    private final SparkMax m_rot_coral;
+    private final SparkMax m_arm_algae_1, m_arm_algae_2, m_left_algae, m_right_algae;
 
 
     private enum algae_arm {
@@ -51,108 +56,109 @@ public class MIntake extends SubsystemBase{
 
     public MIntake() {
         m_left_coral = new CANSparkMax(m_Intake_Motors.motor_coral_1, MotorType.kBrushless);
-        m_left_coral.setInverted(false);
-        m_left_coral.setSmartCurrentLimit(m_limits.m_left_coral_limit);
-        m_left_coral_pid = m_left_coral.getPIDController();
+        SparkMaxConfig leftCoralConfig = new SparkMaxConfig();
 
-        m_right_coral = new CANSparkMax(m_Intake_Motors.motor_coral_1, MotorType.kBrushless);
-        m_right_coral.setInverted(true);
-        m_right_coral.setSmartCurrentLimit(m_limits.m_right_coral_limit);
-        m_right_coral_pid = m_right_coral.getPIDController();
+        leftCoralConfig
+            .inverted(false)
+            .idleMode(IdleMode.kBrake);
+        leftCoralConfig.encoder
+            .positionConversionFactor(1000)
+            .velocityConversionFactor(1000);
+        leftCoralConfig.closedLoop
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .pid(PIDConstants.LEFT_CORAL_KP, PIDConstants.LEFT_CORAL_KI, PIDConstants.LEFT_CORAL_KD);
 
-        m_left_algae = new CANSparkMax(m_Intake_Motors.motor_left_algae, MotorType.kBrushless);
-        m_left_algae.setInverted(false);
-        m_left_algae.setSmartCurrentLimit(m_limits.m_left_algae_limit);
-        m_left_algae_pid = m_left_algae.getPIDController();
+        m_left_coral.configure(leftCoralConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistPara);
 
-        m_right_algae = new CANSparkMax(m_Intake_Motors.motor_right_algae, MotorType.kBrushless);
-        m_right_algae.setInverted(true);
-        m_right_algae.setSmartCurrentLimit(m_limits.m_right_algae_limit);
-        m_right_algae_pid = m_right_algae.getPIDController();
+        m_right_coral = new CANSparkMax(m_Intake_Motors.motor_coral_2, MotorType.kBrushless);
+        SparkMaxConfig rightCoralConfig = new SparkMaxConfig();
 
-        // Setup rot coral motor
-        m_rot_coral = new CANSparkMax(m_Intake_Motors.motor_coral_2, MotorType.kBrushless);
-        m_rot_coral.setInverted(true);
-        m_rot_coral.setSmartCurrentLimit(m_limits.m_rot_coral_limit);
-        m_rot_coral_pid = m_rot_coral.getPIDController();
+        rightCoralConfig
+            .inverted(true)
+            .idleMode(IdleMode.kBrake);
+        rightCoralConfig.encoder
+            .positionConversionFactor(1000)
+            .velocityConversionFactor(1000);
+        rightCoralConfig.closedLoop
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .pid(PIDConstants.RIGHT_CORAL_KP, PIDConstants.RIGHT_CORAL_KI, PIDConstants.RIGHT_CORAL_KD);
 
-        // instantiate arm angle motors
-        m_arm_algae_1 = new CANSparkMax(m_Intake_Motors.motor_arm_algae, MotorType.kBrushless);
-        m_arm_algae_1.setInverted(false);
-        m_arm_algae_1.setSmartCurrentLimit(m_limits.m_arm_algae_1_limit);
-        m_arm_algae_1_pid = m_arm_algae_1.getPIDController();
+        m_right_coral.configure(rightCoralConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistPara);
 
-        m_arm_algae_2 = new CANSparkMax(m_Intake_Motors.motor_arm_algae, MotorType.kBrushless);
-        m_arm_algae_2.setInverted(false);
-        m_arm_algae_2.setSmartCurrentLimit(m_limits.m_arm_algae_2_limit);
-        m_arm_algae_2_pid = m_arm_algae_2.getPIDController();
+        m_arm_algae_1 = new CANSparkMax(m_Intake_Motors.motor_arm_algae_1, MotorType.kBrushless);
+        SparkMaxConfig armAlgae1Config = new SparkMaxConfig();
 
+        armAlgae1Config
+            .inverted(false)
+            .idleMode(IdleMode.kBrake);
+        armAlgae1Config.encoder
+            .positionConversionFactor(1000)
+            .velocityConversionFactor(1000);
+        armAlgae1Config.closedLoop
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .pid(PIDConstants.ARM_ALGAE_1_KP, PIDConstants.ARM_ALGAE_KI, PIDConstants.ARM_ALGAE_KD);
+
+        m_arm_algae_1.configure(armAlgae1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistPara);
+
+        m_arm_algae_2 = new CANSparkMax(m_Intake_Motors.motor_arm_algae_2, MotorType.kBrushless);
+        SparkMaxConfig armAlgae2Config = new SparkMaxConfig();
+
+        armAlgae2Config
+            .inverted(false)
+            .idleMode(IdleMode.kBrake);
+        armAlgae2Config.encoder
+            .positionConversionFactor(1000)
+            .velocityConversionFactor(1000);
+        armAlgae2Config.closedLoop
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .pid(PIDConstants.ARM_ALGAE_2_KP, PIDConstants.ARM_ALGAE_KI, PIDConstants.ARM_ALGAE_KD);
+
+        m_arm_algae_2.configure(armAlgae2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistPara);
         // Configure PID coefficients
         configurePIDControllers();
     }
 
     private void configurePIDControllers() {
-        double kP = 0.1;
-        double kI = 0.0;
-        double kD = 0.0;
-        double kFF = 0.0;
-        double kMaxOutput = 1.0;
-        double kMinOutput = -1.0;
 
-        // Configure PID controllers
-        m_left_coral_pid.setP(kP);
-        m_left_coral_pid.setI(kI);
-        m_left_coral_pid.setD(kD);
-        m_left_coral_pid.setFF(kFF);
-        m_left_coral_pid.setOutputRange(kMinOutput, kMaxOutput);
+        // Configure PID controllers for left coral
+        m_left_coral_pid.setFF(PIDConstants.LEFT_CORAL_KFF);
+        m_left_coral_pid.setOutputRange(PIDConstants.LEFT_CORAL_KMIN_OUTPUT, PIDConstants.LEFT_CORAL_KMAX_OUTPUT);
 
-        m_right_coral_pid.setP(kP);
-        m_right_coral_pid.setI(kI);
-        m_right_coral_pid.setD(kD);
-        m_right_coral_pid.setFF(kFF);
-        m_right_coral_pid.setOutputRange(kMinOutput, kMaxOutput);
+        // Configure PID controllers for right coral
+        m_right_coral_pid.setFF(PIDConstants.RIGHT_CORAL_KFF);
+        m_right_coral_pid.setOutputRange(PIDConstants.RIGHT_CORAL_KMIN_OUTPUT, PIDConstants.RIGHT_CORAL_KMAX_OUTPUT);
 
-        m_left_algae_pid.setP(kP);
-        m_left_algae_pid.setI(kI);
-        m_left_algae_pid.setD(kD);
-        m_left_algae_pid.setFF(kFF);
-        m_left_algae_pid.setOutputRange(kMinOutput, kMaxOutput);
+        // Configure PID controllers for left algae
+        m_left_algae_pid.setFF(PIDConstants.ALGAE_KFF);
+        m_left_algae_pid.setOutputRange(PIDConstants.ALGAE_KMIN_OUTPUT, PIDConstants.ALGAE_KMAX_OUTPUT);
 
-        m_right_algae_pid.setP(kP);
-        m_right_algae_pid.setI(kI);
-        m_right_algae_pid.setD(kD);
-        m_right_algae_pid.setFF(kFF);
-        m_right_algae_pid.setOutputRange(kMinOutput, kMaxOutput);
+        // Configure PID controllers for right algae
+        m_right_algae_pid.setFF(PIDConstants.ALGAE_KFF);
+        m_right_algae_pid.setOutputRange(PIDConstants.ALGAE_KMIN_OUTPUT, PIDConstants.ALGAE_KMAX_OUTPUT);
 
-        m_rot_coral_pid.setP(kP);
-        m_rot_coral_pid.setI(kI);
-        m_rot_coral_pid.setD(kD);
-        m_rot_coral_pid.setFF(kFF);
-        m_rot_coral_pid.setOutputRange(kMinOutput, kMaxOutput);
+        // Configure PID controllers for rot coral
+        m_rot_coral_pid.setFF(PIDConstants.ROT_CORAL_KFF);
+        m_rot_coral_pid.setOutputRange(PIDConstants.ROT_CORAL_KMIN_OUTPUT, PIDConstants.ROT_CORAL_KMAX_OUTPUT);
 
-        m_arm_algae_1_pid.setP(kP);
-        m_arm_algae_1_pid.setI(kI);
-        m_arm_algae_1_pid.setD(kD);
-        m_arm_algae_1_pid.setFF(kFF);
-        m_arm_algae_1_pid.setOutputRange(kMinOutput, kMaxOutput);
+        // Configure PID controllers for arm algae 1
+        m_arm_algae_1_pid.setFF(PIDConstants.ARM_ALGAE_KFF);
+        m_arm_algae_1_pid.setOutputRange(PIDConstants.ARM_ALGAE_KMIN_OUTPUT, PIDConstants.ARM_ALGAE_KMAX_OUTPUT);
 
-        m_arm_algae_2_pid.setP(kP);
-        m_arm_algae_2_pid.setI(kI);
-        m_arm_algae_2_pid.setD(kD);
-        m_arm_algae_2_pid.setFF(kFF);
-        m_arm_algae_2_pid.setOutputRange(kMinOutput, kMaxOutput);
+        // Configure PID controllers for arm algae 2
+        m_arm_algae_2_pid.setFF(PIDConstants.ARM_ALGAE_KFF);
+        m_arm_algae_2_pid.setOutputRange(PIDConstants.ARM_ALGAE_KMIN_OUTPUT, PIDConstants.ARM_ALGAE_KMAX_OUTPUT);
     }
-    
+
     private class Actions {
-        public static void Intake_Algae(CANSparkMax m_left_algae, CANSparkMax m_right_algae, float m_default_speed){
+        public static void Intake_Algae(SparkMax m_left_algae, SparkMax m_right_algae, float m_default_speed){
             m_left_algae.set(-m_default_speed);
             m_right_algae.set(-m_default_speed);
         }
-        public static void Outtake_Algae(CANSparkMax m_left_algae, CANSparkMax m_right_algae, float m_default_speed){
+        public static void Outtake_Algae(SparkMax m_left_algae, SparkMax m_right_algae, float m_default_speed){
             m_left_algae.set(m_default_speed);
             m_right_algae.set(m_default_speed);
         }
-        public static void a_Angle_Arm(algae_arm aState, CANSparkMax m_arm_algae_1, CANSparkMax m_arm_algae_2) {
+        public static void a_Angle_Arm(algae_arm aState, SparkMax m_arm_algae_1, SparkMax m_arm_algae_2) {
             switch(aState){
                 case Down:
                     // use pid to move arm down
@@ -160,7 +166,7 @@ public class MIntake extends SubsystemBase{
                     // use pid to move arm up
             }
         }
-        public static void c_Angle_Arm(coral_arm cState, CANSparkMax m_rot_coral) {
+        public static void c_Angle_Arm(coral_arm cState, SparkMax m_rot_coral) {
             switch(cState){
                 case Processor:
                     // use pid to move arm down
@@ -168,11 +174,11 @@ public class MIntake extends SubsystemBase{
                     // use pid to move arm up
             }
         }
-        public static void Intake_Coral(CANSparkMax m_left_coral, CANSparkMax m_right_coral, float m_default_speed){
+        public static void Intake_Coral(SparkMax m_left_coral, SparkMax m_right_coral, float m_default_speed){
             m_left_coral.set(-m_default_speed);
             m_right_coral.set(-m_default_speed);
         }
-        public static void Outtake_Coral(CANSparkMax m_left_coral, CANSparkMax m_right_coral, float m_default_speed){
+        public static void Outtake_Coral(SparkMax m_left_coral, SparkMax m_right_coral, float m_default_speed){
             m_left_coral.set(m_default_speed);
             m_right_coral.set(m_default_speed);
         }
