@@ -20,10 +20,12 @@ import com.revrobotics.PersistMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.Machine;
-import frc.robot.Constants.m_Intake_Motors;
-import frc.robot.Constants.m_limits;
 import frc.robot.Constants;
-import frc.robot.Constants.PIDConstants;
+
+import frc.robot.Constants.cIntake;
+import frc.robot.Constants.cIntake.m_limits;
+import frc.robot.Constants.cIntake.m_Intake_Motors;
+import frc.robot.Constants.cIntake.PIDConstants;
 
 public class MIntake extends SubsystemBase{
 
@@ -31,7 +33,7 @@ public class MIntake extends SubsystemBase{
     public Machine mState = Constants.state;
 
     // Set our default speed
-    public float m_default_speed = Constants.m_default_speed;
+    public float m_default_speed = cIntake.m_default_speed;
 
     private final PIDController m_left_coral_pid, m_right_coral_pid;
     private final PIDController m_rot_coral_pid;
