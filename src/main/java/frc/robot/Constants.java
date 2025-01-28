@@ -4,6 +4,8 @@ import org.ejml.equation.Variable;
 
 public class Constants {
 
+    public static Machine state = Machine.Robot_off;
+
     public static final float m_default_speed = 1.0f;
 
     public enum Machine{

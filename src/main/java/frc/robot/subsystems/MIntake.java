@@ -23,8 +23,9 @@ import frc.robot.Constants;
 public class MIntake extends SubsystemBase{
 
     // Replace with the current state global via import later
-    public Machine mState = Machine.Robot_off;
+    public Machine mState = Constants.state;
 
+    // Set our default speed
     public float m_default_speed = Constants.m_default_speed;
 
     private final CANPIDController m_left_coral_pid, m_right_coral_pid;
@@ -34,6 +35,19 @@ public class MIntake extends SubsystemBase{
     private final CANSparkMax m_left_coral, m_right_coral;
     private final CANSparkMax m_rot_coral;
     private final CANSparkMax m_arm_algae_1, m_arm_algae_2, m_left_algae, m_right_algae;
+
+
+    private enum algae_arm {
+        Down,
+        Up
+    }
+    private algae_arm aState = algae_arm.Up;
+
+    private enum coral_arm {
+        Processor,
+        L1
+    }
+    private coral_arm cState = coral_arm.Processor;
 
     public MIntake() {
         m_left_coral = new CANSparkMax(m_Intake_Motors.motor_coral_1, MotorType.kBrushless);
@@ -129,7 +143,7 @@ public class MIntake extends SubsystemBase{
         m_arm_algae_2_pid.setOutputRange(kMinOutput, kMaxOutput);
     }
     
-    public class Actions {
+    private class Actions {
         public static void Intake_Algae(CANSparkMax m_left_algae, CANSparkMax m_right_algae, float m_default_speed){
             m_left_algae.set(-m_default_speed);
             m_right_algae.set(-m_default_speed);
@@ -138,11 +152,21 @@ public class MIntake extends SubsystemBase{
             m_left_algae.set(m_default_speed);
             m_right_algae.set(m_default_speed);
         }
-        public static void a_Angle_Arm(float angle, CANSparkMax m_arm_algae_1, CANSparkMax m_arm_algae_2) {
-            // Do this!
+        public static void a_Angle_Arm(algae_arm aState, CANSparkMax m_arm_algae_1, CANSparkMax m_arm_algae_2) {
+            switch(aState){
+                case Down:
+                    // use pid to move arm down
+                case Up:
+                    // use pid to move arm up
+            }
         }
-        public static void c_Angle_Arm(float angle, CANSparkMax m_rot_coral) {
-            // Do this!
+        public static void c_Angle_Arm(coral_arm cState, CANSparkMax m_rot_coral) {
+            switch(cState){
+                case Processor:
+                    // use pid to move arm down
+                case L1:
+                    // use pid to move arm up
+            }
         }
         public static void Intake_Coral(CANSparkMax m_left_coral, CANSparkMax m_right_coral, float m_default_speed){
             m_left_coral.set(-m_default_speed);
@@ -154,7 +178,6 @@ public class MIntake extends SubsystemBase{
         }
     }
     public void periodic(){
-        // Fix all this, it's super broken
         m_left_algae.set(0.0f);
         m_right_algae.set(0.0f);
         m_left_coral.set(0.0f);
@@ -171,7 +194,8 @@ public class MIntake extends SubsystemBase{
             case CoralOuttake:
                 Actions.Outtake_Coral(m_left_coral, m_right_coral, m_default_speed);
             case L1:
-                Actions.c_Angle_Arm(0.0f, m_rot_coral);
+                cState =  coral_arm.L1;
+                Actions.c_Angle_Arm(cState, m_rot_coral);
                 Actions.Outtake_Coral(m_left_coral, m_right_coral, m_default_speed);
             
             case CoralIntake:
@@ -181,7 +205,8 @@ public class MIntake extends SubsystemBase{
             
             case AlgaeIntakeGround:
                 Actions.Intake_Algae(m_left_algae, m_right_algae, m_default_speed);
-                Actions.a_Angle_Arm(0.0f, m_arm_algae_1, m_arm_algae_2);
+                aState = algae_arm.Down;
+                Actions.a_Angle_Arm(aState, m_arm_algae_1, m_arm_algae_2);
             
             case Processor:
                 Actions.Outtake_Algae(m_left_algae, m_right_algae, m_default_speed);
