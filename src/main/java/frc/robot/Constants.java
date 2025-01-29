@@ -23,7 +23,8 @@ public class Constants {
     }
 
     // For Intake Subsystem
-    public static class m_Intake_Motors{
+    public static class Intake{
+        // motor ids
         public static final int motor_algae_arm = 0; // Check
         public static final int motor_coral_1 = 0; // Check  
         public static final int motor_coral_2 = 0; // Check  
@@ -32,8 +33,8 @@ public class Constants {
 
         public static final int motor_right_algae = 0; // Check
         public static final int motor_left_algae = 0; // Check
-    }
-    public static class m_limits{
+
+        // limits
         public static final int m_left_coral_limit = 40; // Check limit; should be in amps
         public static final int m_right_coral_limit = 40; // Check limit; should be in amps
 
