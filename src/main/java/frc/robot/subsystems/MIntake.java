@@ -45,20 +45,20 @@ public class MIntake extends SubsystemBase{
     private final SparkMax m_arm_algae_1, m_arm_algae_2, m_left_algae, m_right_algae;
 
 
-    private enum algae_arm {
+    public enum algae_arm {
         Down,
         Up
     }
-    private algae_arm aState = algae_arm.Up;
+    public algae_arm aState = algae_arm.Up;
 
-    private enum coral_arm {
+    public enum coral_arm {
         Processor,
         L1
     }
-    private coral_arm cState = coral_arm.Processor;
+    public coral_arm cState = coral_arm.Processor;
 
     public MIntake() {
-        m_left_coral = new CANSparkMax(m_Intake_Motors.motor_coral_1, MotorType.kBrushless);
+        m_left_coral = new SparkMax(m_Intake_Motors.motor_coral_1, MotorType.kBrushless);
         SparkMaxConfig leftCoralConfig = new SparkMaxConfig();
 
         leftCoralConfig
@@ -74,7 +74,7 @@ public class MIntake extends SubsystemBase{
         m_left_coral.configure(leftCoralConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistPara);
 
 
-        m_right_coral = new CANSparkMax(m_Intake_Motors.motor_coral_2, MotorType.kBrushless);
+        m_right_coral = new SparkMax(m_Intake_Motors.motor_coral_2, MotorType.kBrushless);
         SparkMaxConfig rightCoralConfig = new SparkMaxConfig();
 
         rightCoralConfig
@@ -90,7 +90,7 @@ public class MIntake extends SubsystemBase{
         m_right_coral.configure(rightCoralConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistPara);
         
 
-        m_right_algae = new CANSparkMax(m_Intake_Motors.motor_right_algae, MotorType.kBrushless);
+        m_right_algae = new SparkMax(m_Intake_Motors.motor_right_algae, MotorType.kBrushless);
         SparkMaxConfig rightAlgaeConfig = new SparkMaxConfig();
 
         rightAlgaeConfig
@@ -106,7 +106,7 @@ public class MIntake extends SubsystemBase{
         m_right_algae.configure(rightAlgaeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistPara);
         
         
-        m_rot_coral = new CANSparkMax(m_Intake_Motors.motor_rot_coral, MotorType.kBrushless);
+        m_rot_coral = new SparkMax(m_Intake_Motors.motor_rot_coral, MotorType.kBrushless);
         SparkMaxConfig rotCoralConfig = new SparkMaxConfig();
 
         rotCoralConfig
@@ -122,7 +122,7 @@ public class MIntake extends SubsystemBase{
         m_rot_coral.configure(rotCoralConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistPara);
 
 
-        m_left_algae = new CANSparkMax(m_Intake_Motors.motor_left_algae, MotorType.kBrushless);
+        m_left_algae = new SparkMax(m_Intake_Motors.motor_left_algae, MotorType.kBrushless);
         SparkMaxConfig leftAlgaeConfig = new SparkMaxConfig();
 
         leftAlgaeConfig
@@ -136,7 +136,7 @@ public class MIntake extends SubsystemBase{
             .pid(PIDConstants.ALGAE_KP, PIDConstants.ALGAE_KI, PIDConstants.ALGAE_KD);
 
 
-        m_arm_algae_1 = new CANSparkMax(m_Intake_Motors.motor_arm_algae_1, MotorType.kBrushless);
+        m_arm_algae_1 = new SparkMax(m_Intake_Motors.motor_arm_algae_1, MotorType.kBrushless);
         SparkMaxConfig armAlgae1Config = new SparkMaxConfig();
 
         armAlgae1Config
@@ -152,7 +152,7 @@ public class MIntake extends SubsystemBase{
         m_arm_algae_1.configure(armAlgae1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistPara);
 
 
-        m_arm_algae_2 = new CANSparkMax(m_Intake_Motors.motor_arm_algae_2, MotorType.kBrushless);
+        m_arm_algae_2 = new SparkMax(m_Intake_Motors.motor_arm_algae_2, MotorType.kBrushless);
         SparkMaxConfig armAlgae2Config = new SparkMaxConfig();
 
         armAlgae2Config
@@ -243,6 +243,7 @@ public class MIntake extends SubsystemBase{
             m_right_coral.set(m_default_speed);
         }
     }
+
     public void periodic(){
         m_left_algae.set(0.0f);
         m_right_algae.set(0.0f);
