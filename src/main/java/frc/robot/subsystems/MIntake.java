@@ -3,19 +3,16 @@ package frc.robot.subsystems;
 import java.util.concurrent.TimeUnit;
 import javax.accessibility.AccessibleRelation;
 
-import com.revrobotics.PIDController;
-
-import com.revrobotics.SparkMax;
-import com.revrobotics.SparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxConfig;
-import com.revrobotics.FeedbackSensor;
-import com.revrobotics.IdleMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.PersistMode;
-
-// Import set saftey enabled
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode; 
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.ControlType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -36,9 +33,9 @@ public class MIntake extends SubsystemBase{
     // Set our default speed
     public float m_default_speed = cIntake.m_default_speed;
 
-    private final PIDController m_left_coral_pid, m_right_coral_pid;
-    private final PIDController m_rot_coral_pid;
-    private final PIDController m_arm_algae_1_pid, m_arm_algae_2_pid, m_left_algae_pid, m_right_algae_pid;
+    private final SparkClosedLoopController m_left_coral_pid, m_right_coral_pid;
+    private final SparkClosedLoopController m_rot_coral_pid;
+    private final SparkClosedLoopController m_arm_algae_1_pid, m_arm_algae_2_pid, m_left_algae_pid, m_right_algae_pid;
 
     private final SparkMax m_left_coral, m_right_coral;
     private final SparkMax m_rot_coral;
@@ -71,7 +68,7 @@ public class MIntake extends SubsystemBase{
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
             .pid(PIDConstants.LEFT_CORAL_KP, PIDConstants.LEFT_CORAL_KI, PIDConstants.LEFT_CORAL_KD);
 
-        m_left_coral.configure(leftCoralConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistPara);
+        m_left_coral.configure(leftCoralConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 
         m_right_coral = new SparkMax(m_Intake_Motors.motor_coral_2, MotorType.kBrushless);
@@ -87,7 +84,7 @@ public class MIntake extends SubsystemBase{
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
             .pid(PIDConstants.RIGHT_CORAL_KP, PIDConstants.RIGHT_CORAL_KI, PIDConstants.RIGHT_CORAL_KD);
 
-        m_right_coral.configure(rightCoralConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistPara);
+        m_right_coral.configure(rightCoralConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         
 
         m_right_algae = new SparkMax(m_Intake_Motors.motor_right_algae, MotorType.kBrushless);
@@ -103,7 +100,7 @@ public class MIntake extends SubsystemBase{
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
             .pid(PIDConstants.ALGAE_KP, PIDConstants.ALGAE_KI, PIDConstants.ALGAE_KD);
 
-        m_right_algae.configure(rightAlgaeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistPara);
+        m_right_algae.configure(rightAlgaeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         
         
         m_rot_coral = new SparkMax(m_Intake_Motors.motor_rot_coral, MotorType.kBrushless);
@@ -119,7 +116,7 @@ public class MIntake extends SubsystemBase{
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
             .pid(PIDConstants.ROT_CORAL_KP, PIDConstants.ROT_CORAL_KI, PIDConstants.ROT_CORAL_KD);
 
-        m_rot_coral.configure(rotCoralConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistPara);
+        m_rot_coral.configure(rotCoralConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 
         m_left_algae = new SparkMax(m_Intake_Motors.motor_left_algae, MotorType.kBrushless);
@@ -147,9 +144,9 @@ public class MIntake extends SubsystemBase{
             .velocityConversionFactor(PIDConstants.ARM_ALGAE_vCONV);
         armAlgae1Config.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pid(PIDConstants.ARM_ALGAE_1_KP, PIDConstants.ARM_ALGAE_KI, PIDConstants.ARM_ALGAE_KD);
+            .pid(PIDConstants.ARM_ALGAE_KP, PIDConstants.ARM_ALGAE_KI, PIDConstants.ARM_ALGAE_KD);
 
-        m_arm_algae_1.configure(armAlgae1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistPara);
+        m_arm_algae_1.configure(armAlgae1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 
         m_arm_algae_2 = new SparkMax(m_Intake_Motors.motor_arm_algae_2, MotorType.kBrushless);
@@ -165,7 +162,7 @@ public class MIntake extends SubsystemBase{
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
             .pid(PIDConstants.ARM_ALGAE_2_KP, PIDConstants.ARM_ALGAE_KI, PIDConstants.ARM_ALGAE_KD);
 
-        m_arm_algae_2.configure(armAlgae2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistPara);
+        m_arm_algae_2.configure(armAlgae2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         
         
         // Configure PID coefficients
@@ -204,15 +201,15 @@ public class MIntake extends SubsystemBase{
     }
 
     private class Actions {
-        public void Intake_Algae(SparkMax m_left_algae, SparkMax m_right_algae, float m_default_speed){
+        public static void Intake_Algae(SparkMax m_left_algae, SparkMax m_right_algae, float m_default_speed){
             m_left_algae.set(-m_default_speed);
             m_right_algae.set(-m_default_speed);
         }
-        public void Outtake_Algae(SparkMax m_left_algae, SparkMax m_right_algae, float m_default_speed){
+        public static void Outtake_Algae(SparkMax m_left_algae, SparkMax m_right_algae, float m_default_speed){
             m_left_algae.set(m_default_speed);
             m_right_algae.set(m_default_speed);
         }
-        public void a_Angle_Arm(algae_arm aState, SparkMax m_arm_algae_1, SparkMax m_arm_algae_2) {
+        public static void a_Angle_Arm(algae_arm aState, SparkMax m_arm_algae_1, SparkMax m_arm_algae_2) {
             switch(aState){
                 case Down:
                     // use pid to move arm down
@@ -224,7 +221,7 @@ public class MIntake extends SubsystemBase{
                     m_arm_algae_2.setReference(AngleReferences.ALGAE_ANGLE_UP, ControlType.kPosition);
             }
         }
-        public void c_Angle_Arm(coral_arm cState, SparkMax m_rot_coral) {
+        public static void c_Angle_Arm(coral_arm cState, SparkMax m_rot_coral) {
             switch(cState){
                 case Processor:
                     // use pid to move arm down
@@ -234,36 +231,36 @@ public class MIntake extends SubsystemBase{
                     m_rot_coral.setReference(AngleReferences.CORAL_ANGLE_L1, ControlType.kPosition);
             }
         }
-        public void Intake_Coral(SparkMax m_left_coral, SparkMax m_right_coral, float m_default_speed){
+        public static void Intake_Coral(SparkMax m_left_coral, SparkMax m_right_coral, float m_default_speed){
             m_left_coral.set(-m_default_speed);
             m_right_coral.set(-m_default_speed);
         }
-        public void Outtake_Coral(SparkMax m_left_coral, SparkMax m_right_coral, float m_default_speed){
-            m_left_coral.set(m_default_speed);
-            m_right_coral.set(m_default_speed);
-        }
-    }
-
-    public void periodic(){
-        m_left_algae.set(0.0f);
-        m_right_algae.set(0.0f);
-        m_left_coral.set(0.0f);
-        m_right_coral.set(0.0f);
-
-        m_arm_algae_1.set(0.0f);
-        m_arm_algae_2.set(0.0f);
-
-        m_rot_coral.set(0.0f);
-
-        switch(mState){
-            // Review reqs, update constants, etc
-
-            case CoralOuttake:
-                Actions.Outtake_Coral(m_left_coral, m_right_coral, m_default_speed);
-            case L1:
-                cState =  coral_arm.L1;
-                Actions.c_Angle_Arm(cState, m_rot_coral);
-                Actions.Outtake_Coral(m_left_coral, m_right_coral, m_default_speed);
+        public static void Outtake_Coral(SparkMax m_left_coral, SparkMax m_right_coral, float m_default_speed){
+                    m_left_coral.set(m_default_speed);
+                    m_right_coral.set(m_default_speed);
+                }
+            }
+        
+            public void periodic(){
+                m_left_algae.set(0.0f);
+                m_right_algae.set(0.0f);
+                m_left_coral.set(0.0f);
+                m_right_coral.set(0.0f);
+        
+                m_arm_algae_1.set(0.0f);
+                m_arm_algae_2.set(0.0f);
+        
+                m_rot_coral.set(0.0f);
+        
+                switch(mState){
+                    // Review reqs, update constants, etc
+        
+                    case CoralOuttake:
+                        Actions.Outtake_Coral(m_left_coral, m_right_coral, m_default_speed);
+                    case L1:
+                        cState =  coral_arm.L1;
+                        Actions.c_Angle_Arm(cState, m_rot_coral);
+                        Actions.Outtake_Coral(m_left_coral, m_right_coral, m_default_speed);
             
             case CoralIntake:
                 Actions.Intake_Coral(m_left_algae, m_right_algae, m_default_speed);
