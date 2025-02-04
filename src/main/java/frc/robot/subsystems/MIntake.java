@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import java.util.concurrent.TimeUnit;
 import javax.accessibility.AccessibleRelation;
 
+// Motor Controllers
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -13,6 +14,10 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.ControlType;
+import com.revrobotics.spark.ClosedLoopSlot;
+
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -30,7 +35,7 @@ public class MIntake extends SubsystemBase{
     // Replace with the current state global via import later
     public Machine mState = Constants.state;
 
-    // Set our default speed
+    // set our default speed
     public float m_default_speed = cIntake.m_default_speed;
 
     private final SparkClosedLoopController m_left_coral_pid, m_right_coral_pid;
@@ -66,7 +71,10 @@ public class MIntake extends SubsystemBase{
             .velocityConversionFactor(PIDConstants.LEFT_CORAL_vCONV);
         leftCoralConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pid(PIDConstants.LEFT_CORAL_KP, PIDConstants.LEFT_CORAL_KI, PIDConstants.LEFT_CORAL_KD);
+            .pid(PIDConstants.LEFT_CORAL_KP, PIDConstants.LEFT_CORAL_KI, PIDConstants.LEFT_CORAL_KD)
+            .velocityFF(PIDConstants.LEFT_CORAL_KFF, ClosedLoopSlot.kSlot1)
+            .outputRange(PIDConstants.LEFT_CORAL_KMIN_OUTPUT, PIDConstants.LEFT_CORAL_KMAX_OUTPUT);
+
 
         m_left_coral.configure(leftCoralConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -82,7 +90,9 @@ public class MIntake extends SubsystemBase{
             .velocityConversionFactor(PIDConstants.RIGHT_CORAL_vCONV);
         rightCoralConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pid(PIDConstants.RIGHT_CORAL_KP, PIDConstants.RIGHT_CORAL_KI, PIDConstants.RIGHT_CORAL_KD);
+            .pid(PIDConstants.RIGHT_CORAL_KP, PIDConstants.RIGHT_CORAL_KI, PIDConstants.RIGHT_CORAL_KD)
+            .velocityFF(PIDConstants.RIGHT_CORAL_KFF, ClosedLoopSlot.kSlot1)
+            .outputRange(PIDConstants.RIGHT_CORAL_KMIN_OUTPUT, PIDConstants.RIGHT_CORAL_KMAX_OUTPUT);
 
         m_right_coral.configure(rightCoralConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         
@@ -98,7 +108,9 @@ public class MIntake extends SubsystemBase{
             .velocityConversionFactor(PIDConstants.ALGAE_vCONV);
         rightAlgaeConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pid(PIDConstants.ALGAE_KP, PIDConstants.ALGAE_KI, PIDConstants.ALGAE_KD);
+            .pid(PIDConstants.ALGAE_KP, PIDConstants.ALGAE_KI, PIDConstants.ALGAE_KD)
+            .velocityFF(PIDConstants.ALGAE_KFF, ClosedLoopSlot.kSlot1)
+            .outputRange(PIDConstants.ALGAE_KMIN_OUTPUT, PIDConstants.ALGAE_KMAX_OUTPUT);
 
         m_right_algae.configure(rightAlgaeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         
@@ -114,7 +126,9 @@ public class MIntake extends SubsystemBase{
             .velocityConversionFactor(PIDConstants.ROT_CORAL_vCONV);
         rotCoralConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pid(PIDConstants.ROT_CORAL_KP, PIDConstants.ROT_CORAL_KI, PIDConstants.ROT_CORAL_KD);
+            .pid(PIDConstants.ROT_CORAL_KP, PIDConstants.ROT_CORAL_KI, PIDConstants.ROT_CORAL_KD)
+            .velocityFF(PIDConstants.ROT_CORAL_KFF, ClosedLoopSlot.kSlot1)
+            .outputRange(PIDConstants.ROT_CORAL_KMIN_OUTPUT, PIDConstants.ROT_CORAL_KMAX_OUTPUT);
 
         m_rot_coral.configure(rotCoralConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -130,7 +144,9 @@ public class MIntake extends SubsystemBase{
             .velocityConversionFactor(PIDConstants.ALGAE_vCONV);
         leftAlgaeConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pid(PIDConstants.ALGAE_KP, PIDConstants.ALGAE_KI, PIDConstants.ALGAE_KD);
+            .pid(PIDConstants.ALGAE_KP, PIDConstants.ALGAE_KI, PIDConstants.ALGAE_KD)
+            .velocityFF(PIDConstants.ALGAE_KFF, ClosedLoopSlot.kSlot1)
+            .outputRange(PIDConstants.ALGAE_KMIN_OUTPUT, PIDConstants.ALGAE_KMAX_OUTPUT);
 
 
         m_arm_algae_1 = new SparkMax(m_Intake_Motors.motor_arm_algae_1, MotorType.kBrushless);
@@ -144,7 +160,9 @@ public class MIntake extends SubsystemBase{
             .velocityConversionFactor(PIDConstants.ARM_ALGAE_vCONV);
         armAlgae1Config.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pid(PIDConstants.ARM_ALGAE_KP, PIDConstants.ARM_ALGAE_KI, PIDConstants.ARM_ALGAE_KD);
+            .pid(PIDConstants.ARM_ALGAE_KP, PIDConstants.ARM_ALGAE_KI, PIDConstants.ARM_ALGAE_KD)
+            .velocityFF(PIDConstants.ARM_ALGAE_KFF, ClosedLoopSlot.kSlot1)
+            .outputRange(PIDConstants.ARM_ALGAE_KMIN_OUTPUT, PIDConstants.ARM_ALGAE_KMAX_OUTPUT);
 
         m_arm_algae_1.configure(armAlgae1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -160,44 +178,11 @@ public class MIntake extends SubsystemBase{
             .velocityConversionFactor(PIDConstants.ARM_ALGAE_vCONV);
         armAlgae2Config.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pid(PIDConstants.ARM_ALGAE_2_KP, PIDConstants.ARM_ALGAE_KI, PIDConstants.ARM_ALGAE_KD);
+            .pid(PIDConstants.ARM_ALGAE_2_KP, PIDConstants.ARM_ALGAE_KI, PIDConstants.ARM_ALGAE_KD)
+            .velocityFF(PIDConstants.ARM_ALGAE_KFF, ClosedLoopSlot.kSlot1)
+            .outputRange(PIDConstants.ARM_ALGAE_KMIN_OUTPUT, PIDConstants.ARM_ALGAE_KMAX_OUTPUT);
 
         m_arm_algae_2.configure(armAlgae2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        
-        
-        // Configure PID coefficients
-        configurePIDControllers();
-    }
-
-    private void configurePIDControllers() {
-
-        // Configure PID controllers for left coral
-        m_left_coral_pid.setFF(PIDConstants.LEFT_CORAL_KFF);
-        m_left_coral_pid.setOutputRange(PIDConstants.LEFT_CORAL_KMIN_OUTPUT, PIDConstants.LEFT_CORAL_KMAX_OUTPUT);
-
-        // Configure PID controllers for right coral
-        m_right_coral_pid.setFF(PIDConstants.RIGHT_CORAL_KFF);
-        m_right_coral_pid.setOutputRange(PIDConstants.RIGHT_CORAL_KMIN_OUTPUT, PIDConstants.RIGHT_CORAL_KMAX_OUTPUT);
-
-        // Configure PID controllers for left algae
-        m_left_algae_pid.setFF(PIDConstants.ALGAE_KFF);
-        m_left_algae_pid.setOutputRange(PIDConstants.ALGAE_KMIN_OUTPUT, PIDConstants.ALGAE_KMAX_OUTPUT);
-
-        // Configure PID controllers for right algae
-        m_right_algae_pid.setFF(PIDConstants.ALGAE_KFF);
-        m_right_algae_pid.setOutputRange(PIDConstants.ALGAE_KMIN_OUTPUT, PIDConstants.ALGAE_KMAX_OUTPUT);
-
-        // Configure PID controllers for rot coral
-        m_rot_coral_pid.setFF(PIDConstants.ROT_CORAL_KFF);
-        m_rot_coral_pid.setOutputRange(PIDConstants.ROT_CORAL_KMIN_OUTPUT, PIDConstants.ROT_CORAL_KMAX_OUTPUT);
-
-        // Configure PID controllers for arm algae 1
-        m_arm_algae_1_pid.setFF(PIDConstants.ARM_ALGAE_KFF);
-        m_arm_algae_1_pid.setOutputRange(PIDConstants.ARM_ALGAE_KMIN_OUTPUT, PIDConstants.ARM_ALGAE_KMAX_OUTPUT);
-
-        // Configure PID controllers for arm algae 2
-        m_arm_algae_2_pid.setFF(PIDConstants.ARM_ALGAE_KFF);
-        m_arm_algae_2_pid.setOutputRange(PIDConstants.ARM_ALGAE_KMIN_OUTPUT, PIDConstants.ARM_ALGAE_KMAX_OUTPUT);
     }
 
     private class Actions {
