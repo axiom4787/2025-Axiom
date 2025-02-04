@@ -199,7 +199,7 @@ public class MIntake extends SubsystemBase{
                 case Down:
                     // use pid to move arm down
                     m_arm_algae_1.setReference(AngleReferences.ALGAE_ANGLE_DOWN, ControlType.kPosition);
-                    m_arm_algae_2.setReference(AngleReferences.ALGAE_ANGLE_DOWN, ControlType.kPosition);
+                    (m_arm_algae_2).setReference(AngleReferences.ALGAE_ANGLE_DOWN, ControlType.kPosition);
                 case Up:
                     // use pid to move arm up
                     m_arm_algae_1.setReference(AngleReferences.ALGAE_ANGLE_UP, ControlType.kPosition);
