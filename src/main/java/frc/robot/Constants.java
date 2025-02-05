@@ -116,6 +116,11 @@ public class Constants {
             public static final double ALGAE_ANGLE_DOWN = 0.0; // Check. In rotations
             public static final double ALGAE_ANGLE_UP = 0.0; // Check. In rotations
         }
+        public static class Arm_Angles{
+            public static final float arm_angle_l1 = 0; // Check
+            public static final float arm_angle_l2 = 0; // Check
+            public static final float arm_angle_l3 = 0; // Check
+            public static final float arm_angle_l4 = 0; // Check
+        }
     }
-    
 }

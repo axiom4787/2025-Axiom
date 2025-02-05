@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.concurrent.TimeUnit;
 import javax.accessibility.AccessibleRelation;
-
 // Motor Controllers
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -18,10 +17,12 @@ import com.revrobotics.spark.ClosedLoopSlot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.Machine;
+
 import frc.robot.Constants;
 
 import frc.robot.Constants.cIntake;
@@ -51,7 +52,6 @@ public class MIntake extends SubsystemBase{
         public static final SparkMax m_rot_coral = new SparkMax(m_Intake_Motors.motor_rot_coral, MotorType.kBrushless);
         public static final SparkMax m_arm_algae_1 = new SparkMax(m_Intake_Motors.motor_arm_algae_1, MotorType.kBrushless), m_arm_algae_2 = new SparkMax(m_Intake_Motors.motor_arm_algae_2, MotorType.kBrushless);
         public static final SparkMax m_left_algae = new SparkMax(m_Intake_Motors.motor_left_algae, MotorType.kBrushless), m_right_algae = new SparkMax(m_Intake_Motors.motor_right_algae, MotorType.kBrushless);
-
 
     
         public enum algae_arm {
