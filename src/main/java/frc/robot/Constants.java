@@ -4,12 +4,32 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.util.Units;
+import java.util.HashMap;
+import java.util.Map;
+
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.PS5Controller;
+import edu.wpi.first.wpilibj.PS4Controller;
 
 /** Add your docs here. */
 public class Constants {
     public static class DriveConstants {
         public static final double kMaxSpeedMetersPerSecond = 5;
         public static final double kGyroOffsetX = -5.25;
+    }
+
+    public enum ControllerType {
+        XBOX,
+        PS4,
+        PS5
+    }
+
+    public enum ControllerAction {
+        DRIVE_Y,
+        DRIVE_X,
+        DRIVE_ROT,
+        INTAKE,
+        SHOOT,
+        CLIMB
     }
 }
