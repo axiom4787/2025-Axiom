@@ -2,7 +2,6 @@ package frc.robot.utils;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;

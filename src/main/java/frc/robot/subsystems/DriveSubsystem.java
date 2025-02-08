@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package subsystems;
+package frc.robot.subsystems;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,70 +44,84 @@ public class DriveSubsystem extends SubsystemBase {
     private final DoublePublisher pitchPublisher;
     private final DoublePublisher rollPublisher;
     private final DoubleArrayPublisher chassisSpeedsPublisher;
-
-	/** Creates a new DriveSubsystem. */
-	public DriveSubsystem() {
-		File swerveJsonDirectory = new File(Filesystem.getDeployDirectory(), "swerve");
-		try {
-			swerveDrive = new SwerveParser(swerveJsonDirectory)
-					.createSwerveDrive(DriveConstants.kMaxSpeedMetersPerSecond);
-		} catch (IOException i) {
-			throw new RuntimeException(i);
+		private Command currentPathCommand;
+	
+		/** Creates a new DriveSubsystem. */
+		public DriveSubsystem() {
+			File swerveJsonDirectory = new File(Filesystem.getDeployDirectory(), "swerve");
+			try {
+				swerveDrive = new SwerveParser(swerveJsonDirectory)
+						.createSwerveDrive(DriveConstants.kMaxSpeedMetersPerSecond);
+			} catch (IOException i) {
+				throw new RuntimeException(i);
+			}
+	
+			swerveDrive.setHeadingCorrection(false);
+			swerveDrive.setCosineCompensator(true);
+	
+			SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+			SmartDashboard.putData("Field", m_field);
+	
+			// set initial pose
+			swerveDrive.resetOdometry(new Pose2d(2, 2, new Rotation2d(0)));
+			
+			// Initialize publishers
+			posePublisher = NetworkTableInstance.getDefault()
+				.getStructTopic("Drive/Pose", Pose3d.struct).publish();
+			moduleStatesPublisher = NetworkTableInstance.getDefault()
+				.getStructArrayTopic("Drive/ModuleStates", SwerveModuleState.struct).publish();
+			yawPublisher = NetworkTableInstance.getDefault()
+				.getDoubleTopic("Drive/Gyro/Yaw").publish();
+			pitchPublisher = NetworkTableInstance.getDefault()
+				.getDoubleTopic("Drive/Gyro/Pitch").publish();
+			rollPublisher = NetworkTableInstance.getDefault()
+				.getDoubleTopic("Drive/Gyro/Roll").publish();
+			chassisSpeedsPublisher = NetworkTableInstance.getDefault()
+				.getDoubleArrayTopic("Drive/ChassisSpeeds").publish();
 		}
-
-		swerveDrive.setHeadingCorrection(false);
-		swerveDrive.setCosineCompensator(true);
-
-		SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
-		SmartDashboard.putData("Field", m_field);
-
-		// set initial pose
-		swerveDrive.resetOdometry(new Pose2d(2, 2, new Rotation2d(0)));
-		
-		// Initialize publishers
-        posePublisher = NetworkTableInstance.getDefault()
-            .getStructTopic("Drive/Pose", Pose3d.struct).publish();
-        moduleStatesPublisher = NetworkTableInstance.getDefault()
-            .getStructArrayTopic("Drive/ModuleStates", SwerveModuleState.struct).publish();
-        yawPublisher = NetworkTableInstance.getDefault()
-            .getDoubleTopic("Drive/Gyro/Yaw").publish();
-        pitchPublisher = NetworkTableInstance.getDefault()
-            .getDoubleTopic("Drive/Gyro/Pitch").publish();
-        rollPublisher = NetworkTableInstance.getDefault()
-            .getDoubleTopic("Drive/Gyro/Roll").publish();
-        chassisSpeedsPublisher = NetworkTableInstance.getDefault()
-            .getDoubleArrayTopic("Drive/ChassisSpeeds").publish();
-	}
-
-	@Override
-	public void periodic() {
-		// Update pose
-        Pose2d pose2d = swerveDrive.getPose();
-        posePublisher.set(new Pose3d(pose2d.getX(), pose2d.getY(), 0.0,
-            new Rotation3d(0.0, 0.0, pose2d.getRotation().getRadians())));
-
-        // Update module states
-        moduleStatesPublisher.set(swerveDrive.getStates());
-
-        // Update gyro data
-        yawPublisher.set(swerveDrive.getYaw().getDegrees());
-        pitchPublisher.set(swerveDrive.getPitch().getDegrees());
-        rollPublisher.set(swerveDrive.getRoll().getDegrees());
-
-        // Update chassis speeds
-        ChassisSpeeds speeds = swerveDrive.getRobotVelocity();
-        chassisSpeedsPublisher.set(new double[] {
-            speeds.vxMetersPerSecond,
-            speeds.vyMetersPerSecond,
-            speeds.omegaRadiansPerSecond
-        });
-
-        // Update field visualization
-        m_field.setRobotPose(pose2d);
-	}
-
-	public void zeroGyro() {
-		swerveDrive.zeroGyro();
+	
+		@Override
+		public void periodic() {
+			// Update pose
+			Pose2d pose2d = swerveDrive.getPose();
+			posePublisher.set(new Pose3d(pose2d.getX(), pose2d.getY(), 0.0,
+				new Rotation3d(0.0, 0.0, pose2d.getRotation().getRadians())));
+	
+			// Update module states
+			moduleStatesPublisher.set(swerveDrive.getStates());
+	
+			// Update gyro data
+			yawPublisher.set(swerveDrive.getYaw().getDegrees());
+			pitchPublisher.set(swerveDrive.getPitch().getDegrees());
+			rollPublisher.set(swerveDrive.getRoll().getDegrees());
+	
+			// Update chassis speeds
+			ChassisSpeeds speeds = swerveDrive.getRobotVelocity();
+			chassisSpeedsPublisher.set(new double[] {
+				speeds.vxMetersPerSecond,
+				speeds.vyMetersPerSecond,
+				speeds.omegaRadiansPerSecond
+			});
+	
+			// Update field visualization
+			m_field.setRobotPose(pose2d);
+		}
+	
+		public void zeroGyro() {
+			swerveDrive.zeroGyro();
+		}
+	
+		public Pose2d getPose() {
+			return swerveDrive.getPose();
+		}
+	
+		/**
+		 * Checks if a path command is currently running.
+		 *
+		 * @return True if a path command is active, false otherwise.
+		 */
+		public boolean isPathCommandRunning() {
+			return currentPathCommand != null && currentPathCommand.isScheduled();
 	}
 
 	/**
