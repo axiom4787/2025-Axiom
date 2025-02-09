@@ -8,6 +8,7 @@ import java.io.File;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -132,6 +133,7 @@ public class RobotContainer {
 		configureBindings();
 		DriverStation.silenceJoystickConnectionWarning(true);
 		NamedCommands.registerCommand("test", Commands.print("I EXIST"));
+     new EventTrigger("test").whileTrue(Commands.print("placing coral"));
 		 // For convenience a programmer could change this when going to competition.
     boolean isCompetition = true;
 
