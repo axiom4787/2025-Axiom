@@ -7,9 +7,8 @@ package frc.robot;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.PS5Controller;
-import edu.wpi.first.wpilibj.PS4Controller;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 
 /** Add your docs here. */
 public class Constants {
@@ -18,18 +17,23 @@ public class Constants {
         public static final double kGyroOffsetX = -5.25;
     }
 
-    public enum ControllerType {
-        XBOX,
-        PS4,
-        PS5
+    public static class ControllerConstants {
+        public static final int kDriverControllerPort = 0;
+        public static final int kOperatorControllerPort = 1;
+
+        public static final double kIdleDeadzone = 0.15;
     }
 
-    public enum ControllerAction {
-        DRIVE_Y,
-        DRIVE_X,
-        DRIVE_ROT,
-        INTAKE,
-        SHOOT,
-        CLIMB
-    }
+    // setpoints for auto paths
+    public static final Pose2d noteCenterPose = new Pose2d(1.55, 5.37, Rotation2d.fromDegrees(180.00));
+    public static final Pose2d noteTopPose = new Pose2d(0.62, 6.60, Rotation2d.fromDegrees(60.00));
+    public static final Pose2d noteBottomPose = new Pose2d(0.62, 4.48, Rotation2d.fromDegrees(-60.00));
+
+    private static final Map<String, Pose2d> poseMap = new HashMap<String, Pose2d>() {
+        {
+            put("q", Constants.noteTopPose);
+            put("w", Constants.noteCenterPose);
+            put("e", Constants.noteBottomPose);
+        }
+    };
 }

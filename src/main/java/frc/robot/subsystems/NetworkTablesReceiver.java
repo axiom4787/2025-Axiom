@@ -17,7 +17,7 @@ public class NetworkTablesReceiver {
     private final double driveBaseRadius = 0.4131; // Example drivebase radius
 
     public NetworkTablesReceiver() {
-        table = NetworkTableInstance.getDefault().getTable("pythonData");
+        table = NetworkTableInstance.getDefault().getTable("keyEvents");
     }
 
     public final void runMain() {
@@ -52,14 +52,6 @@ public class NetworkTablesReceiver {
 
         // Clean up when exiting
         ntInstance.stopClient();
-    }
-
-    public double getX() {
-        return table.getEntry("x").getDouble(0.0); // Default to 0 if no value received
-    }
-
-    public double getY() {
-        return table.getEntry("y").getDouble(0.0); // Default to 0 if no value received
     }
 
     public String getLastKeyPressed() {
