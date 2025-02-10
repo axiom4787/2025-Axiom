@@ -9,9 +9,13 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
+import frc.robot.Constants.Machine;
+import frc.robot.Constants;
 
 public class ClimberSubsystem extends SubsystemBase {
 
+    public Machine m_state = Constants.state;
+    
     private final SparkMax climbMotor;
 
     /**
