@@ -15,8 +15,8 @@ public class Constants {
         AlgaeIntakeGround,
         Processor,
         L1,
-        Climbing_on,
-        Climbing_off,
+        Climbing_up,
+        Climbing_down,
         Robot_off
     }
     
