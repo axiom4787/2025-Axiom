@@ -241,16 +241,16 @@ public class MIntake extends SubsystemBase{
     
     @Override
     public void periodic(){
-     m_left_coral.getClosedLoopController().setReference(0.0, ControlType.kDutyCycle);
-    m_right_coral.getClosedLoopController().setReference(0.0, ControlType.kDutyCycle);
+    m_left_coral.set(0.0);
+    m_right_coral.set(0.0);
 
-    m_rot_coral.getClosedLoopController().setReference(0.0, ControlType.kDutyCycle);
+    m_rot_coral.set(0.0);
 
-    m_arm_algae_1.getClosedLoopController().setReference(0.0, ControlType.kDutyCycle);
-    m_arm_algae_2.getClosedLoopController().setReference(0.0, ControlType.kDutyCycle);
+    m_arm_algae_1.set(0.0);
+    m_arm_algae_2.set(0.0);
 
-    m_left_algae.getClosedLoopController().setReference(0.0, ControlType.kDutyCycle);
-    m_right_algae.getClosedLoopController().setReference(0.0, ControlType.kDutyCycle);
+    m_left_algae.set(0.0);
+    m_right_algae.set(0.0);
 
         switch(mState){
             // Review reqs, update constants, etc
