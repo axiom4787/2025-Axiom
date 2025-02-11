@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand, m_teleopCommand;
+  private Command m_autonomousCommand, m_teleopCommand, m_testCommand;
 
   private final RobotContainer m_robotContainer;
 
@@ -70,6 +70,11 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
     CommandScheduler.getInstance().cancelAll();
+
+    m_testCommand = m_robotContainer.getTestCommand();
+
+    if (m_testCommand != null)
+      m_testCommand.schedule();
   }
 
   @Override

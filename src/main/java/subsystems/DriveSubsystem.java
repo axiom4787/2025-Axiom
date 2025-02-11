@@ -11,6 +11,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,7 +22,6 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
-import edu.wpi.first.math.util.Units.*;
 
 public class DriveSubsystem extends SubsystemBase {
   private final SwerveDrive swerveDrive;
@@ -72,7 +72,13 @@ public class DriveSubsystem extends SubsystemBase {
                         angularRotationX.getAsDouble() * swerveDrive.getMaximumChassisAngularVelocity(),
                         true,
                         false,
-                        new Translation2d(0 - Units.inchesToMaters(kGyroOffsetX), 0.0));
+                        new Translation2d(Units.inchesToMeters(DriveConstants.kGyroOffsetX), 0.0));
     });
   }
+
+  public void driveDirect(Translation2d translation, double angularRotation)
+  {
+    swerveDrive.drive(translation.times(swerveDrive.getMaximumChassisVelocity()), angularRotation, false, false);
+  }
+
 }
