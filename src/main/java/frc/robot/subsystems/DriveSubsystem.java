@@ -84,7 +84,7 @@ public class DriveSubsystem extends SubsystemBase {
 			throw new RuntimeException(i);
 		}
 
-		swerveDrive.setHeadingCorrection(false);
+		swerveDrive.setHeadingCorrection(true);
 		swerveDrive.setCosineCompensator(true);
 
 		SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -176,7 +176,7 @@ public class DriveSubsystem extends SubsystemBase {
 		});
 
 		// Update field visualization
-		m_field.setRobotPose(pose2d);
+		// m_field.setRobotPose(pose2d);
 	}
 
 	// Resets the robot pose (simply delegate to your swerveDrive)
@@ -205,8 +205,15 @@ public class DriveSubsystem extends SubsystemBase {
 		return swerveDrive.getPose();
 	}
 
-	public void addVisionMeasurement(Pose2d visionPose) {
-		swerveDrive.addVisionMeasurement(visionPose, Timer.getFPGATimestamp());
+	/** Returns the latest estimated rotation from the pose estimator. */
+	public Rotation2d getRotation() {
+		return getPose().getRotation();
+	}
+
+	/** Adds a new timestamped vision measurement. */
+	public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
+		swerveDrive.addVisionMeasurement(visionRobotPoseMeters, Timer.getFPGATimestamp());
+		// System.out.println("Vision measurement added.");
 	}
 
 	/**
@@ -365,8 +372,7 @@ public class DriveSubsystem extends SubsystemBase {
 							ySpeed * swerveDrive.getMaximumChassisVelocity()),
 					rot * swerveDrive.getMaximumChassisAngularVelocity(),
 					true,
-					false,
-					new Translation2d(-Units.inchesToMeters(Constants.DriveConstants.kGyroOffsetX), 0.0));
+					false);
 		}, this).withName("TeleopCommand");
 	}
 

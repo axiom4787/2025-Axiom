@@ -14,7 +14,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 public class Constants {
     public static class DriveConstants {
         public static final double kMaxSpeedMetersPerSecond = 5;
-        public static final double kGyroOffsetX = -5.25;
+        public static final double kGyroOffsetX = 5.25;
     }
 
     public static class ControllerConstants {

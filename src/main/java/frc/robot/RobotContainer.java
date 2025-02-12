@@ -20,18 +20,24 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.sim.vision.Vision;
+import frc.robot.sim.vision.VisionConstants;
+import frc.robot.sim.vision.VisionIOLimelight;
+import frc.robot.sim.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.NetworkTablesReceiver;
 import frc.robot.utils.NavGridCounter;
-
 
 public class RobotContainer {
 	private final CommandXboxController m_controller;
 	private final DriveSubsystem m_driveSubsystem;
 	private final NetworkTablesReceiver m_networkTablesReceiver = new NetworkTablesReceiver();
 	private final Limelight m_limelight = new Limelight();
-	// private final NavGridCounter u_navGridAnalyzer = new NavGridCounter("src/main/deploy/pathplanner/navgrid.json");
+	private static final String CAMERA_0_NAME = "limelight-front";
+	private static final String CAMERA_1_NAME = "limelight-back";
+	// private final NavGridCounter u_navGridAnalyzer = new
+	// NavGridCounter("src/main/deploy/pathplanner/navgrid.json");
 
 	// private final SendableChooser<Command> autoChooser;
 
@@ -48,6 +54,7 @@ public class RobotContainer {
 
 	private boolean keyDebounce = false;
 	private String lastProcessedKey = "";
+	private Vision vision;
 
 	public RobotContainer() {
 		m_driveSubsystem = new DriveSubsystem();
@@ -57,7 +64,9 @@ public class RobotContainer {
 		// SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		configureBindings();
-		registerNamedCommands();
+		vision = new Vision(
+			(pose, time, stdDevs) -> m_driveSubsystem.addVisionMeasurement(pose, time),
+				new VisionIOPhotonVisionSim(CAMERA_0_NAME, VisionConstants.robotToCamera0, m_driveSubsystem::getPose));
 
 		// System.out.println(u_navGridAnalyzer.analyze());
 	}
@@ -89,95 +98,99 @@ public class RobotContainer {
 
 	public Command getTeleopCommand() {
 		return m_driveSubsystem.driveCommand(
-			() -> Math.abs(m_controller.getLeftY()) > 0.15 ? -m_controller.getLeftY() : 0,
-			() -> Math.abs(m_controller.getLeftX()) > 0.15 ? -m_controller.getLeftX() : 0,
-			() -> Math.abs(m_controller.getRightX()) > 0.15 ? -m_controller.getRightX() : 0)
-			.withName("TeleopCommand");
+				() -> Math.abs(m_controller.getLeftY()) > 0.15 ? -m_controller.getLeftY() : 0,
+				() -> Math.abs(m_controller.getLeftX()) > 0.15 ? -m_controller.getLeftX() : 0,
+				() -> Math.abs(m_controller.getRightX()) > 0.15 ? -m_controller.getRightX() : 0)
+				.withName("TeleopCommand");
 	}
 
 	/**
-     * Starts the auto path following thread.
-     */
-    public synchronized void startAutoPathThread() {
-        if (autoPathThread == null || !autoPathThread.isAlive()) {
-            System.out.println("[RobotContainer] Starting Auto Path Thread...");
-            autoPathThread = new Thread(() -> {
-                System.out.println("[RobotContainer] Auto Path Thread started.");
-                while (autoPathEnabled) {
-                    // Define a BooleanSupplier to detect joystick movement on axes 0, 1, or 4.
-                    BooleanSupplier joystickMoved = () -> {
-                        double axis0 = m_controller.getLeftX();
-                        double axis1 = m_controller.getLeftY();
-                        double axis4 = m_controller.getRightX();
-                        // System.out.printf("[AutoPathThread] Joystick axes: %.2f, %.2f, %.2f%n", axis0, axis1, axis4);
-                        return Math.abs(axis0) > Constants.ControllerConstants.kIdleDeadzone ||
-                               Math.abs(axis1) > Constants.ControllerConstants.kIdleDeadzone ||
-                               Math.abs(axis4) > Constants.ControllerConstants.kIdleDeadzone;
-                    };
+	 * Starts the auto path following thread.
+	 */
+	public synchronized void startAutoPathThread() {
+		if (autoPathThread == null || !autoPathThread.isAlive()) {
+			System.out.println("[RobotContainer] Starting Auto Path Thread...");
+			autoPathThread = new Thread(() -> {
+				System.out.println("[RobotContainer] Auto Path Thread started.");
+				while (autoPathEnabled) {
+					// Define a BooleanSupplier to detect joystick movement on axes 0, 1, or 4.
+					BooleanSupplier joystickMoved = () -> {
+						double axis0 = m_controller.getLeftX();
+						double axis1 = m_controller.getLeftY();
+						double axis4 = m_controller.getRightX();
+						// System.out.printf("[AutoPathThread] Joystick axes: %.2f, %.2f, %.2f%n",
+						// axis0, axis1, axis4);
+						return Math.abs(axis0) > Constants.ControllerConstants.kIdleDeadzone ||
+								Math.abs(axis1) > Constants.ControllerConstants.kIdleDeadzone ||
+								Math.abs(axis4) > Constants.ControllerConstants.kIdleDeadzone;
+					};
 
-                    // If joystick is moved, cancel any auto-path command and schedule teleop immediately.
-                    if (joystickMoved.getAsBoolean()) {
-                        System.out.println("[AutoPathThread] Joystick moved detected!");
-                        if (currentPathCommand != null && currentPathCommand.isScheduled()) {
-                            currentPathCommand.cancel();
-                            System.out.println("[RobotContainer] Auto path command canceled due to joystick movement.");
-                            // Immediately schedule teleop command.
-                            Command teleopCmd = getTeleopCommand();
-                            teleopCmd.schedule();
-                            System.out.println("Rerunning Teleop cmd");
-                        }
-                        try {
-                            Thread.sleep(10);
-                        } catch (InterruptedException e) {
-                            System.out.println("[RobotContainer] Auto Path Thread interrupted during joystick check.");
-                            break;
-                        }
-                        continue;
-                    }
+					// If joystick is moved, cancel any auto-path command and schedule teleop
+					// immediately.
+					if (joystickMoved.getAsBoolean()) {
+						// System.out.println("[AutoPathThread] Joystick moved detected!");
+						if (currentPathCommand != null && currentPathCommand.isScheduled()) {
+							currentPathCommand.cancel();
+							System.out.println("[RobotContainer] Auto path command canceled due to joystick movement.");
+							// Immediately schedule teleop command.
+							Command teleopCmd = getTeleopCommand();
+							teleopCmd.schedule();
+							System.out.println("Rerunning Teleop cmd");
+						}
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
+							System.out.println("[RobotContainer] Auto Path Thread interrupted during joystick check.");
+							break;
+						}
+						continue;
+					}
 
-                    // Retrieve the current key press from NetworkTables.
-                    String currentKey = m_networkTablesReceiver.getLastKeyPressed();
-                    System.out.println("[AutoPathThread] Retrieved key from NT: " + currentKey);
+					// Retrieve the current key press from NetworkTables.
+					String currentKey = m_networkTablesReceiver.getLastKeyPressed();
+					// System.out.println("[AutoPathThread] Retrieved key from NT: " + currentKey);
 
-                    // If the key has changed, schedule a new auto-path command.
-                    if (!currentKey.equals(lastProcessedKey)) {
-                        System.out.println("[AutoPathThread] New key detected: " + currentKey);
-                        lastProcessedKey = currentKey;
+					// If the key has changed, schedule a new auto-path command.
+					if (!currentKey.equals(lastProcessedKey)) {
+						System.out.println("[AutoPathThread] New key detected: " + currentKey);
+						lastProcessedKey = currentKey;
 
-                        if (currentPathCommand != null && currentPathCommand.isScheduled()) {
-                            currentPathCommand.cancel();
-                            System.out.println("[RobotContainer] Canceled existing path command.");
-                        }
+						if (currentPathCommand != null && currentPathCommand.isScheduled()) {
+							currentPathCommand.cancel();
+							System.out.println("[RobotContainer] Canceled existing path command.");
+						}
 
-                        // Map the key to a target pose.
-                        Pose2d targetPose = getPoseFromKey(currentKey);
-                        if (targetPose != null) {
-                            System.out.println("[AutoPathThread] Creating path to " + targetPose);
-                            Command pathCommand = m_driveSubsystem.createPathToPose2D(targetPose).andThen(getTeleopCommand());
-                            currentPathCommand = pathCommand;
-                            currentPathCommand.schedule();
-                            System.out.println("[RobotContainer] Scheduled Auto Path Following Command to " + currentKey + ".");
-                        } else {
-                            System.out.println("[AutoPathThread] No pose mapped for key: " + currentKey);
-                        }
-                    }
+						// Map the key to a target pose.
+						Pose2d targetPose = getPoseFromKey(currentKey);
+						if (targetPose != null) {
+							System.out.println("[AutoPathThread] Creating path to " + targetPose);
+							Command pathCommand = m_driveSubsystem.createPathToPose2D(targetPose)
+									.andThen(getTeleopCommand());
+							currentPathCommand = pathCommand;
+							currentPathCommand.schedule();
+							System.out.println(
+									"[RobotContainer] Scheduled Auto Path Following Command to " + currentKey + ".");
+						} else {
+							System.out.println("[AutoPathThread] No pose mapped for key: " + currentKey);
+						}
+					}
 
-                    try {
-                        Thread.sleep(10); // Check every 10ms.
-                    } catch (InterruptedException e) {
-                        System.out.println("[RobotContainer] Auto Path Thread interrupted during normal operation.");
-                        break;
-                    }
-                }
+					try {
+						Thread.sleep(100); // Check every 10ms.
+					} catch (InterruptedException e) {
+						System.out.println("[RobotContainer] Auto Path Thread interrupted during normal operation.");
+						break;
+					}
+				}
 				System.out.println("[RobotContainer] autothreadenabled is " + autoPathEnabled);
-                System.out.println("[RobotContainer] Auto Path Thread stopped.");
-            });
-            autoPathThread.setDaemon(true);
-            autoPathThread.setName("Auto Path Thread");
-            autoPathThread.start();
-            System.out.println("[RobotContainer] Started Auto Path Thread.");
-        }
-    }
+				System.out.println("[RobotContainer] Auto Path Thread stopped.");
+			});
+			autoPathThread.setDaemon(true);
+			autoPathThread.setName("Auto Path Thread");
+			autoPathThread.start();
+			System.out.println("[RobotContainer] Started Auto Path Thread.");
+		}
+	}
 
 	/**
 	 * Stops the auto path following thread.
@@ -240,12 +253,12 @@ public class RobotContainer {
 	}
 
 	/**
-	* Retrieves the selected autonomous command.
-	*
-	* @return The selected autonomous command.
-	*/
+	 * Retrieves the selected autonomous command.
+	 *
+	 * @return The selected autonomous command.
+	 */
 	public Command getAutonomousCommand() {
-	// return autoChooser.getSelected();
+		// return autoChooser.getSelected();
 		return new Command() {
 		};
 	}
