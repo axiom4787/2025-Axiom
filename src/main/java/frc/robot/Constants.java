@@ -2,24 +2,15 @@ package frc.robot;
 
 import org.ejml.equation.Variable;
 
-public class Constants {
-
-    public static Machine state = Machine.Robot_off;
-
-    public static final float m_default_speed = 1.0f;
-
-    public enum Machine{
-        CoralOuttake,
-        CoralIntake,
-        AlgaeIntake,
-        AlgaeIntakeGround,
-        Processor,
-        L1,
-        Climbing_up,
-        Climbing_down,
-        Robot_off
-    }
-    
+public class Constants {   
+    public static class EverybotClimberConstants
+    {
+        public static final int CLIMBER_MOTOR_ID = 1;
+        public static final int CLIMBER_MOTOR_CURRENT_LIMIT = 60;
+        public static final double CLIMBER_MOTOR_VOLTAGE_COMP = 12;
+        public static final double CLIMBER_CLIMB_SPEED = -0.5;
+        public static final double CLIMBER_UNCLIMB_SPEED = 0.5;
+    } 
     public static class cIntake {
         public static class m_Intake_Motors{
             public static final int motor_algae_arm = 0; // Check
