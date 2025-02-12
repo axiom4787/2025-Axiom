@@ -5,7 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.LEDCommand;
 import frc.robot.subsystems.LEDSubsystem;
 
@@ -37,8 +36,15 @@ public class RobotContainer {
 
   private void configureBindings() {}
 
+  public Command getDisabledCommand() {
+
+    System.out.println("disabled command called");
+
+    return ledOffCommand;
+
+  }
+
   public Command getAutonomousCommand() {
-    //TODO: implement teleop command for lights
 
     System.out.println("autonomous command called");
 
@@ -47,7 +53,6 @@ public class RobotContainer {
   }
 
   public Command getTeleopCommand() {
-    //TODO: implement teleop command for lights
 
     System.out.println("teleop command called");
 
@@ -59,7 +64,7 @@ public class RobotContainer {
 
     System.out.println("teleop command called");
 
-    return ledRainbowCommand;
+    return ledRSLSyncCommand;
 
   }
 
