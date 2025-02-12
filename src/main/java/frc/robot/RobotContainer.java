@@ -5,25 +5,43 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.subsystems.MIntake;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+
+import frc.robot.subsystems.AlgaeSubsystem;
+import frc.robot.subsystems.CoralSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.AlgaeSubsystem.AlgaeState;
 
 public class RobotContainer {
-  private final MIntake mIntake = new MIntake();
+  private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
+  private final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
+  private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
+  private CommandXboxController m_controller = new CommandXboxController(0);
 
   public RobotContainer() {
     // Configure the button bindings
-    configureButtonBindings();
+    configureBindings();
   }
 
-  private void configureButtonBindings() {
-    // Example: Bind a command to a button
+  private void configureBindings() {
+    Trigger algaeIntake = m_controller.a().onTrue(new InstantCommand(() -> {
+      m_algaeSubsystem.setState(AlgaeState.INTAKE);
+    }));
+
+    Trigger algaeOuttake = m_controller.a().onTrue(new InstantCommand(() -> {
+      m_algaeSubsystem.setState(AlgaeState.INTAKE);
+    }));
+
+    algaeIntake.or(algaeOuttake).onFalse(new InstantCommand(() -> {
+      m_algaeSubsystem.setState(AlgaeState.OFF);
+    }));
+
+    // TODO: CORAL/ELEVATOR BINDINGS
   }
 
   public Command getTeleopCommand() {
-    // Example command to run in teleop mode
-    return new InstantCommand(() -> mIntake.mState = Constants.Machine.CoralOuttake, mIntake);
+    return null;
   }
 }

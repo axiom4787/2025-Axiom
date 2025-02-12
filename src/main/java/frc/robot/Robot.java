@@ -8,10 +8,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
-import frc.robot.subsystems.MIntake;
-
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
+  private Command m_autonomousCommand, m_teleopCommand;
 
   private final RobotContainer m_robotContainer;
 
@@ -35,10 +33,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    
-    // MIntake.mState = Constants.Machine.Robot_off;
-    //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
@@ -46,7 +40,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    MIntake.mState = Constants.Machine.AlgaeIntake;
   }
 
   @Override
@@ -57,11 +50,16 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    m_teleopCommand = m_robotContainer.getTeleopCommand();
+    if (m_teleopCommand != null)
+    {
+      m_teleopCommand.schedule();
+    }
   }
 
   @Override
   public void teleopPeriodic() {
-    MIntake.mState = Constants.Machine.L1;
   }
 
   @Override
@@ -79,9 +77,7 @@ public class Robot extends TimedRobot {
   public void testExit() {}
 
   @Override
-  public void simulationInit() {
-    MIntake.mState = Constants.Machine.Robot_off;
-  }
+  public void simulationInit() {}
 
   @Override
   public void simulationPeriodic() {
