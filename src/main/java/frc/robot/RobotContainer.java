@@ -13,6 +13,7 @@ import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.AlgaeSubsystem.AlgaeState;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 
 public class RobotContainer {
   private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
@@ -27,18 +28,31 @@ public class RobotContainer {
 
   private void configureBindings() {
     Trigger algaeIntake = m_controller.a().onTrue(new InstantCommand(() -> {
-      m_algaeSubsystem.setState(AlgaeState.INTAKE);
+      m_algaeSubsystem.intake();
     }));
 
-    Trigger algaeOuttake = m_controller.a().onTrue(new InstantCommand(() -> {
-      m_algaeSubsystem.setState(AlgaeState.INTAKE);
+    Trigger algaeOuttake = m_controller.x().onTrue(new InstantCommand(() -> {
+      m_algaeSubsystem.outtake();
     }));
 
-    algaeIntake.or(algaeOuttake).onFalse(new InstantCommand(() -> {
-      m_algaeSubsystem.setState(AlgaeState.OFF);
+
+    Trigger armToL1 = m_controller.povDown().onTrue(new InstantCommand(() -> {
+      m_elevatorSubsystem.setState(ElevatorState.L1);
+    }));
+    Trigger armToL2 = m_controller.povLeft().onTrue(new InstantCommand(() -> {
+      m_elevatorSubsystem.setState(ElevatorState.L2);
+    }));
+    Trigger armToL3 = m_controller.povUp().onTrue(new InstantCommand(() -> {
+      m_elevatorSubsystem.setState(ElevatorState.L3);
+    }));
+    Trigger coralIntakeArmToSource = m_controller.povRight().onTrue(new InstantCommand(() -> {
+      m_elevatorSubsystem.setState(ElevatorState.SOURCE);
+      m_coralSubsystem.intake();
     }));
 
-    // TODO: CORAL/ELEVATOR BINDINGS
+    Trigger coralOuttake = m_controller.y().onTrue(new InstantCommand(() -> {
+      m_coralSubsystem.outtake();
+    }));
   }
 
   public Command getTeleopCommand() {

@@ -4,24 +4,24 @@ public class Constants {
     public static final float m_default_speed = 1.0f;
 
     public static class CoralConstants {
-        public static final int TOP_CORAL_MOTOR_ID = 15; // Check
-        public static final int BOTTOM_CORAL_MOTOR_ID = 16; // Check
+        public static final int TOP_CORAL_MOTOR_ID = 15;
+        public static final int BOTTOM_CORAL_MOTOR_ID = 16; 
 
         public static final double CORAL_INTAKE_DUTYCYCLE = -1; // Check
         public static final double CORAL_SCORE_DUTYCYCLE = 1; // Check
     }
 
     public static class AlgaeConstants {
-        public static final int RIGHT_ALGAE_ARM_MOTOR_ID = 11; // Check
-        public static final int LEFT_ALGAE_ARM_MOTOR_ID = 12; // Fix & Check
+        public static final int RIGHT_ALGAE_ARM_MOTOR_ID = 11; 
+        public static final int LEFT_ALGAE_ARM_MOTOR_ID = 12; 
 
-        public static final int RIGHT_ALGAE_WHEEL_MOTOR_ID = 13; // Check
-        public static final int LEFT_ALGAE_WHEEL_MOTOR_ID = 14; // Check
+        public static final int RIGHT_ALGAE_WHEEL_MOTOR_ID = 13; 
+        public static final int LEFT_ALGAE_WHEEL_MOTOR_ID = 14; 
 
         public static final double ALGAE_WHEEL_INTAKE_DUTYCYCLE = -1; // Check
         public static final double ALGAE_WHEEL_OUTTAKE_DUTYCYCLE = 1; // Check
-        public static final int ALGAE_ARM_INTAKE_POSITION = 0; // Placeholder
-        public static final int ALGAE_ARM_OUTTAKE_POSITION = 1; // Placeholder
+        public static final int ALGAE_ARM_EMPTY_ANGLE = 0; // Placeholder
+        public static final int ALGAE_ARM_FULL_ANGLE = 1; // Placeholder
     }
 
     public static class ElevatorConstants {
