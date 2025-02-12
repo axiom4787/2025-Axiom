@@ -9,24 +9,24 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.EverybotClimberConstants;
+import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants;
 
-public class EverybotClimber extends SubsystemBase {
+public class ClimberSubsystem extends SubsystemBase {
 
-    private EverybotClimberState m_state = EverybotClimberState.OFF;
+    private ClimberState m_state = ClimberState.OFF;
 
     private final SparkMax climbMotor;
 
-    public EverybotClimber() {
+    public ClimberSubsystem() {
 
-        climbMotor = new SparkMax(EverybotClimberConstants.CLIMBER_MOTOR_ID, MotorType.kBrushless);
+        climbMotor = new SparkMax(ClimberConstants.CLIMBER_MOTOR_ID, MotorType.kBrushless);
 
         climbMotor.setCANTimeout(250);
 
         SparkMaxConfig climbConfig = new SparkMaxConfig();
-        climbConfig.voltageCompensation(EverybotClimberConstants.CLIMBER_MOTOR_VOLTAGE_COMP);
-        climbConfig.smartCurrentLimit(EverybotClimberConstants.CLIMBER_MOTOR_CURRENT_LIMIT);
+        climbConfig.voltageCompensation(ClimberConstants.CLIMBER_MOTOR_VOLTAGE_COMP);
+        climbConfig.smartCurrentLimit(ClimberConstants.CLIMBER_MOTOR_CURRENT_LIMIT);
         climbConfig.idleMode(IdleMode.kBrake);
         climbMotor.configure(climbConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
@@ -40,19 +40,19 @@ public class EverybotClimber extends SubsystemBase {
                 climbMotor.set(0);
                 break;
             case CLIMB:
-                climbMotor.set(EverybotClimberConstants.CLIMBER_CLIMB_SPEED);
+                climbMotor.set(ClimberConstants.CLIMBER_CLIMB_SPEED);
                 break;
             case UNCLIMB:
-                climbMotor.set(EverybotClimberConstants.CLIMBER_UNCLIMB_SPEED);
+                climbMotor.set(ClimberConstants.CLIMBER_UNCLIMB_SPEED);
                 break;
         }
     }
 
-    public void setDesiredState(EverybotClimberState desiredState) {
+    public void setState(ClimberState desiredState) {
         m_state = desiredState;
     }
 
-    public enum EverybotClimberState
+    public enum ClimberState
     {
         OFF,
         CLIMB,

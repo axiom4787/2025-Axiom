@@ -3,7 +3,7 @@ package frc.robot;
 import org.ejml.equation.Variable;
 
 public class Constants {   
-    public static class EverybotClimberConstants
+    public static class ClimberConstants
     {
         public static final int CLIMBER_MOTOR_ID = 1;
         public static final int CLIMBER_MOTOR_CURRENT_LIMIT = 60;
