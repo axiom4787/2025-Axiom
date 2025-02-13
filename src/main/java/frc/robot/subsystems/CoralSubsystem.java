@@ -53,16 +53,14 @@ public class CoralSubsystem extends SubsystemBase {
       case INTAKE:
         m_topCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
         m_bottomCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
-        if (hasCoral())
-        {
+        if (hasCoral()) {
           m_state = CoralState.FULL;
         }
         break;
       case SCORE:
         m_topCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
         m_bottomCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
-        if (!hasCoral())
-        {
+        if (!hasCoral()) {
           m_state = CoralState.EMPTY;
         }
         break;
@@ -77,24 +75,19 @@ public class CoralSubsystem extends SubsystemBase {
     }
   }
 
-  public void intake()
-  {
-    if (!hasCoral())
-    {
+  public void intake() {
+    if (!hasCoral()) {
       m_state = CoralState.INTAKE;
     }
   }
 
-  public void outtake()
-  {
-    if (hasCoral())
-    {
+  public void outtake() {
+    if (hasCoral()) {
       m_state = CoralState.SCORE;
     }
   }
 
-  public boolean hasCoral()
-  {
+  public boolean hasCoral() {
     // TODO: use time of flight to determine if coral is present
     return false;
   }
