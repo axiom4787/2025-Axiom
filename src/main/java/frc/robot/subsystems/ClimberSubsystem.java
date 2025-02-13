@@ -40,10 +40,10 @@ public class ClimberSubsystem extends SubsystemBase {
                 climbMotor.set(0);
                 break;
             case CLIMB:
-                climbMotor.set(ClimberConstants.CLIMBER_CLIMB_SPEED);
+                climbMotor.set(ClimberConstants.CLIMBER_CLIMB_DUTYCYCLE);
                 break;
             case UNCLIMB:
-                climbMotor.set(ClimberConstants.CLIMBER_UNCLIMB_SPEED);
+                climbMotor.set(ClimberConstants.CLIMBER_UNCLIMB_DUTYCYCLE);
                 break;
         }
     }
