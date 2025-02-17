@@ -4,14 +4,14 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDConstants;
-import frc.robot.Constants.RobotStates;
+import frc.robot.Constants;
 
 import java.util.HashMap;
 
 public class LEDSubsystem extends SubsystemBase {
       private final AddressableLED leds;
       private final AddressableLEDBuffer buffer; // Creates a new buffer object
-      private final HashMap<RobotStates.States, Runnable> LedMap;
+      private final HashMap<Constants.RobotStates, Runnable> LedMap;
 
       /**
        * LEDSubsystem
@@ -30,11 +30,11 @@ public class LEDSubsystem extends SubsystemBase {
             startLEDS();
       }
 
-      public void setPattern(RobotStates.States state, Runnable function) {
+      public void setPattern(Constants.RobotStates state, Runnable function) {
             LedMap.put(state, function);
       }
 
-      public Runnable getPattern(RobotStates.States state) {
+      public Runnable getPattern(Constants.RobotStates state) {
             return LedMap.get(state);
       }
 

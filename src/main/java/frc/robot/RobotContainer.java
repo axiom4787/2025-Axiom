@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.commands.LEDCommand;
 import frc.robot.subsystems.LEDSubsystem;
 
@@ -24,7 +25,7 @@ public class RobotContainer {
 
     System.out.println("disabled command called");
 
-    return new LEDCommand(ledSubsystem, RobotStates.States.LEDS_OFF);
+    return new LEDCommand(ledSubsystem, Constants.RobotStates.LEDS_OFF);
 
   }
 
@@ -39,7 +40,7 @@ public class RobotContainer {
 
     System.out.println("teleop command called");
 
-    return new LEDCommand(ledSubsystem, RobotStates.States.LEDS_TEAM_COLOR);
+    return new LEDCommand(ledSubsystem, Constants.RobotStates.LEDS_TEAM_COLOR);
 
   }
 
@@ -47,7 +48,7 @@ public class RobotContainer {
 
     System.out.println("test command called");
 
-    return new LEDCommand(ledSubsystem, RobotStates.States.LEDS_RAINBOW);
+    return new LEDCommand(ledSubsystem, Constants.RobotStates.LEDS_RAINBOW);
 
   }
 
