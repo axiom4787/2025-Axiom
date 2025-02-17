@@ -56,6 +56,7 @@ public class CoralSubsystem extends SubsystemBase {
         //if (hasCoral()) {
           m_state = CoralState.FULL;
         //}
+        System.out.println("Coral Intake");
         break;
       case SCORE:
         m_topCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
@@ -63,6 +64,7 @@ public class CoralSubsystem extends SubsystemBase {
         //if (!hasCoral()) {
           m_state = CoralState.EMPTY;
         //}
+        System.out.println("Coral Score");
         break;
       case EMPTY:
         m_topCoralMotor.set(0.0);
