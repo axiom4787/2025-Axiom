@@ -25,9 +25,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   // Motor Controllers for Coral
   public static final SparkMax m_coralArmMotor = new SparkMax(ElevatorConstants.CORAL_ARM_MOTOR_ID,
       MotorType.kBrushless);
-  public static final SparkMax m_elevatorMotorLeft = new SparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID,
+  public static final SparkMax m_elevatorMotorLeft = new SparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_L,
       MotorType.kBrushless);
-    public static final SparkMax m_elevatorMotorRight = new SparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID,
+    public static final SparkMax m_elevatorMotorRight = new SparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_R,
       MotorType.kBrushless);
 
   public ElevatorSubsystem() {
