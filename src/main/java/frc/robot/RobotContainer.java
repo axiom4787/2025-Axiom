@@ -33,8 +33,7 @@ public class RobotContainer {
   }
 
   public Command getTeleopCommand() {
-//    return m_driveSubsystem.driveCommand(() -> 0.1, () -> 0, () -> 0);
-    return m_driveSubsystem.driveCommand(() -> -m_controller.getLeftY()*0.2, () -> -m_controller.getLeftX()*0.2, () -> -m_controller.getRightX()*0.2);
+    return m_driveSubsystem.driveCommand(() -> -m_controller.getLeftY(), () -> -m_controller.getLeftX(), () -> -m_controller.getRightX());
   }
 
   public Command getAutonomousCommand() {
@@ -42,6 +41,6 @@ public class RobotContainer {
   }
 
   public Command getTestCommand() {
-    return new TestCommand(m_driveSubsystem);
+    return null;
   }
 }
