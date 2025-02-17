@@ -78,6 +78,7 @@ public class AlgaeSubsystem extends SubsystemBase {
                                 //        m_state = AlgaeState.FULL;
                                 //break;
                                 System.out.println("AlgaeSubsystem: INTAKE");
+                                break;
                         case OUTTAKE:
                                 // TODO: extend arm and only activate wheels if arm is extended
                                 m_rightAlgaeWheel.set(AlgaeConstants.ALGAE_WHEEL_OUTTAKE_DUTYCYCLE);
@@ -100,14 +101,14 @@ public class AlgaeSubsystem extends SubsystemBase {
                 }
         }
 
-        /** Puts the manipulator in intake mode, if an algae is not present. */
+        /* Puts the manipulator in intake mode, if an algae is not present. */
         public void intake() {
                 //if (!hasAlgae()) {
                         m_state = AlgaeState.INTAKE;
                 //}
         }
 
-        /** Puts the manipulator in outtake mode. */
+        /* Puts the manipulator in outtake mode. */
         public void outtake() {
                 //if (hasAlgae()) {
                         m_state = AlgaeState.OUTTAKE;
