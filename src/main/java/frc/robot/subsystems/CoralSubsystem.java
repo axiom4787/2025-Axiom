@@ -17,7 +17,7 @@ import frc.robot.Constants.PID;
 
 // controls the coral manipulator motors
 public class CoralSubsystem extends SubsystemBase {
-  private CoralState m_state = hasCoral() ? CoralState.FULL : CoralState.EMPTY;
+  private CoralState m_state = CoralState.EMPTY; // hasCoral() ? CoralState.FULL : CoralState.EMPTY;
 
   // Motor Controllers for Coral
   public static final SparkMax m_topCoralMotor = new SparkMax(CoralConstants.TOP_CORAL_MOTOR_ID, MotorType.kBrushless);
@@ -53,16 +53,16 @@ public class CoralSubsystem extends SubsystemBase {
       case INTAKE:
         m_topCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
         m_bottomCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
-        if (hasCoral()) {
+        //if (hasCoral()) {
           m_state = CoralState.FULL;
-        }
+        //}
         break;
       case SCORE:
         m_topCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
         m_bottomCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
-        if (!hasCoral()) {
+        //if (!hasCoral()) {
           m_state = CoralState.EMPTY;
-        }
+        //}
         break;
       case EMPTY:
         m_topCoralMotor.set(0.0);
@@ -76,21 +76,23 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public void intake() {
-    if (!hasCoral()) {
+    //if (!hasCoral()) {
       m_state = CoralState.INTAKE;
-    }
+    //}
   }
 
   public void outtake() {
-    if (hasCoral()) {
+    //if (hasCoral()) {
       m_state = CoralState.SCORE;
-    }
+    //}
   }
 
+  /*/
   public boolean hasCoral() {
     // TODO: use time of flight to determine if coral is present
     return false;
   }
+  /*/
 
   public enum CoralState {
     INTAKE,
