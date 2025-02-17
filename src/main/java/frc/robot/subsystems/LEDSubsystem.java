@@ -4,29 +4,38 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDConstants;
+import frc.robot.Constants.RobotStates;
+
+import java.util.HashMap;
 
 public class LEDSubsystem extends SubsystemBase {
       private final AddressableLED leds;
-      private final AddressableLEDBuffer buffer;  // Creates a new buffer object
+      private final AddressableLEDBuffer buffer; // Creates a new buffer object
+      private final HashMap<RobotStates.States, Runnable> LedMap;
 
       /**
        * LEDSubsystem
+       * 
        * @param port PWM port on the roboRIO
        */
       public LEDSubsystem(int port) {
-            
-            leds = new AddressableLED(port);
-            leds.setLength(LEDConstants.kBufferLength);
 
-            buffer = new AddressableLEDBuffer(LEDConstants.kBufferLength);
-            
+            leds = new AddressableLED(port);
+            leds.setLength(LEDConstants.BUFFER_LENGTH);
+            buffer = new AddressableLEDBuffer(LEDConstants.BUFFER_LENGTH);
+            LedMap = new HashMap<>();
 
             setBuffer(buffer);
-            System.out.println("ledsubsystem set buffer");
 
             startLEDS();
-            System.out.println("ledsubsystem started leds");
-            
+      }
+
+      public void setPattern(RobotStates.States state, Runnable function) {
+            LedMap.put(state, function);
+      }
+
+      public Runnable getPattern(RobotStates.States state) {
+            return LedMap.get(state);
       }
 
       public AddressableLEDBuffer getBuffer() {

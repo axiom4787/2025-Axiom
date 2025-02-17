@@ -9,10 +9,6 @@ import frc.robot.commands.LEDCommand;
 import frc.robot.subsystems.LEDSubsystem;
 
 public class RobotContainer {
-  private final LEDCommand ledRSLSyncCommand;
-  private final LEDCommand ledTeamColorCommand;
-  private final LEDCommand ledRainbowCommand;
-  private final LEDCommand ledOffCommand;
 
   private LEDSubsystem ledSubsystem;
 
@@ -20,18 +16,6 @@ public class RobotContainer {
     configureBindings();
 
     ledSubsystem = new LEDSubsystem(0);
-    
-    ledRSLSyncCommand =
-    new LEDCommand(ledSubsystem,LEDCommand.LEDPatterns.RSL_SYNC);
-
-    ledTeamColorCommand =
-    new LEDCommand(ledSubsystem, LEDCommand.LEDPatterns.TEAM_COLOR);
-
-    ledRainbowCommand =
-    new LEDCommand(ledSubsystem, LEDCommand.LEDPatterns.RAINBOW);
-
-    ledOffCommand =
-    new LEDCommand(ledSubsystem, LEDCommand.LEDPatterns.OFF);
   }
 
   private void configureBindings() {}
@@ -40,7 +24,7 @@ public class RobotContainer {
 
     System.out.println("disabled command called");
 
-    return ledOffCommand;
+    return new LEDCommand(ledSubsystem, RobotStates.States.LEDS_OFF);
 
   }
 
@@ -48,23 +32,22 @@ public class RobotContainer {
 
     System.out.println("autonomous command called");
 
-    return ledTeamColorCommand;
-    
+    return new PrintCommand("autonomous command");
   }
 
   public Command getTeleopCommand() {
 
     System.out.println("teleop command called");
 
-    return ledRainbowCommand;
+    return new LEDCommand(ledSubsystem, RobotStates.States.LEDS_TEAM_COLOR);
 
   }
 
   public Command getTestCommand() {
 
-    System.out.println("teleop command called");
+    System.out.println("test command called");
 
-    return ledRSLSyncCommand;
+    return new LEDCommand(ledSubsystem, RobotStates.States.LEDS_RAINBOW);
 
   }
 

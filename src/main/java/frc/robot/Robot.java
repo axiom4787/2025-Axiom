@@ -73,10 +73,18 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
     CommandScheduler.getInstance().cancelAll();
+
+    m_testCommand = m_robotContainer.getTestCommand();
+
+    if (m_testCommand != null) {
+      m_testCommand.schedule();
+    }
   }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+    m_testCommand.execute();
+  }
 
   @Override
   public void testExit() {}
