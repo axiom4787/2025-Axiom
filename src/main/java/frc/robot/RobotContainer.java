@@ -25,7 +25,7 @@ public class RobotContainer {
 
     System.out.println("disabled command called");
 
-    return new LEDCommand(ledSubsystem, Constants.RobotStates.LEDS_OFF);
+    return new LEDCommand(ledSubsystem, Constants.LEDPresets.LEDS_OFF);
 
   }
 
@@ -40,7 +40,7 @@ public class RobotContainer {
 
     System.out.println("teleop command called");
 
-    return new LEDCommand(ledSubsystem, Constants.RobotStates.LEDS_TEAM_COLOR);
+    return new LEDCommand(ledSubsystem, Constants.LEDPresets.LEDS_TEAM_COLOR);
 
   }
 
@@ -48,7 +48,7 @@ public class RobotContainer {
 
     System.out.println("test command called");
 
-    return new LEDCommand(ledSubsystem, Constants.RobotStates.LEDS_RAINBOW);
+    return new LEDCommand(ledSubsystem, Constants.LEDPresets.LEDS_RAINBOW);
 
   }
 

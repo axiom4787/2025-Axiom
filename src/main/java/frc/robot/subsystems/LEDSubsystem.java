@@ -11,7 +11,7 @@ import java.util.HashMap;
 public class LEDSubsystem extends SubsystemBase {
       private final AddressableLED leds;
       private final AddressableLEDBuffer buffer; // Creates a new buffer object
-      private final HashMap<Constants.RobotStates, Runnable> LedMap;
+      private final HashMap<Constants.LEDPresets, Runnable> LedMap;
 
       /**
        * LEDSubsystem
@@ -30,11 +30,11 @@ public class LEDSubsystem extends SubsystemBase {
             startLEDS();
       }
 
-      public void setPattern(Constants.RobotStates state, Runnable function) {
+      public void setPattern(Constants.LEDPresets state, Runnable function) {
             LedMap.put(state, function);
       }
 
-      public Runnable getPattern(Constants.RobotStates state) {
+      public Runnable getPattern(Constants.LEDPresets state) {
             return LedMap.get(state);
       }
 

@@ -9,12 +9,14 @@ public class Constants {
   }
 
   
-  public static enum RobotStates{
+  public static enum LEDPresets{
+    //example presets
     INTAKING,
     SCORING,
     CLIMBING,
     IDLE,
-    //default states that dont depend on other mechanisms
+
+    //testing presets
     LEDS_RAINBOW,
     LEDS_OFF, 
     LEDS_TEAM_COLOR,

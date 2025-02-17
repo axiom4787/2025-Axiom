@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Percent;
 import static edu.wpi.first.units.Units.Second;
 
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
@@ -17,14 +16,14 @@ public class LEDCommand extends Command{
 
   private final LEDSubsystem m_LEDSubsystem;
   private final AddressableLEDBuffer m_buffer;
-  private Constants.RobotStates state;
+  private Constants.LEDPresets state;
 
   /**
    * Creates a command that runs a pattern on the entire LED strip.
    *
    * @param pattern the LED pattern to run
    */
-  public LEDCommand(LEDSubsystem subsystem, Constants.RobotStates LEDstate) {
+  public LEDCommand(LEDSubsystem subsystem, Constants.LEDPresets LEDstate) {
     m_LEDSubsystem = subsystem;
     m_buffer = m_LEDSubsystem.getBuffer();
     addRequirements(m_LEDSubsystem);
@@ -35,9 +34,9 @@ public class LEDCommand extends Command{
   public void initialize() {
 
     //set up default patterns
-    m_LEDSubsystem.setPattern(Constants.RobotStates.LEDS_OFF, this::LedOff);
-    m_LEDSubsystem.setPattern(Constants.RobotStates.LEDS_RAINBOW, this::LedRainbow);
-    m_LEDSubsystem.setPattern(Constants.RobotStates.LEDS_TEAM_COLOR, this::LedTeamColor);
+    m_LEDSubsystem.setPattern(Constants.LEDPresets.LEDS_OFF, this::LedOff);
+    m_LEDSubsystem.setPattern(Constants.LEDPresets.LEDS_RAINBOW, this::LedRainbow);
+    m_LEDSubsystem.setPattern(Constants.LEDPresets.LEDS_TEAM_COLOR, this::LedTeamColor);
 
   }
 
