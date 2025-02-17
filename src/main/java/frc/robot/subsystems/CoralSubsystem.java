@@ -54,14 +54,14 @@ public class CoralSubsystem extends SubsystemBase {
         m_topCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
         m_bottomCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
         //if (hasCoral()) {
-          m_state = CoralState.FULL;
+        //  m_state = CoralState.FULL;
         //}
         break;
       case SCORE:
         m_topCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
         m_bottomCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
         //if (!hasCoral()) {
-          m_state = CoralState.EMPTY;
+        //  m_state = CoralState.EMPTY;
         //}
         break;
       case EMPTY:

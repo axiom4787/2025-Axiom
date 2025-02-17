@@ -75,14 +75,14 @@ public class AlgaeSubsystem extends SubsystemBase {
                                 m_rightAlgaeWheel.set(AlgaeConstants.ALGAE_WHEEL_INTAKE_DUTYCYCLE);
                                 m_leftAlgaeWheel.set(AlgaeConstants.ALGAE_WHEEL_INTAKE_DUTYCYCLE);
                                 //if (hasAlgae())
-                                        m_state = AlgaeState.FULL;
+                                //        m_state = AlgaeState.FULL;
                                 //break;
                         case OUTTAKE:
                                 // TODO: extend arm and only activate wheels if arm is extended
                                 m_rightAlgaeWheel.set(AlgaeConstants.ALGAE_WHEEL_OUTTAKE_DUTYCYCLE);
                                 m_leftAlgaeWheel.set(AlgaeConstants.ALGAE_WHEEL_OUTTAKE_DUTYCYCLE);
                                 //if (!hasAlgae()) {
-                                        m_state = AlgaeState.EMPTY;
+                                //        m_state = AlgaeState.EMPTY;
                                 //}
                                 break;
                         case EMPTY:
