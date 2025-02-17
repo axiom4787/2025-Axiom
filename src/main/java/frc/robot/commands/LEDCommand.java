@@ -15,7 +15,6 @@ import frc.robot.Constants;
 public class LEDCommand extends Command{
 
   private final LEDSubsystem m_LEDSubsystem;
-  private final AddressableLEDBuffer m_buffer;
   private Constants.LEDPresets state;
 
   /**
@@ -25,7 +24,6 @@ public class LEDCommand extends Command{
    */
   public LEDCommand(LEDSubsystem subsystem, Constants.LEDPresets LEDstate) {
     m_LEDSubsystem = subsystem;
-    m_buffer = m_LEDSubsystem.getBuffer();
     addRequirements(m_LEDSubsystem);
     state = LEDstate;
   }
@@ -57,6 +55,8 @@ public class LEDCommand extends Command{
   }
 
   public void LedTeamColor() {
+    var m_buffer = m_LEDSubsystem.getBuffer();
+
     (switch (DriverStation.getAlliance().get()) {
       case Blue -> LEDPattern.solid(Color.kBlue); // (Blue: #0000FF)
       case Red -> LEDPattern.solid(Color.kRed); // (Red: #FF0000)
@@ -67,6 +67,8 @@ public class LEDCommand extends Command{
   }
 
   public void LedOff() {
+    var m_buffer = m_LEDSubsystem.getBuffer();
+
     LEDPattern.kOff
         .applyTo(m_buffer);
 
@@ -74,6 +76,8 @@ public class LEDCommand extends Command{
   }
 
   public void LedRainbow() {
+    var m_buffer = m_LEDSubsystem.getBuffer();
+
     LEDPattern
     .rainbow(255,255)
     .scrollAtRelativeSpeed(Percent.per(Second).of(25))
