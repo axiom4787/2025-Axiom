@@ -9,6 +9,7 @@ import java.io.IOException;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,7 +17,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import subsystems.DriveSubsystem;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.subsystems.DriveSubsystem;
 
 public class RobotContainer {
   private final CommandXboxController m_controller = new CommandXboxController(0);
@@ -33,7 +35,10 @@ public class RobotContainer {
   }
 
   public Command getTeleopCommand() {
-    return m_driveSubsystem.driveCommand(() -> -m_controller.getLeftY(), () -> -m_controller.getLeftX(), () -> -m_controller.getRightX());
+    return m_driveSubsystem.driveCommand(
+      () -> -MathUtil.applyDeadband(m_controller.getLeftY(), DriveConstants.CONTROLLER_DEADBAND, 1), 
+      () -> -MathUtil.applyDeadband(m_controller.getLeftX(), DriveConstants.CONTROLLER_DEADBAND, 1), 
+      () -> -MathUtil.applyDeadband(m_controller.getRightX(), DriveConstants.CONTROLLER_DEADBAND, 1));
   }
 
   public Command getAutonomousCommand() {

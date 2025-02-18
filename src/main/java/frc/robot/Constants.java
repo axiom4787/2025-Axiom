@@ -9,8 +9,7 @@ import edu.wpi.first.math.util.Units;
 /** Add your docs here. */
 public class Constants {
     public static class DriveConstants {
-        public static final double kMaxSpeedMetersPerSecond = 4.92;
-        public static final double kGyroOffsetX = +5.75;
-        public static final double kGyroOffsetY = +9.25;
+        public static final double MAX_SPEED_MS = 4.92;
+        public static final double CONTROLLER_DEADBAND = 0.1;
     }
 }

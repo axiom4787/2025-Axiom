@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package subsystems;
+package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Meter;
 
@@ -77,7 +77,7 @@ public class DriveSubsystem extends SubsystemBase
     File swerveJsonDirectory = new File(Filesystem.getDeployDirectory(), "swerve");
     try
     {
-      swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive(DriveConstants.kMaxSpeedMetersPerSecond);
+      swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive(DriveConstants.MAX_SPEED_MS);
       // Alternative method if you don't want to supply the conversion factor via JSON files.
       // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed, angleConversionFactor, driveConversionFactor);
     } catch (Exception e)
@@ -336,8 +336,7 @@ public class DriveSubsystem extends SubsystemBase
                             translationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()), 0.8),
                         Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumChassisAngularVelocity(),
                         true,
-                        false, 
-                        new Translation2d(Units.inchesToMeters(DriveConstants.kGyroOffsetX), Units.inchesToMeters(DriveConstants.kGyroOffsetY)));
+                        false);
     });
   }
 
@@ -469,7 +468,7 @@ public class DriveSubsystem extends SubsystemBase
                                                         headingX,
                                                         headingY,
                                                         getHeading().getRadians(),
-                                                        DriveConstants.kMaxSpeedMetersPerSecond);
+                                                        DriveConstants.MAX_SPEED_MS);
   }
 
   /**
@@ -489,7 +488,7 @@ public class DriveSubsystem extends SubsystemBase
                                                         scaledInputs.getY(),
                                                         angle.getRadians(),
                                                         getHeading().getRadians(),
-                                                        DriveConstants.kMaxSpeedMetersPerSecond);
+                                                        DriveConstants.MAX_SPEED_MS);
   }
 
   /**
