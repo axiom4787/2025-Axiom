@@ -4,12 +4,14 @@
 
 package frc.robot;
 
+import java.io.IOException;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
+  private Command m_autonomousCommand, m_teleopCommand, m_testCommand;
 
   private final RobotContainer m_robotContainer;
 
@@ -51,6 +53,12 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    m_teleopCommand = m_robotContainer.getTeleopCommand();
+
+    if (m_teleopCommand != null) {
+      m_teleopCommand.schedule();
+    }
   }
 
   @Override
@@ -62,6 +70,11 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
     CommandScheduler.getInstance().cancelAll();
+
+    m_testCommand = m_robotContainer.getTestCommand();
+
+    if (m_testCommand != null)
+      m_testCommand.schedule();
   }
 
   @Override

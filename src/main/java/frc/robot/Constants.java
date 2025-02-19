@@ -1,5 +1,10 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
 import org.ejml.equation.Variable;
 
 public class Constants {
@@ -18,6 +23,11 @@ public class Constants {
         Climbing_on,
         Climbing_off,
         Robot_off
+    }
+  
+    public static class DriveConstants {
+        public static final double MAX_SPEED_MS = 4.92;
+        public static final double CONTROLLER_DEADBAND = 0.1;
     }
     
     public static class cIntake {
@@ -111,5 +121,4 @@ public class Constants {
             public static final double ALGAE_ANGLE_UP = 0.0; // Check. In rotations
         }
     }
-    
 }
