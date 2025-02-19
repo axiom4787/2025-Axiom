@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 // Motor Controllers
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
@@ -10,6 +11,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.ClosedLoopSlot;
 
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.ElevatorConstants;
@@ -23,7 +25,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   // Motor Controllers for Coral
   public static final SparkMax m_coralArmMotor = new SparkMax(ElevatorConstants.CORAL_ARM_MOTOR_ID,
       MotorType.kBrushless);
-  public static final SparkMax m_elevatorMotor = new SparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID,
+  public static final SparkMax m_elevatorMotorLeft = new SparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_L,
+      MotorType.kBrushless);
+    public static final SparkMax m_elevatorMotorRight = new SparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_R,
       MotorType.kBrushless);
 
   public ElevatorSubsystem() {
@@ -43,21 +47,38 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     m_coralArmMotor.configure(coralArmMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    SparkMaxConfig elevatorMotorConfig = new SparkMaxConfig();
+    SparkMaxConfig elevatorMotorLeftConfig = new SparkMaxConfig();
 
-    elevatorMotorConfig
+    elevatorMotorLeftConfig
         .inverted(false)
         .idleMode(IdleMode.kBrake);
-    elevatorMotorConfig.encoder
+    elevatorMotorLeftConfig.encoder
         .positionConversionFactor(PID.ELEVATOR_pCONV)
         .velocityConversionFactor(PID.ELEVATOR_vCONV);
-    elevatorMotorConfig.closedLoop
+    elevatorMotorLeftConfig.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .pid(PID.ELEVATOR_KP, PID.ELEVATOR_KI, PID.ELEVATOR_KD)
         .velocityFF(PID.ELEVATOR_KFF, ClosedLoopSlot.kSlot1)
         .outputRange(PID.ELEVATOR_KMIN_OUTPUT, PID.ELEVATOR_KMAX_OUTPUT);
 
-    m_elevatorMotor.configure(elevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_elevatorMotorLeft.configure(elevatorMotorLeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    SparkMaxConfig elevatorMotorRightConfig = new SparkMaxConfig();
+
+    elevatorMotorRightConfig
+        .inverted(true)
+        .idleMode(IdleMode.kBrake)
+        .follow(m_elevatorMotorLeft);
+    elevatorMotorRightConfig.encoder
+        .positionConversionFactor(PID.ELEVATOR_pCONV)
+        .velocityConversionFactor(PID.ELEVATOR_vCONV);
+    elevatorMotorRightConfig.closedLoop
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        .pid(PID.ELEVATOR_KP, PID.ELEVATOR_KI, PID.ELEVATOR_KD)
+        .velocityFF(PID.ELEVATOR_KFF, ClosedLoopSlot.kSlot1)
+        .outputRange(PID.ELEVATOR_KMIN_OUTPUT, PID.ELEVATOR_KMAX_OUTPUT);
+
+    m_elevatorMotorRight.configure(elevatorMotorRightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
@@ -65,16 +86,24 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     switch (m_state) {
       case SOURCE:
-        // TODO: elevator to source position, coral arm angled up
+        m_elevatorMotorLeft.getClosedLoopController().setReference(ElevatorConstants.ELEVATOR_SOURCE_POSITION, ControlType.kPosition);
+        m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_NEUTRAL_ANGLE, ControlType.kPosition); // Need to test
+        System.out.println("ElevatorSubsystem: SOURCE");
         break;
       case L1:
-        // TODO: elevator to L1 position, coral arm angled down
+        m_elevatorMotorLeft.getClosedLoopController().setReference(ElevatorConstants.ELEVATOR_L1_POSITION, ControlType.kPosition);
+        m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_DOWN_ANGLE, ControlType.kPosition); // Need to test
+        System.out.println("ElevatorSubsystem: L1");
         break;
       case L2:
-        // TODO: elevator to L2 position, coral arm angled down
+        m_elevatorMotorLeft.getClosedLoopController().setReference(ElevatorConstants.ELEVATOR_L2_POSITION, ControlType.kPosition);
+        m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_DOWN_ANGLE, ControlType.kPosition); // Need to test
+        System.out.println("ElevatorSubsystem: L2");
         break;
       case L3:
-        // TODO: elevator to L3 position, coral arm angled down
+        m_elevatorMotorLeft.getClosedLoopController().setReference(ElevatorConstants.ELEVATOR_L3_POSITION, ControlType.kPosition);
+        m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_UP_ANGLE, ControlType.kPosition); // Need to test
+        System.out.println("ElevatorSubsystem: L3");
         break;
     }
   }
