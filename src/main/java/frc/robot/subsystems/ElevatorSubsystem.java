@@ -105,6 +105,11 @@ public class ElevatorSubsystem extends SubsystemBase {
         m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_UP_ANGLE, ControlType.kPosition); // Need to test
         System.out.println("ElevatorSubsystem: L3");
         break;
+      case L0:
+        m_elevatorMotorLeft.getClosedLoopController().setReference(ElevatorConstants.ELEVATOR_L0_POSITION, ControlType.kPosition);
+        m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_NEUTRAL_ANGLE, ControlType.kPosition); // Need to test
+        System.out.println("ElevatorSubsystem: L0");
+        break;
     }
   }
 
@@ -116,6 +121,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     SOURCE,
     L1,
     L2,
-    L3
+    L3,
+    L0
   }
 }

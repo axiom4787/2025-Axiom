@@ -33,6 +33,7 @@ public class Constants {
         public static final double ELEVATOR_L2_POSITION = 0.5; // Check
         public static final double ELEVATOR_L1_POSITION = 0.0; // Check
         public static final double ELEVATOR_SOURCE_POSITION = 0.0; // Check
+        public static final double ELEVATOR_L0_POSITION = 0.0; // Check
         public static final double CORAL_ARM_UP_ANGLE = 1.0; // Check
         public static final double CORAL_ARM_DOWN_ANGLE = -1.0; // Check
         public static final double CORAL_ARM_NEUTRAL_ANGLE = 0.0; // Check
