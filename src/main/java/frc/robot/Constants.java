@@ -95,8 +95,9 @@ public class Constants {
         public static final float ARM_ALGAE_vCONV = 1.0f;
 
     }
-}
+    
     public static class DriveConstants {
         public static final double MAX_SPEED_MS = 4.92;
         public static final double CONTROLLER_DEADBAND = 0.1;
     }
+}

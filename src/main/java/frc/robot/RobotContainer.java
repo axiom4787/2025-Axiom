@@ -36,7 +36,6 @@ public class RobotContainer {
   private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
   private final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
-  private CommandXboxController m_controller = new CommandXboxController(0);
 
   public RobotContainer() {
     m_driveSubsystem = new DriveSubsystem();
