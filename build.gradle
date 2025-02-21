@@ -73,6 +73,9 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Added the SparkMax library so I can do PID control
+    implementation 'com.revrobotics.frc:SparkMax-java:1.5.2'
 }
 
 test {
