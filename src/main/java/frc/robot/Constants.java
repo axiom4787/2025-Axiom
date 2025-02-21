@@ -3,6 +3,11 @@ package frc.robot;
 public class Constants {
     public static final float m_default_speed = 1.0f;
 
+    public static class DriveConstants {
+        public static final double MAX_SPEED_MS = 4.92;
+        public static final double CONTROLLER_DEADBAND = 0.1;
+    }
+
     public static class CoralConstants {
         public static final int TOP_CORAL_MOTOR_ID = 16;
         public static final int BOTTOM_CORAL_MOTOR_ID = 17; 
@@ -29,12 +34,12 @@ public class Constants {
         public static final int ELEVATOR_MOTOR_ID_L = 10;
         public static final int CORAL_ARM_MOTOR_ID = 11;
 
-        public static final double ELEVATOR_L3_POSITION = 1.0; // Check
-        public static final double ELEVATOR_L2_POSITION = 0.5; // Check
-        public static final double ELEVATOR_L1_POSITION = 0.0; // Check
+        public static final double ELEVATOR_L3_POSITION = 1.0; // 121 cm or 3 ft 11 5/8 in above carpet
+        public static final double ELEVATOR_L2_POSITION = 0.5; // 81 cm or 2 ft 7/8 in above carpet
+        public static final double ELEVATOR_L1_POSITION = 0.0; // type shit
         public static final double ELEVATOR_SOURCE_POSITION = 0.0; // Check
-        public static final double CORAL_ARM_UP_ANGLE = 1.0; // Check
-        public static final double CORAL_ARM_DOWN_ANGLE = -1.0; // Check
+        public static final double CORAL_ARM_UP_ANGLE = 55; // Check
+        public static final double CORAL_ARM_DOWN_ANGLE = -35; // Check
         public static final double CORAL_ARM_NEUTRAL_ANGLE = 0.0; // Check
     }
 

@@ -12,6 +12,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.ClosedLoopSlot;
 
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.ElevatorConstants;
@@ -23,11 +24,11 @@ public class ElevatorSubsystem extends SubsystemBase {
   public ElevatorState m_state = ElevatorState.L1;
 
   // Motor Controllers for Coral
-  public static final SparkMax m_coralArmMotor = new SparkMax(ElevatorConstants.CORAL_ARM_MOTOR_ID,
+  private final SparkMax m_coralArmMotor = new SparkMax(ElevatorConstants.CORAL_ARM_MOTOR_ID,
       MotorType.kBrushless);
-  public static final SparkMax m_elevatorMotorLeft = new SparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_L,
+  private final SparkMax m_elevatorMotorLeft = new SparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_L,
       MotorType.kBrushless);
-    public static final SparkMax m_elevatorMotorRight = new SparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_R,
+  private final SparkMax m_elevatorMotorRight = new SparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_R,
       MotorType.kBrushless);
 
   public ElevatorSubsystem() {
@@ -83,6 +84,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    SmartDashboard.putString("Elevator State", m_state.name());
+    SmartDashboard.putNumber("L Elevator Motor Pos Encoder", m_elevatorMotorLeft.getAbsoluteEncoder().getPosition());
+    SmartDashboard.putNumber("R Elevator Motor Pos Encoder", m_elevatorMotorRight.getAbsoluteEncoder().getPosition());
 
     switch (m_state) {
       case SOURCE:

@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.ClosedLoopSlot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.AlgaeConstants;
@@ -19,13 +20,13 @@ public class AlgaeSubsystem extends SubsystemBase {
   private AlgaeState m_state = AlgaeState.EMPTY; // hasAlgae() ? AlgaeState.FULL : AlgaeState.EMPTY;
 
   // Motor Controllers for Algae
-  public static final SparkMax m_rightArmMotor = new SparkMax(AlgaeConstants.RIGHT_ALGAE_ARM_MOTOR_ID,
+  private final SparkMax m_rightArmMotor = new SparkMax(AlgaeConstants.RIGHT_ALGAE_ARM_MOTOR_ID,
       MotorType.kBrushless);
-  public static final SparkMax m_leftArmMotor = new SparkMax(AlgaeConstants.LEFT_ALGAE_ARM_MOTOR_ID,
+  private final SparkMax m_leftArmMotor = new SparkMax(AlgaeConstants.LEFT_ALGAE_ARM_MOTOR_ID,
       MotorType.kBrushless);
-  public static final SparkMax m_leftAlgaeWheel = new SparkMax(AlgaeConstants.LEFT_ALGAE_WHEEL_MOTOR_ID,
+  private final SparkMax m_leftAlgaeWheel = new SparkMax(AlgaeConstants.LEFT_ALGAE_WHEEL_MOTOR_ID,
       MotorType.kBrushless);
-  public static final SparkMax m_rightAlgaeWheel = new SparkMax(AlgaeConstants.RIGHT_ALGAE_WHEEL_MOTOR_ID,
+  private final SparkMax m_rightAlgaeWheel = new SparkMax(AlgaeConstants.RIGHT_ALGAE_WHEEL_MOTOR_ID,
       MotorType.kBrushless);
 
   public AlgaeSubsystem() {
@@ -69,6 +70,9 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    SmartDashboard.putString("Algae State", m_state.name());
+
     switch (m_state) {
       case INTAKE:
         // TODO: extend arm

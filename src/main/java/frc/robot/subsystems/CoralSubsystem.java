@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.ClosedLoopSlot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.CoralConstants;
@@ -20,8 +21,8 @@ public class CoralSubsystem extends SubsystemBase {
   private CoralState m_state = CoralState.EMPTY; // hasCoral() ? CoralState.FULL : CoralState.EMPTY;
 
   // Motor Controllers for Coral
-  public static final SparkMax m_topCoralMotor = new SparkMax(CoralConstants.TOP_CORAL_MOTOR_ID, MotorType.kBrushless);
-  public static final SparkMax m_bottomCoralMotor = new SparkMax(CoralConstants.BOTTOM_CORAL_MOTOR_ID,
+  private final SparkMax m_topCoralMotor = new SparkMax(CoralConstants.TOP_CORAL_MOTOR_ID, MotorType.kBrushless);
+  private final SparkMax m_bottomCoralMotor = new SparkMax(CoralConstants.BOTTOM_CORAL_MOTOR_ID,
       MotorType.kBrushless);
 
   public CoralSubsystem() {
@@ -46,8 +47,8 @@ public class CoralSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    m_topCoralMotor.set(0.0);
-    m_bottomCoralMotor.set(0.0);
+
+    SmartDashboard.putString("Coral State", m_state.name());
 
     switch (m_state) {
       case INTAKE:
