@@ -56,13 +56,21 @@ public class RobotContainer {
     Trigger armToL3 = m_controller.povUp().onTrue(new InstantCommand(() -> {
       m_elevatorSubsystem.setState(ElevatorState.L3);
     }));
-    // Trigger coralIntakeArmToSource = m_controller.povRight().onTrue(new InstantCommand(() -> {
-    //   m_elevatorSubsystem.setState(ElevatorState.SOURCE);
+    Trigger armToBase = m_controller.povUp().onTrue(new InstantCommand(() -> {
+      m_elevatorSubsystem.setState(ElevatorState.BASE);
+    }));
+    Trigger armToSource = m_controller.povRight().onTrue(new InstantCommand(() -> {
+      m_elevatorSubsystem.setState(ElevatorState.SOURCE);
+    }));
+
+    // Trigger coralIntake = m_controller.y().onTrue(new InstantCommand(() -> {
     //   m_coralSubsystem.intake();
     // }));
-
     // Trigger coralOuttake = m_controller.y().onTrue(new InstantCommand(() -> {
     //   m_coralSubsystem.outtake();
+    // }));
+    // coralIntake.or(coralOuttake).negate().onTrue(new InstantCommand(() -> {
+    //   m_coralSubsystem.stop();
     // }));
 
     Trigger gyroReset = m_controller.a();

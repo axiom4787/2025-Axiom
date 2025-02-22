@@ -18,12 +18,11 @@ import frc.robot.Constants.PID;
 
 // controls the coral manipulator motors
 public class CoralSubsystem extends SubsystemBase {
-  private CoralState m_state = CoralState.EMPTY; // hasCoral() ? CoralState.FULL : CoralState.EMPTY;
+  private CoralState m_state = CoralState.OFF; // hasCoral() ? CoralState.FULL : CoralState.EMPTY;
 
   // Motor Controllers for Coral
-  private final SparkMax m_topCoralMotor = new SparkMax(CoralConstants.TOP_CORAL_MOTOR_ID, MotorType.kBrushless);
-  private final SparkMax m_bottomCoralMotor = new SparkMax(CoralConstants.BOTTOM_CORAL_MOTOR_ID,
-      MotorType.kBrushless);
+  // private final SparkMax m_topCoralMotor = new SparkMax(CoralConstants.TOP_CORAL_MOTOR_ID, MotorType.kBrushless);
+  private final SparkMax m_bottomCoralMotor = new SparkMax(CoralConstants.BOTTOM_CORAL_MOTOR_ID, MotorType.kBrushless);
 
   public CoralSubsystem() {
     SparkMaxConfig coralMotorConfig = new SparkMaxConfig();
@@ -40,7 +39,7 @@ public class CoralSubsystem extends SubsystemBase {
         .velocityFF(PID.CORAL_MOTOR_KFF, ClosedLoopSlot.kSlot1)
         .outputRange(PID.CORAL_MOTOR_MIN_OUTPUT, PID.CORAL_MOTOR_MAX_OUTPUT);
 
-    m_topCoralMotor.configure(coralMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    // m_topCoralMotor.configure(coralMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     m_bottomCoralMotor.configure(coralMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
@@ -52,7 +51,7 @@ public class CoralSubsystem extends SubsystemBase {
 
     switch (m_state) {
       case INTAKE:
-        m_topCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
+        // m_topCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
         m_bottomCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
         //if (hasCoral()) {
         //  m_state = CoralState.FULL;
@@ -60,19 +59,15 @@ public class CoralSubsystem extends SubsystemBase {
         System.out.println("Coral Intake");
         break;
       case SCORE:
-        m_topCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
+        // m_topCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
         m_bottomCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
         //if (!hasCoral()) {
         //  m_state = CoralState.EMPTY;
         //}
         System.out.println("Coral Score");
         break;
-      case EMPTY:
-        m_topCoralMotor.set(0.0);
-        m_bottomCoralMotor.set(0.0);
-        break;
-      case FULL:
-        m_topCoralMotor.set(0.0);
+      case OFF:
+        // m_topCoralMotor.set(0.0);
         m_bottomCoralMotor.set(0.0);
         break;
     }
@@ -90,6 +85,10 @@ public class CoralSubsystem extends SubsystemBase {
     //}
   }
 
+  public void stop() {
+    m_state = CoralState.OFF;
+  }
+
   /*/
   public boolean hasCoral() {
     // TODO: use time of flight to determine if coral is present
@@ -100,7 +99,6 @@ public class CoralSubsystem extends SubsystemBase {
   public enum CoralState {
     INTAKE,
     SCORE,
-    EMPTY,
-    FULL
+    OFF
   }
 }

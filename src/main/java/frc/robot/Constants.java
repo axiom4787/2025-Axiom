@@ -34,9 +34,12 @@ public class Constants {
         public static final int ELEVATOR_MOTOR_ID_L = 10;
         public static final int CORAL_ARM_MOTOR_ID = 11;
 
+
+        // values should be in relative encoder rotations
         public static final double ELEVATOR_L3_POSITION = 1.0; // 121 cm or 3 ft 11 5/8 in above carpet
         public static final double ELEVATOR_L2_POSITION = 0.5; // 81 cm or 2 ft 7/8 in above carpet
         public static final double ELEVATOR_L1_POSITION = 0.0; // type shit
+        public static final double ELEVATOR_BASE_POSITION = 0.0; // starting position
         public static final double ELEVATOR_SOURCE_POSITION = 0.0; // Check
         public static final double CORAL_ARM_UP_ANGLE = 55; // Check
         public static final double CORAL_ARM_DOWN_ANGLE = -35; // Check

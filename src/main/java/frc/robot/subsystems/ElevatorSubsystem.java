@@ -21,38 +21,38 @@ import frc.robot.Constants.PID;
 // controls the elevator and arm rotation motors
 public class ElevatorSubsystem extends SubsystemBase {
 
-  public ElevatorState m_state = ElevatorState.L1;
+  public ElevatorState m_state = ElevatorState.BASE;
 
   // Motor Controllers for Coral
-  private final SparkMax m_coralArmMotor = new SparkMax(ElevatorConstants.CORAL_ARM_MOTOR_ID,
-      MotorType.kBrushless);
+  // private final SparkMax m_coralArmMotor = new SparkMax(ElevatorConstants.CORAL_ARM_MOTOR_ID,
+  //     MotorType.kBrushless);
   private final SparkMax m_elevatorMotorLeft = new SparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_L,
       MotorType.kBrushless);
   private final SparkMax m_elevatorMotorRight = new SparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_R,
       MotorType.kBrushless);
 
   public ElevatorSubsystem() {
-    SparkMaxConfig coralArmMotorConfig = new SparkMaxConfig();
+    // SparkMaxConfig coralArmMotorConfig = new SparkMaxConfig();
 
-    coralArmMotorConfig
-        .inverted(false)
-        .idleMode(IdleMode.kBrake);
-    coralArmMotorConfig.encoder
-        .positionConversionFactor(PID.ROT_CORAL_pCONV)
-        .velocityConversionFactor(PID.ROT_CORAL_vCONV);
-    coralArmMotorConfig.closedLoop
-        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(PID.ROT_CORAL_KP, PID.ROT_CORAL_KI, PID.ROT_CORAL_KD)
-        .velocityFF(PID.ROT_CORAL_KFF, ClosedLoopSlot.kSlot1)
-        .outputRange(PID.ROT_CORAL_KMIN_OUTPUT, PID.ROT_CORAL_KMAX_OUTPUT);
+    // coralArmMotorConfig
+    //     .inverted(false)
+    //     .idleMode(IdleMode.kBrake);
+    // coralArmMotorConfig.encoder
+    //     .positionConversionFactor(PID.ROT_CORAL_pCONV)
+    //     .velocityConversionFactor(PID.ROT_CORAL_vCONV);
+    // coralArmMotorConfig.closedLoop
+    //     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+    //     .pid(PID.ROT_CORAL_KP, PID.ROT_CORAL_KI, PID.ROT_CORAL_KD)
+    //     .velocityFF(PID.ROT_CORAL_KFF, ClosedLoopSlot.kSlot1)
+    //     .outputRange(PID.ROT_CORAL_KMIN_OUTPUT, PID.ROT_CORAL_KMAX_OUTPUT);
 
-    m_coralArmMotor.configure(coralArmMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    //m_coralArmMotor.configure(coralArmMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     SparkMaxConfig elevatorMotorLeftConfig = new SparkMaxConfig();
 
     elevatorMotorLeftConfig
         .inverted(false)
-        .idleMode(IdleMode.kBrake);
+        .idleMode(IdleMode.kCoast);
     elevatorMotorLeftConfig.encoder
         .positionConversionFactor(PID.ELEVATOR_pCONV)
         .velocityConversionFactor(PID.ELEVATOR_vCONV);
@@ -68,7 +68,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     elevatorMotorRightConfig
         .inverted(true)
-        .idleMode(IdleMode.kBrake)
+        .idleMode(IdleMode.kCoast)
         .follow(m_elevatorMotorLeft);
     elevatorMotorRightConfig.encoder
         .positionConversionFactor(PID.ELEVATOR_pCONV)
@@ -86,36 +86,36 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
 
     SmartDashboard.putString("Elevator State", m_state.name());
-    SmartDashboard.putNumber("L Elevator Motor Pos Encoder", m_elevatorMotorLeft.getAbsoluteEncoder().getPosition());
+    SmartDashboard.putNumber("L Elevator Motor Pos Encoder", m_elevatorMotorLeft.getEncoder().getPosition());
     SmartDashboard.putNumber("R Elevator Motor Pos Encoder", m_elevatorMotorRight.getAbsoluteEncoder().getPosition());
 
-    switch (m_state) {
-      case SOURCE:
-        m_elevatorMotorLeft.getClosedLoopController().setReference(ElevatorConstants.ELEVATOR_SOURCE_POSITION, ControlType.kPosition);
-        m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_NEUTRAL_ANGLE, ControlType.kPosition); // Need to test
-        System.out.println("ElevatorSubsystem: SOURCE");
-        break;
-      case L1:
-        m_elevatorMotorLeft.getClosedLoopController().setReference(ElevatorConstants.ELEVATOR_L1_POSITION, ControlType.kPosition);
-        m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_DOWN_ANGLE, ControlType.kPosition); // Need to test
-        System.out.println("ElevatorSubsystem: L1");
-        break;
-      case L2:
-        m_elevatorMotorLeft.getClosedLoopController().setReference(ElevatorConstants.ELEVATOR_L2_POSITION, ControlType.kPosition);
-        m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_DOWN_ANGLE, ControlType.kPosition); // Need to test
-        System.out.println("ElevatorSubsystem: L2");
-        break;
-      case L3:
-        m_elevatorMotorLeft.getClosedLoopController().setReference(ElevatorConstants.ELEVATOR_L3_POSITION, ControlType.kPosition);
-        m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_UP_ANGLE, ControlType.kPosition); // Need to test
-        System.out.println("ElevatorSubsystem: L3");
-        break;
-      case L0:
-        m_elevatorMotorLeft.getClosedLoopController().setReference(ElevatorConstants.ELEVATOR_L0_POSITION, ControlType.kPosition);
-        m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_NEUTRAL_ANGLE, ControlType.kPosition); // Need to test
-        System.out.println("ElevatorSubsystem: L0");
-        break;
-    }
+    // switch (m_state) {
+    //   case SOURCE:
+    //     m_elevatorMotorLeft.getClosedLoopController().setReference(ElevatorConstants.ELEVATOR_SOURCE_POSITION, ControlType.kPosition);
+    //     //m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_NEUTRAL_ANGLE, ControlType.kPosition); // Need to test
+    //     System.out.println("ElevatorSubsystem: SOURCE");
+    //     break;
+    //   case L1:
+    //     m_elevatorMotorLeft.getClosedLoopController().setReference(ElevatorConstants.ELEVATOR_L1_POSITION, ControlType.kPosition);
+    //     //m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_DOWN_ANGLE, ControlType.kPosition); // Need to test
+    //     System.out.println("ElevatorSubsystem: L1");
+    //     break;
+    //   case L2:
+    //     m_elevatorMotorLeft.getClosedLoopController().setReference(ElevatorConstants.ELEVATOR_L2_POSITION, ControlType.kPosition);
+    //     //m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_DOWN_ANGLE, ControlType.kPosition); // Need to test
+    //     System.out.println("ElevatorSubsystem: L2");
+    //     break;
+    //   case L3:
+    //     m_elevatorMotorLeft.getClosedLoopController().setReference(ElevatorConstants.ELEVATOR_L3_POSITION, ControlType.kPosition);
+    //     //m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_UP_ANGLE, ControlType.kPosition); // Need to test
+    //     System.out.println("ElevatorSubsystem: L3");
+    //     break;
+    //   case BASE:
+    //     m_elevatorMotorLeft.getClosedLoopController().setReference(ElevatorConstants.ELEVATOR_BASE_POSITION, ControlType.kPosition);
+    //     //m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_NEUTRAL_ANGLE, ControlType.kPosition); // Need to test
+    //     System.out.println("ElevatorSubsystem: BASE");
+    //     break;
+    // }
   }
 
   public void setState(ElevatorState state) {
@@ -127,6 +127,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     L1,
     L2,
     L3,
-    L0
+    BASE
   }
 }
