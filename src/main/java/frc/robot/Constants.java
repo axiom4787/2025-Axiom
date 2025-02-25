@@ -83,7 +83,7 @@ public class Constants {
         public static final float ROT_CORAL_pCONV = 1.0f;
         public static final float ROT_CORAL_vCONV = 1.0f;
 
-        public static final double ELEVATOR_KP = 0.1;
+        public static final double ELEVATOR_KP = 0.01;
         public static final double ELEVATOR_KI = 0.0;
         public static final double ELEVATOR_KD = 0.0;
         public static final double ELEVATOR_KFF = 0.0;

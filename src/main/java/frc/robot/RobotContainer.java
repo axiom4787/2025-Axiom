@@ -48,19 +48,19 @@ public class RobotContainer {
 
 
     Trigger armToL1 = m_controller.povDown().onTrue(new InstantCommand(() -> {
-      m_elevatorSubsystem.setState(ElevatorState.L1);
+      m_elevatorSubsystem.setElevatorState(ElevatorState.L1);
     }));
     Trigger armToL2 = m_controller.povLeft().onTrue(new InstantCommand(() -> {
-      m_elevatorSubsystem.setState(ElevatorState.L2);
+      m_elevatorSubsystem.setElevatorState(ElevatorState.L2);
     }));
     Trigger armToL3 = m_controller.povUp().onTrue(new InstantCommand(() -> {
-      m_elevatorSubsystem.setState(ElevatorState.L3);
+      m_elevatorSubsystem.setElevatorState(ElevatorState.L3);
     }));
-    Trigger armToBase = m_controller.povUp().onTrue(new InstantCommand(() -> {
-      m_elevatorSubsystem.setState(ElevatorState.BASE);
-    }));
+    // Trigger armToBase = m_controller.povUp().onTrue(new InstantCommand(() -> {
+    //   m_elevatorSubsystem.setElevatorState(ElevatorState.BASE);
+    // }));
     Trigger armToSource = m_controller.povRight().onTrue(new InstantCommand(() -> {
-      m_elevatorSubsystem.setState(ElevatorState.SOURCE);
+      m_elevatorSubsystem.setElevatorState(ElevatorState.SOURCE);
     }));
 
     Trigger coralIntake = m_controller.y().onTrue(new InstantCommand(() -> {
