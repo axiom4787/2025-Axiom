@@ -27,7 +27,7 @@ import swervelib.parser.json.modules.DriveConversionFactorsJson;
 
 public class RobotContainer {
   // private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
-  private final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
+  // private final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
   private CommandXboxController m_controller = new CommandXboxController(0);
@@ -63,15 +63,15 @@ public class RobotContainer {
       m_elevatorSubsystem.setElevatorState(ElevatorState.SOURCE);
     }));
 
-    Trigger coralIntake = m_controller.y().onTrue(new InstantCommand(() -> {
-      m_coralSubsystem.intake();
-    }));
-    Trigger coralOuttake = m_controller.y().onTrue(new InstantCommand(() -> {
-      m_coralSubsystem.outtake();
-    }));
-    coralIntake.or(coralOuttake).negate().onTrue(new InstantCommand(() -> {
-      m_coralSubsystem.stop();
-    }));
+    // Trigger coralIntake = m_controller.y().onTrue(new InstantCommand(() -> {
+    //   m_coralSubsystem.intake();
+    // }));
+    // Trigger coralOuttake = m_controller.y().onTrue(new InstantCommand(() -> {
+    //   m_coralSubsystem.outtake();
+    // }));
+    // coralIntake.or(coralOuttake).negate().onTrue(new InstantCommand(() -> {
+    //   m_coralSubsystem.stop();
+    // }));
 
     Trigger gyroReset = m_controller.a();
     gyroReset.onTrue(new InstantCommand(m_driveSubsystem::zeroGyro));

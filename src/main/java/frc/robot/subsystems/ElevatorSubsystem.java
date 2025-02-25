@@ -18,7 +18,7 @@ import frc.robot.Constants.PID;
 
 // controls the elevator and arm rotation motors
 public class ElevatorSubsystem extends SubsystemBase {
-    private ElevatorState m_ElevatorState = ElevatorState.SOURCE;
+    private ElevatorState m_ElevatorState = ElevatorState.L1;
 
     private final SparkMax m_elevatorMotorR = new SparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_R, MotorType.kBrushless);
     private final SparkMax m_elevatorMotorL = new SparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_L, MotorType.kBrushless);
