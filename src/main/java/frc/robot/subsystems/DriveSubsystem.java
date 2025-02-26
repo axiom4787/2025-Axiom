@@ -41,6 +41,7 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -147,6 +148,8 @@ public class DriveSubsystem extends SubsystemBase {
 				.getDoubleTopic("Debug/Controller/LeftY").publish();
 		rightXPub = NetworkTableInstance.getDefault()
 				.getDoubleTopic("Debug/Controller/RightX").publish();
+
+		fieldRelative = true;
 	}
 
 	@Override
@@ -371,9 +374,9 @@ public class DriveSubsystem extends SubsystemBase {
 					new Translation2d(xSpeed * swerveDrive.getMaximumChassisVelocity(),
 							ySpeed * swerveDrive.getMaximumChassisVelocity()),
 					rot * swerveDrive.getMaximumChassisAngularVelocity(),
-					true,
+					fieldRelative,
 					false);
-		}, this).withName("TeleopCommand");
+		}, this).withName("TeleopCommand").alongWith(new RunCommand(() -> SmartDashboard.putBoolean("fieldrel", fieldRelative)).alongWith(new PrintCommand("fieldrel" + fieldRelative)));
 	}
 
 }
