@@ -1,3 +1,5 @@
+// Depricated. Replace w/ everybot intake!!!
+
 package frc.robot.subsystems;
 
 // Motor Controllers

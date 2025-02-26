@@ -49,8 +49,10 @@ public class CoralSubsystem extends SubsystemBase {
     m_topCoralMotor.set(0.0);
     m_bottomCoralMotor.set(0.0);
 
+    // Our State Machine for Coral
     switch (m_state) {
       case INTAKE:
+        // Spin the top and bottom coral motors to intake a coral
         m_topCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
         m_bottomCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
         //if (hasCoral()) {
@@ -59,6 +61,7 @@ public class CoralSubsystem extends SubsystemBase {
         System.out.println("Coral Intake");
         break;
       case SCORE:
+        // Spin the top and bottom coral motors to outtake a coral
         m_topCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
         m_bottomCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
         //if (!hasCoral()) {
@@ -67,16 +70,20 @@ public class CoralSubsystem extends SubsystemBase {
         System.out.println("Coral Score");
         break;
       case EMPTY:
+        // Disable our motors if we aren't using them
         m_topCoralMotor.set(0.0);
         m_bottomCoralMotor.set(0.0);
         break;
       case FULL:
+        // When we are full, don't spin the motors. We already have the coral so we do not need to intake anything
         m_topCoralMotor.set(0.0);
         m_bottomCoralMotor.set(0.0);
         break;
     }
   }
 
+  // Expose intaking and outtaking modes
+  // Equivalent to SetState() in ElevatorSubsystem.java
   public void intake() {
     //if (!hasCoral()) {
       m_state = CoralState.INTAKE;
@@ -96,6 +103,7 @@ public class CoralSubsystem extends SubsystemBase {
   }
   /*/
 
+  // Define what sates we can be in
   public enum CoralState {
     INTAKE,
     SCORE,

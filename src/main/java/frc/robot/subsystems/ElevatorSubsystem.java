@@ -85,27 +85,34 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
 
     switch (m_state) {
+      // For each of these, we set the elevator height and coral arm angle
+      // This is so we can get the coral up to the target level and drop the coral in at the correct position
       case SOURCE:
+        // Set our elevator height and coral arm motor angle for source.  
         m_elevatorMotorLeft.getClosedLoopController().setReference(ElevatorConstants.ELEVATOR_SOURCE_POSITION, ControlType.kPosition);
         m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_NEUTRAL_ANGLE, ControlType.kPosition); // Need to test
         System.out.println("ElevatorSubsystem: SOURCE");
         break;
       case L1:
+        // Similar idea to SOURCE, continued for the rest of the cases
         m_elevatorMotorLeft.getClosedLoopController().setReference(ElevatorConstants.ELEVATOR_L1_POSITION, ControlType.kPosition);
         m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_DOWN_ANGLE, ControlType.kPosition); // Need to test
         System.out.println("ElevatorSubsystem: L1");
         break;
       case L2:
+        // ...
         m_elevatorMotorLeft.getClosedLoopController().setReference(ElevatorConstants.ELEVATOR_L2_POSITION, ControlType.kPosition);
         m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_DOWN_ANGLE, ControlType.kPosition); // Need to test
         System.out.println("ElevatorSubsystem: L2");
         break;
       case L3:
+        // ...
         m_elevatorMotorLeft.getClosedLoopController().setReference(ElevatorConstants.ELEVATOR_L3_POSITION, ControlType.kPosition);
         m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_UP_ANGLE, ControlType.kPosition); // Need to test
         System.out.println("ElevatorSubsystem: L3");
         break;
       case L0:
+        // ...
         m_elevatorMotorLeft.getClosedLoopController().setReference(ElevatorConstants.ELEVATOR_L0_POSITION, ControlType.kPosition);
         m_coralArmMotor.getClosedLoopController().setReference(ElevatorConstants.CORAL_ARM_NEUTRAL_ANGLE, ControlType.kPosition); // Need to test
         System.out.println("ElevatorSubsystem: L0");
@@ -113,10 +120,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
   }
 
+  // Allow us to globally set the state
   public void setState(ElevatorState state) {
     m_state = state;
   }
 
+  // What states our elevator can be in
   public enum ElevatorState {
     SOURCE,
     L1,
