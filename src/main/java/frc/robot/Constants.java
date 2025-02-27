@@ -36,7 +36,7 @@ public class Constants {
 
 
         // values should be in relative encoder rotations
-        public static final double ELEVATOR_L3_POSITION = 1.0; // 121 cm or 3 ft 11 5/8 in above carpet
+        public static final double ELEVATOR_L3_POSITION = 20; // 121 cm or 3 ft 11 5/8 in above carpet
         public static final double ELEVATOR_L2_POSITION = 0.5; // 81 cm or 2 ft 7/8 in above carpet
         public static final double ELEVATOR_L1_POSITION = 0.0; // type shit
         public static final double ELEVATOR_BASE_POSITION = 0.0; // starting position
