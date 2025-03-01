@@ -40,7 +40,7 @@ public class Constants {
         public static final double ELEVATOR_L2_POSITION = 0.5; // 81 cm or 2 ft 7/8 in above carpet
         public static final double ELEVATOR_L1_POSITION = 0.0; // type shit
         public static final double ELEVATOR_BASE_POSITION = 0.0; // starting position
-        public static final double ELEVATOR_SOURCE_POSITION = 0.0; // Check
+        public static final double ELEVATOR_SOURCE_POSITION = -20.75; // Check
         public static final double CORAL_ARM_UP_ANGLE = 55; // Check
         public static final double CORAL_ARM_DOWN_ANGLE = -35; // Check
         public static final double CORAL_ARM_NEUTRAL_ANGLE = 0.0; // Check
@@ -83,7 +83,7 @@ public class Constants {
         public static final float ROT_CORAL_pCONV = 1.0f;
         public static final float ROT_CORAL_vCONV = 1.0f;
 
-        public static final double ELEVATOR_KP = 0.01;
+        public static final double ELEVATOR_KP = 0.125 ;
         public static final double ELEVATOR_KI = 0.0;
         public static final double ELEVATOR_KD = 0.0;
         public static final double ELEVATOR_KFF = 0.0;
