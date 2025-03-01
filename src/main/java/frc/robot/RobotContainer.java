@@ -83,4 +83,9 @@ public class RobotContainer {
       () -> -MathUtil.applyDeadband(m_controller.getLeftX(), DriveConstants.CONTROLLER_DEADBAND, 1), 
       () -> -MathUtil.applyDeadband(m_controller.getRightX(), DriveConstants.CONTROLLER_DEADBAND, 1));
   }
+
+  public Command getTestCommand()
+  {
+    return m_driveSubsystem.sysIdDriveMotorCommand();
+  }
 }
