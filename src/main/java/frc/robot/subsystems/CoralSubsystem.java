@@ -4,97 +4,104 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.ClosedLoopSlot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.CoralConstants;
-import frc.robot.Constants.PID;
 
-// controls the coral manipulator motors
+// This subsystem controls the two rollers on the coral manipulator.
 public class CoralSubsystem extends SubsystemBase {
-  private CoralState m_state = CoralState.OFF; // hasCoral() ? CoralState.FULL : CoralState.EMPTY;
+  private CoralState m_state = CoralState.OFF;
 
-  // Motor Controllers for Coral
-  // private final SparkMax m_topCoralMotor = new SparkMax(CoralConstants.TOP_CORAL_MOTOR_ID, MotorType.kBrushless);
+  private final SparkMax m_topCoralMotor = new SparkMax(CoralConstants.TOP_CORAL_MOTOR_ID, MotorType.kBrushless);
   private final SparkMax m_bottomCoralMotor = new SparkMax(CoralConstants.BOTTOM_CORAL_MOTOR_ID, MotorType.kBrushless);
 
   public CoralSubsystem() {
-    SparkMaxConfig coralMotorConfig = new SparkMaxConfig();
+    SparkMaxConfig topCoralMotorConfig = new SparkMaxConfig();
 
-    coralMotorConfig
-        .inverted(false)
-        .idleMode(IdleMode.kBrake);
-    coralMotorConfig.encoder
-        .positionConversionFactor(PID.CORAL_MOTOR_pCONV)
-        .velocityConversionFactor(PID.CORAL_MOTOR_vCONV);
-    coralMotorConfig.closedLoop
-        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(PID.CORAL_MOTOR_KP, PID.CORAL_MOTOR_KI, PID.CORAL_MOTOR_KD)
-        .velocityFF(PID.CORAL_MOTOR_KFF, ClosedLoopSlot.kSlot1)
-        .outputRange(PID.CORAL_MOTOR_MIN_OUTPUT, PID.CORAL_MOTOR_MAX_OUTPUT);
+    topCoralMotorConfig.inverted(true);
+    topCoralMotorConfig.smartCurrentLimit(20);
+    topCoralMotorConfig.idleMode(IdleMode.kCoast);
 
-    // m_topCoralMotor.configure(coralMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    SparkMaxConfig bottomCoralMotorConfig = new SparkMaxConfig();
 
-    m_bottomCoralMotor.configure(coralMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    bottomCoralMotorConfig.idleMode(IdleMode.kCoast);
+    bottomCoralMotorConfig.smartCurrentLimit(20);
+    bottomCoralMotorConfig.follow(m_topCoralMotor, false);
+
+    m_topCoralMotor.configure(topCoralMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_bottomCoralMotor.configure(bottomCoralMotorConfig, ResetMode.kResetSafeParameters,
+        PersistMode.kPersistParameters);
   }
 
   @Override
   public void periodic() {
-
     SmartDashboard.putString("Coral State", m_state.name());
 
     switch (m_state) {
       case INTAKE:
-        // m_topCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
+        m_topCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
         m_bottomCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
-        //if (hasCoral()) {
-        //  m_state = CoralState.FULL;
-        //}
-        System.out.println("Coral Intake");
         break;
       case SCORE:
-        // m_topCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
+        m_topCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
         m_bottomCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
-        //if (!hasCoral()) {
-        //  m_state = CoralState.EMPTY;
-        //}
-        System.out.println("Coral Score");
         break;
       case OFF:
-        // m_topCoralMotor.set(0.0);
+        m_topCoralMotor.set(0.0);
         m_bottomCoralMotor.set(0.0);
         break;
     }
   }
 
-  public void intake() {
-    //if (!hasCoral()) {
-      m_state = CoralState.INTAKE;
-    //}
+  /**
+   * Command to intake coral.
+   * @return A command that sets the coral state to INTAKE until the coral is no longer detected and then disables. (currently runs for 1 second since our sensor is not attached yet)
+   */
+  public Command coralIntakeCommand() {
+    Command intake = new InstantCommand(() -> m_state = CoralState.INTAKE)
+        .andThen(new WaitCommand(1))
+        .andThen(new InstantCommand(() -> m_state = CoralState.OFF));
+
+    // command for when sensor is attached:
+    // Command intake = new InstantCommand(() -> m_state = CoralState.INTAKE)
+    // .andThen(new WaitUntilCommand(() -> hasCoral()))
+    // .andThen(new InstantCommand(() -> m_state = CoralState.OFF));
+    intake.addRequirements(this);
+    return intake;
   }
 
-  public void outtake() {
-    //if (hasCoral()) {
-      m_state = CoralState.SCORE;
-    //}
+  /**
+   * Command to score coral.
+   * @return A command that sets the coral state to SCORE until the coral is no longer detected and then disables. (currently runs for 1 second since our sensor is not attached yet)
+   */
+  public Command coralScoreCommand() {
+    Command score = new InstantCommand(() -> m_state = CoralState.SCORE)
+        .andThen(new WaitCommand(1))
+        .andThen(new InstantCommand(() -> m_state = CoralState.OFF));
+
+    // command for when sensor is attached:
+    // Command outtake = new InstantCommand(() -> m_state = CoralState.SCORE)
+    // .andThen(new WaitUntilCommand(() -> !hasCoral()))
+    // .andThen(new InstantCommand(() -> m_state = CoralState.OFF));
+    score.addRequirements(this);
+    return score;
   }
 
-  public void stop() {
-    m_state = CoralState.OFF;
-  }
-
-  /*/
-  public boolean hasCoral() {
-    // TODO: use time of flight to determine if coral is present
-    return false;
-  }
-  /*/
+  /**
+   * Method to determine if coral is present with Time of Flight sensor.
+   * @return True if coral is present, false otherwise.
+   */
+  // public boolean hasCoral() {
+  //   // TODO: use time of flight to determine if coral is present
+  //   return false;
+  // }
 
   public enum CoralState {
     INTAKE,

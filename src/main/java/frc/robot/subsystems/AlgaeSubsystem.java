@@ -1,137 +1,98 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot.subsystems;
 
-// Motor Controllers
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.AlgaeConstants;
-import frc.robot.Constants.PID;
 
+// This subsystem controls the roller on the algae manipulator.
 public class AlgaeSubsystem extends SubsystemBase {
-  private AlgaeState m_state = AlgaeState.EMPTY; // hasAlgae() ? AlgaeState.FULL : AlgaeState.EMPTY;
+  private AlgaeState m_state = AlgaeState.OFF;
+  // private SparkMax m_rollerMotor = new SparkMax(AlgaeConstants.ROLLER_MOTOR_ID, MotorType.kBrushless);
 
-  // Motor Controllers for Algae
-  private final SparkMax m_rightArmMotor = new SparkMax(AlgaeConstants.RIGHT_ALGAE_ARM_MOTOR_ID,
-      MotorType.kBrushless);
-  private final SparkMax m_leftArmMotor = new SparkMax(AlgaeConstants.LEFT_ALGAE_ARM_MOTOR_ID,
-      MotorType.kBrushless);
-  private final SparkMax m_leftAlgaeWheel = new SparkMax(AlgaeConstants.LEFT_ALGAE_WHEEL_MOTOR_ID,
-      MotorType.kBrushless);
-  private final SparkMax m_rightAlgaeWheel = new SparkMax(AlgaeConstants.RIGHT_ALGAE_WHEEL_MOTOR_ID,
-      MotorType.kBrushless);
-
+  /** Creates a new AlgaeSubsystem. */
   public AlgaeSubsystem() {
-    SparkMaxConfig algaeWheelConfig = new SparkMaxConfig();
+    // m_rollerMotor.setCANTimeout(250);
 
-    algaeWheelConfig
-        .inverted(true)
-        .idleMode(IdleMode.kBrake);
-    algaeWheelConfig.encoder
-        .positionConversionFactor(PID.ALGAE_pCONV)
-        .velocityConversionFactor(PID.ALGAE_vCONV);
-    algaeWheelConfig.closedLoop
-        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(PID.ALGAE_KP, PID.ALGAE_KI, PID.ALGAE_KD)
-        .velocityFF(PID.ALGAE_KFF, ClosedLoopSlot.kSlot1)
-        .outputRange(PID.ALGAE_KMIN_OUTPUT, PID.ALGAE_KMAX_OUTPUT);
-
-    m_rightAlgaeWheel.configure(algaeWheelConfig, ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
-    m_leftAlgaeWheel.configure(algaeWheelConfig, ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
-
-    SparkMaxConfig armConfig = new SparkMaxConfig();
-
-    armConfig
-        .inverted(false)
-        .idleMode(IdleMode.kBrake);
-    armConfig.encoder
-        .positionConversionFactor(PID.ARM_ALGAE_pCONV)
-        .velocityConversionFactor(PID.ARM_ALGAE_vCONV);
-    armConfig.closedLoop
-        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(PID.ARM_ALGAE_KP, PID.ARM_ALGAE_KI, PID.ARM_ALGAE_KD)
-        .velocityFF(PID.ARM_ALGAE_KFF, ClosedLoopSlot.kSlot1)
-        .outputRange(PID.ARM_ALGAE_KMIN_OUTPUT, PID.ARM_ALGAE_KMAX_OUTPUT);
-
-    m_rightArmMotor.configure(armConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    m_leftArmMotor.configure(armConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
+    SparkMaxConfig rollerMotorConfig = new SparkMaxConfig();
+    rollerMotorConfig.voltageCompensation(10);
+    rollerMotorConfig.smartCurrentLimit(40);
+    rollerMotorConfig.idleMode(IdleMode.kBrake);
+    // m_rollerMotor.configure(rollerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
   public void periodic() {
-
     SmartDashboard.putString("Algae State", m_state.name());
 
-    switch (m_state) {
-      case INTAKE:
-        // TODO: extend arm
-        m_rightAlgaeWheel.set(AlgaeConstants.ALGAE_WHEEL_INTAKE_DUTYCYCLE);
-        m_leftAlgaeWheel.set(AlgaeConstants.ALGAE_WHEEL_INTAKE_DUTYCYCLE);
-        // if (hasAlgae())
-        // m_state = AlgaeState.FULL;
-        // break;
-        System.out.println("AlgaeSubsystem: INTAKE");
-        break;
-      case OUTTAKE:
-        // TODO: extend arm and only activate wheels if arm is extended
-        m_rightAlgaeWheel.set(AlgaeConstants.ALGAE_WHEEL_OUTTAKE_DUTYCYCLE);
-        m_leftAlgaeWheel.set(AlgaeConstants.ALGAE_WHEEL_OUTTAKE_DUTYCYCLE);
-        // if (!hasAlgae()) {
-        // m_state = AlgaeState.EMPTY;
-        // }
-        System.out.println("AlgaeSubsystem: OUTTAKE");
-        break;
-      case EMPTY:
-        // TODO: make sure arm stays in retracted position
-        m_rightAlgaeWheel.set(0.0);
-        m_leftAlgaeWheel.set(0.0);
-        break;
-      case FULL:
-        // TODO: make sure arm stays in extended position
-        m_rightAlgaeWheel.set(0.0);
-        m_leftAlgaeWheel.set(0.0);
-        break;
-    }
-  }
-
-  /* Puts the manipulator in intake mode, if an algae is not present. */
-  public void intake() {
-    // if (!hasAlgae()) {
-    m_state = AlgaeState.INTAKE;
+    // switch (m_state) {
+    //   case INTAKE:
+    //     m_rollerMotor.set(AlgaeConstants.ALGAE_INTAKE_DUTYCYCLE);
+    //     break;
+    //   case SCORE:
+    //     m_rollerMotor.set(AlgaeConstants.ALGAE_SCORE_DUTYCYCLE);
+    //     break;
+    //   case OFF:
+    //     m_rollerMotor.set(0);
     // }
   }
 
-  /* Puts the manipulator in outtake mode. */
-  public void outtake() {
-    // if (hasAlgae()) {
-    m_state = AlgaeState.OUTTAKE;
-    // }
-  }
-
-  /*
-   * /
-   * private boolean hasAlgae() {
-   * // TODO: use time of flight to determine if algae is present
-   * return false;
-   * }
-   * /
+  /**
+   * Command to intake algae.
+   * @return A command that sets the algae state to INTAKE until the algae is no longer detected and then disables. (currently runs for 3 seconds since our sensor is not attached yet)
    */
+  public Command algaeIntakeCommand() {
+    Command algaeIntake = new InstantCommand(() -> m_state = AlgaeState.INTAKE).andThen(new WaitCommand(3))
+        .andThen(new InstantCommand(() -> m_state = AlgaeState.OFF));
+    
+    // command for when sensor is attached:
+    // Command algaeIntake = new InstantCommand(() -> m_state = AlgaeState.INTAKE)
+    //     .andThen(new WaitUntilCommand(() -> hasAlgae())).andThen(new InstantCommand(() -> m_state = AlgaeState.OFF));
+    algaeIntake.addRequirements(this);
+    return algaeIntake;
+  }
+
+  /**
+   * Command to score algae.
+   * @return A command that sets the algae state to SCORE until the algae is no longer detected and then disables. (currently runs for 3 seconds since our sensor is not attached yet)
+   */
+  public Command algaeScoreCommand() {
+    Command algaeScore = new InstantCommand(() -> m_state = AlgaeState.SCORE).andThen(new WaitCommand(3))
+        .andThen(new InstantCommand(() -> m_state = AlgaeState.OFF));
+
+    // command for when sensor is attached:
+    // Command algaeScore = new InstantCommand(() -> m_state = AlgaeState.SCORE)
+    //     .andThen(new WaitUntilCommand(() -> !hasAlgae())).andThen(new InstantCommand(() -> m_state = AlgaeState.OFF));
+    algaeScore.addRequirements(this);
+    return algaeScore;
+  }
+
+  /**
+   * Method to determine if algae is present with Time of Flight sensor.
+   * @return True if algae is present, false otherwise.
+   */
+  // public boolean hasAlgae() {
+  // // TODO: use time of flight to determine if algae is present
+  // return false;
+  // }
 
   public enum AlgaeState {
     INTAKE,
-    OUTTAKE,
-    EMPTY,
-    FULL
+    SCORE,
+    OFF,
   }
 }
