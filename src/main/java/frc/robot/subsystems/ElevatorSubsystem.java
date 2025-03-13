@@ -27,6 +27,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     private SparkMaxConfig elevatorMotorR_Config = new SparkMaxConfig();
     private SparkMaxConfig elevatorMotorL_Config = new SparkMaxConfig();
+
     public ElevatorSubsystem() {
         m_elevatorPID.setTolerance(0.05);
   

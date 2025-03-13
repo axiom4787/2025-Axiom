@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.ClosedLoopSlot;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -21,27 +22,33 @@ public class CoralSubsystem extends SubsystemBase {
   private CoralState m_state = CoralState.OFF; // hasCoral() ? CoralState.FULL : CoralState.EMPTY;
 
   // Motor Controllers for Coral
-  // private final SparkMax m_topCoralMotor = new SparkMax(CoralConstants.TOP_CORAL_MOTOR_ID, MotorType.kBrushless);
+  private final SparkMax m_topCoralMotor = new SparkMax(CoralConstants.TOP_CORAL_MOTOR_ID, MotorType.kBrushless);
   private final SparkMax m_bottomCoralMotor = new SparkMax(CoralConstants.BOTTOM_CORAL_MOTOR_ID, MotorType.kBrushless);
+  private final SparkMax m_pivotMotor = new SparkMax(CoralConstants.CORAL_ARM_MOTOR_ID, MotorType.kBrushless);
+
+  private final PIDController m_PivotPID = new PIDController(PID.PIVOT_CORAL_KP, PID.PIVOT_CORAL_KI, PID.PIVOT_CORAL_KD);
+
+  private SparkMaxConfig coralMotorConfig = new SparkMaxConfig();
+  private SparkMaxConfig pivotMotorConfig = new SparkMaxConfig();
 
   public CoralSubsystem() {
-    SparkMaxConfig coralMotorConfig = new SparkMaxConfig();
 
     coralMotorConfig
         .inverted(false)
-        .idleMode(IdleMode.kBrake);
-    coralMotorConfig.encoder
-        .positionConversionFactor(PID.CORAL_MOTOR_pCONV)
-        .velocityConversionFactor(PID.CORAL_MOTOR_vCONV);
-    coralMotorConfig.closedLoop
-        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(PID.CORAL_MOTOR_KP, PID.CORAL_MOTOR_KI, PID.CORAL_MOTOR_KD)
-        .velocityFF(PID.CORAL_MOTOR_KFF, ClosedLoopSlot.kSlot1)
-        .outputRange(PID.CORAL_MOTOR_MIN_OUTPUT, PID.CORAL_MOTOR_MAX_OUTPUT);
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(40);
 
-    // m_topCoralMotor.configure(coralMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
+    m_topCoralMotor.configure(coralMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     m_bottomCoralMotor.configure(coralMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    pivotMotorConfig
+        .inverted(false)
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(40);
+    
+    m_pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    m_pivotMotor.getEncoder().setPosition(0);
   }
 
   @Override
@@ -53,6 +60,7 @@ public class CoralSubsystem extends SubsystemBase {
       case INTAKE:
         // m_topCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
         m_bottomCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
+        m_PivotPID.calculate(m_pivotMotor.getEncoder().getPosition(), CoralConstants.CORAL_ARM_UP_ANGLE);
         //if (hasCoral()) {
         //  m_state = CoralState.FULL;
         //}
@@ -61,6 +69,7 @@ public class CoralSubsystem extends SubsystemBase {
       case SCORE:
         // m_topCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
         m_bottomCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
+        m_PivotPID.calculate(m_pivotMotor.getEncoder().getPosition(), CoralConstants.CORAL_ARM_DOWN_ANGLE);
         //if (!hasCoral()) {
         //  m_state = CoralState.EMPTY;
         //}
@@ -69,8 +78,10 @@ public class CoralSubsystem extends SubsystemBase {
       case OFF:
         // m_topCoralMotor.set(0.0);
         m_bottomCoralMotor.set(0.0);
+        m_PivotPID.calculate(m_pivotMotor.getEncoder().getPosition(), CoralConstants.CORAL_ARM_NEUTRAL_ANGLE);
         break;
     }
+    m_pivotMotor.set(m_PivotPID.calculate(m_pivotMotor.getEncoder().getPosition()));
   }
 
   public void intake() {
@@ -85,7 +96,7 @@ public class CoralSubsystem extends SubsystemBase {
     //}
   }
 
-  public void stop() {
+  public void neutral() {
     m_state = CoralState.OFF;
   }
 
