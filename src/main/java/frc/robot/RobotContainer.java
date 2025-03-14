@@ -50,8 +50,9 @@ public class RobotContainer {
     // Makes the robot ready to score a coral in L1/L2/L3 or intake from source
     // Pivots the pivot to neutral first, to make sure the coral manipulator doesn't get caught on the elevator carriage
     // Then brings the elevator to the correct setpoint
-    Trigger gotoL1 = m_controller.povDown().onTrue(m_pivotSubsystem.pivotNeutralCommand()
-        .andThen(m_elevatorSubsystem.elevatorL1Command()));
+    Trigger gotoL1 = m_controller.povDown()
+        .onTrue(m_pivotSubsystem.pivotNeutralCommand()
+            .andThen(m_elevatorSubsystem.elevatorL1Command()));
     // For L2 and L3, the pivot pivots down at the end to face the manipulator toward the reef branch
     Trigger gotoL2 = m_controller.povLeft()
         .onTrue(m_pivotSubsystem.pivotNeutralCommand()
