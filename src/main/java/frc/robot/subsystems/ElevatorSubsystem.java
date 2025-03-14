@@ -23,20 +23,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final SparkMax m_elevatorMotorR = new SparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_R, MotorType.kBrushless);
   private final SparkMax m_elevatorMotorL = new SparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_L, MotorType.kBrushless);
 
-<<<<<<< HEAD
   private final PIDController m_elevatorPID = new PIDController(ElevatorConstants.ELEVATOR_KP,
       ElevatorConstants.ELEVATOR_KI, ElevatorConstants.ELEVATOR_KD);
-=======
-    private SparkMaxConfig elevatorMotorR_Config = new SparkMaxConfig();
-    private SparkMaxConfig elevatorMotorL_Config = new SparkMaxConfig();
-
-    public ElevatorSubsystem() {
-        m_elevatorPID.setTolerance(0.05);
-  
-        elevatorMotorL_Config.inverted(true);
-        elevatorMotorL_Config.idleMode(IdleMode.kCoast);
-        elevatorMotorL_Config.smartCurrentLimit(40);
->>>>>>> 19ee2b9966ca790c18f9a87a50e58bccb131405c
 
   public ElevatorSubsystem() {
     m_elevatorPID.setTolerance(0.05);
