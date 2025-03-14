@@ -23,6 +23,7 @@ import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.AlgaeSubsystem.AlgaeState;
+import frc.robot.subsystems.CoralSubsystem.CoralState;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import swervelib.parser.json.modules.DriveConversionFactorsJson;
 
@@ -40,15 +41,15 @@ public class RobotContainer {
 
   private void configureBindings() {
     Trigger algaeIntake = m_controller.a().onTrue(new InstantCommand(() -> {
-      m_algaeSubsystem.intake();
+      m_algaeSubsystem.setAlgaeState(AlgaeState.INTAKE);
     }));
 
     Trigger algaeUp = m_controller.b().onTrue(new InstantCommand(() -> {
-      m_algaeSubsystem.armUp();
+      m_algaeSubsystem.setAlgaeState(AlgaeState.UP);
     }));
 
     Trigger algaeOuttake = m_controller.x().onTrue(new InstantCommand(() -> {
-      m_algaeSubsystem.outtake();
+      m_algaeSubsystem.setAlgaeState(AlgaeState.OUTTAKE);
     }));
 
 
@@ -56,36 +57,35 @@ public class RobotContainer {
       new InstantCommand(() -> {
         m_elevatorSubsystem.setElevatorState(ElevatorState.L1);
       }), new InstantCommand(() -> {
-        m_coralSubsystem.neutral();
+        m_coralSubsystem.setCoralState(CoralState.OFF);
       })));
     Trigger armToL2 = m_controller.povLeft().onTrue(new SequentialCommandGroup(
       new InstantCommand(() -> {
         m_elevatorSubsystem.setElevatorState(ElevatorState.L2);
       }), new InstantCommand(() -> {
-        m_coralSubsystem.neutral();
+        m_coralSubsystem.setCoralState(CoralState.OFF);
       })));
     Trigger armToL3 = m_controller.povUp().onTrue(new SequentialCommandGroup(
       new InstantCommand(() -> {
         m_elevatorSubsystem.setElevatorState(ElevatorState.L3);
       }), new InstantCommand(() -> {
-        m_coralSubsystem.neutral();
+        m_coralSubsystem.setCoralState(CoralState.OFF);
       })));
     Trigger armToSource = m_controller.povRight().onTrue(new SequentialCommandGroup(
       new InstantCommand(() -> {
         m_elevatorSubsystem.setElevatorState(ElevatorState.SOURCE);
       }), new InstantCommand(() -> {
-        m_coralSubsystem.neutral();
+        m_coralSubsystem.setCoralState(CoralState.OFF);
       })));
 
     Trigger coralIntake = m_controller.y().onTrue(new InstantCommand(() -> {
-      m_coralSubsystem.outtake();
+      m_coralSubsystem.setCoralState(CoralState.SCORE);
     }));
     Trigger coralOuttake = m_controller.povRight().onTrue(new InstantCommand(() -> {
-      m_coralSubsystem.intake();
+      m_coralSubsystem.setCoralState(CoralState.INTAKE);
     }));
 
-    Trigger gyroReset = m_controller.a();
-    gyroReset.onTrue(new InstantCommand(m_driveSubsystem::zeroGyro));
+    Trigger gyroReset = m_controller.a().onTrue(new InstantCommand(m_driveSubsystem::zeroGyro));
   }
 
   public Command getTeleopCommand() {

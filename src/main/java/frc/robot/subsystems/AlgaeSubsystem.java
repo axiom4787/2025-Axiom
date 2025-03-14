@@ -93,23 +93,27 @@ public class AlgaeSubsystem extends SubsystemBase {
     m_ArmMotor.set(m_AlgaePID.calculate(m_ArmMotor.getEncoder().getPosition()));
   }
 
-  /* Puts the manipulator in intake mode, if an algae is not present. */
-  public void intake() {
-    // if (!hasAlgae()) {
-    m_state = AlgaeState.INTAKE;
-    // }
+  public void setAlgaeState(AlgaeState state) {
+    m_state = state;
   }
 
-  public void armUp() {
-    m_state = AlgaeState.UP;
-  }
+  // /* Puts the manipulator in intake mode, if an algae is not present. */
+  // public void intake() {
+  //   // if (!hasAlgae()) {
+  //   m_state = AlgaeState.INTAKE;
+  //   // }
+  // }
 
-  /* Puts the manipulator in outtake mode. */
-  public void outtake() {
-    // if (hasAlgae()) {
-    m_state = AlgaeState.OUTTAKE;
-    // }
-  }
+  // public void armUp() {
+  //   m_state = AlgaeState.UP;
+  // }
+
+  // /* Puts the manipulator in outtake mode. */
+  // public void outtake() {
+  //   // if (hasAlgae()) {
+  //   m_state = AlgaeState.OUTTAKE;
+  //   // }
+  // }
 
   /*
    * /

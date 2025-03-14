@@ -84,21 +84,25 @@ public class CoralSubsystem extends SubsystemBase {
     m_pivotMotor.set(m_PivotPID.calculate(m_pivotMotor.getEncoder().getPosition()));
   }
 
-  public void intake() {
-    //if (!hasCoral()) {
-      m_state = CoralState.INTAKE;
-    //}
+  public void setCoralState(CoralState state) {
+    m_state = state;
   }
 
-  public void outtake() {
-    //if (hasCoral()) {
-      m_state = CoralState.SCORE;
-    //}
-  }
+  // public void intake() {
+  //   //if (!hasCoral()) {
+  //     m_state = CoralState.INTAKE;
+  //   //}
+  // }
 
-  public void neutral() {
-    m_state = CoralState.OFF;
-  }
+  // public void outtake() {
+  //   //if (hasCoral()) {
+  //     m_state = CoralState.SCORE;
+  //   //}
+  // }
+
+  // public void neutral() {
+  //   m_state = CoralState.OFF;
+  // }
 
   /*/
   public boolean hasCoral() {
