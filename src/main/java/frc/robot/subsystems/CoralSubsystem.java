@@ -50,22 +50,20 @@ public class CoralSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putString("Coral State", m_state.name());
-
-    // switch (m_state) {
-    //   case INTAKE:
-    //     m_topCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
-    //     m_bottomCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
-    //     break;
-    //   case SCORE:
-    //     m_topCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
-    //     m_bottomCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
-    //     break;
-    //   case OFF:
-    //     m_topCoralMotor.set(0.0);
-    //     m_bottomCoralMotor.set(0.0);
-    //     m_PivotPID.calculate(m_pivotMotor.getEncoder().getPosition(), CoralConstants.CORAL_ARM_NEUTRAL_ANGLE);
-    //     break;
-    // }
+    switch (m_state) {
+      case INTAKE:
+        m_topCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
+        m_bottomCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
+        break;
+      case SCORE:
+        m_topCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
+        m_bottomCoralMotor.set(CoralConstants.CORAL_SCORE_DUTYCYCLE);
+        break;
+      case OFF:
+        m_topCoralMotor.set(0.0);
+        m_bottomCoralMotor.set(0.0);
+        break;
+    }
     // m_pivotMotor.set(m_PivotPID.calculate(m_pivotMotor.getEncoder().getPosition()));
   }
 
