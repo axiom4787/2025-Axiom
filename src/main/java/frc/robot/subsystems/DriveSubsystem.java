@@ -318,12 +318,12 @@ public class DriveSubsystem extends SubsystemBase {
       DoubleSupplier angularRotationX) {
     return run(() -> {
       // Make the robot move
-      swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d(
-          translationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(),
-          translationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()), 0.8),
-          Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumChassisAngularVelocity(),
-          false,
-          false);
+      ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(
+          new ChassisSpeeds(translationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(),
+              translationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity(),
+              Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumChassisAngularVelocity()),
+          swerveDrive.getYaw());
+      swerveDrive.drive(chassisSpeeds);
     });
   }
 

@@ -8,6 +8,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.CommandStadiaController;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -32,8 +33,9 @@ public class RobotContainer {
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
   private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
-  private CommandXboxController m_controller = new CommandXboxController(0);
+  // private CommandXboxController m_controller = new CommandXboxController(0);
   // private CommandJoystick m_controller = new CommandJoystick(0);
+  private CommandStadiaController m_controller = new CommandStadiaController(0);
 
   public RobotContainer() {
     // Configure the button bindings
@@ -100,7 +102,7 @@ public class RobotContainer {
     // TODO: Add field/robot relative toggle.
 
     // Zeroes the gyro (sets the new "forward" direction to wherever the robot is facing) in field relative mode.
-    Trigger gyroReset = m_controller.start().onTrue(new InstantCommand(m_driveSubsystem::zeroGyro));
+    Trigger gyroReset = m_controller.frame().onTrue(new InstantCommand(m_driveSubsystem::zeroGyro));
   }
 
   private void registerNamedCommands() {
@@ -125,9 +127,9 @@ public class RobotContainer {
 
   public Command getTeleopCommand() {
     return m_driveSubsystem.driveCommand(
-        () -> -MathUtil.applyDeadband(-m_controller.getLeftY(), DriveConstants.CONTROLLER_DEADBAND, 1),
-        () -> -MathUtil.applyDeadband(m_controller.getLeftX(), DriveConstants.CONTROLLER_DEADBAND, 1),
-        () -> -MathUtil.applyDeadband(-m_controller.getRightX(), DriveConstants.CONTROLLER_DEADBAND, 1));
+        () -> MathUtil.applyDeadband(-m_controller.getLeftY(), DriveConstants.CONTROLLER_DEADBAND, 1),
+        () -> MathUtil.applyDeadband(-m_controller.getLeftX(), DriveConstants.CONTROLLER_DEADBAND, 1),
+        () -> MathUtil.applyDeadband(-m_controller.getRightX(), DriveConstants.CONTROLLER_DEADBAND, 1));
   }
 
   public Command getTestCommand() {

@@ -23,7 +23,7 @@ import frc.robot.Constants.PivotConstants;
 public class PivotSubsystem extends SubsystemBase {
   private PivotState m_state = PivotState.NEUTRAL;
 
-  // private SparkMax m_pivotMotor = new SparkMax(PivotConstants.PIVOT_MOTOR_ID, MotorType.kBrushless);
+  private SparkMax m_pivotMotor = new SparkMax(PivotConstants.PIVOT_MOTOR_ID, MotorType.kBrushless);
   private PIDController m_pivotPID = new PIDController(PivotConstants.PIVOT_KP, PivotConstants.PIVOT_KI, PivotConstants.PIVOT_KD);
 
   /** Creates a new PivotSubsystem. */
@@ -33,9 +33,9 @@ public class PivotSubsystem extends SubsystemBase {
     pivotMotorConfig.inverted(false);
     pivotMotorConfig.smartCurrentLimit(20);
     pivotMotorConfig.idleMode(IdleMode.kBrake);
-    pivotMotorConfig.absoluteEncoder.positionConversionFactor(360);
+    pivotMotorConfig.encoder.positionConversionFactor(360);
 
-    // m_pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     m_pivotPID.setTolerance(1);
   }
@@ -44,22 +44,22 @@ public class PivotSubsystem extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putString("Pivot State", m_state.name());
 
-    // switch (m_state) {
-    //   case UP:
-    //     m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition(), PivotConstants.PIVOT_UP_ANGLE);
-    //     break;
-    //   case DOWN:
-    //     m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition(), PivotConstants.PIVOT_DOWN_ANGLE);
-    //     break;
-    //   case NEUTRAL:
-    //     m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition(), PivotConstants.PIVOT_NEUTRAL_ANGLE);
-    //     break;
-    //   default:
-    //     m_pivotMotor.set(0);
-    //     break;
-    // }
+    switch (m_state) {
+      case UP:
+        m_pivotPID.calculate(m_pivotMotor.getEncoder().getPosition(), PivotConstants.PIVOT_UP_ANGLE);
+        break;
+      case DOWN:
+        m_pivotPID.calculate(m_pivotMotor.getEncoder().getPosition(), PivotConstants.PIVOT_DOWN_ANGLE);
+        break;
+      case NEUTRAL:
+        m_pivotPID.calculate(m_pivotMotor.getEncoder().getPosition(), PivotConstants.PIVOT_NEUTRAL_ANGLE);
+        break;
+      default:
+        m_pivotMotor.set(0);
+        break;
+    }
 
-    // m_pivotMotor.set(m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition()));
+    m_pivotMotor.set(m_pivotPID.calculate(m_pivotMotor.getEncoder().getPosition()));
   }
 
   /**

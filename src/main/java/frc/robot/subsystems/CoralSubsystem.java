@@ -22,12 +22,6 @@ public class CoralSubsystem extends SubsystemBase {
 
   private final SparkMax m_topCoralMotor = new SparkMax(CoralConstants.TOP_CORAL_MOTOR_ID, MotorType.kBrushless);
   private final SparkMax m_bottomCoralMotor = new SparkMax(CoralConstants.BOTTOM_CORAL_MOTOR_ID, MotorType.kBrushless);
-  // private final SparkMax m_pivotMotor = new SparkMax(CoralConstants.CORAL_ARM_MOTOR_ID, MotorType.kBrushless);
-
-  // private final PIDController m_PivotPID = new PIDController(PID.PIVOT_CORAL_KP, PID.PIVOT_CORAL_KI, PID.PIVOT_CORAL_KD);
-
-  private SparkMaxConfig coralMotorConfig = new SparkMaxConfig();
-  private SparkMaxConfig pivotMotorConfig = new SparkMaxConfig();
 
   public CoralSubsystem() {
     SparkMaxConfig topCoralMotorConfig = new SparkMaxConfig();
@@ -50,6 +44,7 @@ public class CoralSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putString("Coral State", m_state.name());
+
     switch (m_state) {
       case INTAKE:
         m_topCoralMotor.set(CoralConstants.CORAL_INTAKE_DUTYCYCLE);
@@ -64,7 +59,7 @@ public class CoralSubsystem extends SubsystemBase {
         m_bottomCoralMotor.set(0.0);
         break;
     }
-    // m_pivotMotor.set(m_PivotPID.calculate(m_pivotMotor.getEncoder().getPosition()));
+
   }
 
   /**
