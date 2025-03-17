@@ -311,6 +311,9 @@ public class DriveSubsystem extends SubsystemBase {
 				System.out.println("[DriveSubsystem] Path command was interrupted.");
 				currentPathCommand = null; // Clear the reference upon interruption
 			}));
+		} else {
+			System.out.println("[DriveSubsystem] Warning: Path command creation failed.");
+        	return new InstantCommand(); // Return a no-op command instead of crashing
 		}
 
 		return pathCommand;
