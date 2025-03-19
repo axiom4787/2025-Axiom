@@ -12,6 +12,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ElevatorConstants;
@@ -84,7 +85,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public Command elevatorL1Command() {
     Command elevatorL1 = new InstantCommand(() -> m_state = ElevatorState.L1)
-        .andThen(new WaitUntilCommand(() -> m_elevatorPID.atSetpoint()));
+        .andThen(new WaitUntilCommand(() -> m_elevatorPID.atSetpoint())).andThen(new PrintCommand("L1 Finished"));
     elevatorL1.addRequirements(this);
     return elevatorL1;
   }
@@ -95,7 +96,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public Command elevatorL2Command() {
     Command elevatorL2 = new InstantCommand(() -> m_state = ElevatorState.L2)
-        .andThen(new WaitUntilCommand(() -> m_elevatorPID.atSetpoint()));
+        .andThen(new WaitUntilCommand(() -> m_elevatorPID.atSetpoint())).andThen(new PrintCommand("L2 Finished"));
     elevatorL2.addRequirements(this);
     return elevatorL2;
   }
@@ -106,7 +107,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public Command elevatorL3Command() {
     Command elevatorL3 = new InstantCommand(() -> m_state = ElevatorState.L3)
-        .andThen(new WaitUntilCommand(() -> m_elevatorPID.atSetpoint()));
+        .andThen(new WaitUntilCommand(() -> m_elevatorPID.atSetpoint())).andThen(new PrintCommand("L3 Finished"));
     elevatorL3.addRequirements(this);
     return elevatorL3;
   }
@@ -117,7 +118,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public Command elevatorSourceCommand() {
     Command elevatorSource = new InstantCommand(() -> m_state = ElevatorState.SOURCE)
-        .andThen(new WaitUntilCommand(() -> m_elevatorPID.atSetpoint()));
+        .andThen(new WaitUntilCommand(() -> m_elevatorPID.atSetpoint())).andThen(new PrintCommand("Source Finished"));
     elevatorSource.addRequirements(this);
     return elevatorSource;
   }

@@ -11,10 +11,12 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.PivotConstants;
@@ -33,33 +35,36 @@ public class PivotSubsystem extends SubsystemBase {
     pivotMotorConfig.inverted(false);
     pivotMotorConfig.smartCurrentLimit(20);
     pivotMotorConfig.idleMode(IdleMode.kBrake);
-    pivotMotorConfig.encoder.positionConversionFactor(360);
+    pivotMotorConfig.absoluteEncoder.positionConversionFactor(360);
 
     m_pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     m_pivotPID.setTolerance(1);
+    m_pivotPID.enableContinuousInput(0, 360);
   }
 
   @Override
   public void periodic() {
     SmartDashboard.putString("Pivot State", m_state.name());
+    SmartDashboard.putNumber("Pivot Encoder", m_pivotMotor.getAbsoluteEncoder().getPosition());
+    SmartDashboard.putNumber("PID Error", m_pivotPID.getError());
 
     switch (m_state) {
       case UP:
-        m_pivotPID.calculate(m_pivotMotor.getEncoder().getPosition(), PivotConstants.PIVOT_UP_ANGLE);
+        m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition(), PivotConstants.PIVOT_UP_ANGLE);
         break;
       case DOWN:
-        m_pivotPID.calculate(m_pivotMotor.getEncoder().getPosition(), PivotConstants.PIVOT_DOWN_ANGLE);
+        m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition(), PivotConstants.PIVOT_DOWN_ANGLE);
         break;
       case NEUTRAL:
-        m_pivotPID.calculate(m_pivotMotor.getEncoder().getPosition(), PivotConstants.PIVOT_NEUTRAL_ANGLE);
+        m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition(), PivotConstants.PIVOT_NEUTRAL_ANGLE);
         break;
       default:
         m_pivotMotor.set(0);
         break;
     }
 
-    m_pivotMotor.set(m_pivotPID.calculate(m_pivotMotor.getEncoder().getPosition()));
+    m_pivotMotor.set(MathUtil.clamp(m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition()), -0.1, 0.1));
   }
 
   /**
@@ -68,7 +73,7 @@ public class PivotSubsystem extends SubsystemBase {
    */
   public Command pivotUpCommand() {
     Command pivotUp = new InstantCommand(() -> m_state = PivotState.UP)
-        .andThen(new WaitUntilCommand(() -> m_pivotPID.atSetpoint()));
+        .andThen(new WaitUntilCommand(() -> m_pivotPID.atSetpoint())).andThen(new PrintCommand("Pivot Up Finished"));
     pivotUp.addRequirements(this);
     return pivotUp;
   }
@@ -79,7 +84,7 @@ public class PivotSubsystem extends SubsystemBase {
    */
   public Command pivotDownCommand() {
     Command pivotDown = new InstantCommand(() -> m_state = PivotState.DOWN)
-        .andThen(new WaitUntilCommand(() -> m_pivotPID.atSetpoint()));
+        .andThen(new WaitUntilCommand(() -> m_pivotPID.atSetpoint())).andThen(new PrintCommand("Pivot Down Finished"));
     pivotDown.addRequirements(this);
     return pivotDown;
   }
@@ -90,7 +95,7 @@ public class PivotSubsystem extends SubsystemBase {
    */
   public Command pivotNeutralCommand() {
     Command pivotNeutral = new InstantCommand(() -> m_state = PivotState.NEUTRAL)
-        .andThen(new WaitUntilCommand(() -> m_pivotPID.atSetpoint()));
+        .andThen(new WaitUntilCommand(() -> m_pivotPID.atSetpoint())).andThen(new PrintCommand("Pivot Neutral Finished"));
     pivotNeutral.addRequirements(this);
     return pivotNeutral;
   }

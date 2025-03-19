@@ -34,9 +34,10 @@ public class ArmSubsystem extends SubsystemBase {
     armMotorConfig.voltageCompensation(10);
     armMotorConfig.smartCurrentLimit(40);
     armMotorConfig.idleMode(IdleMode.kBrake);
-    armMotorConfig.encoder.positionConversionFactor(360);
+    armMotorConfig.encoder.positionConversionFactor(1);
     
     m_armMotor.configure(armMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_armMotor.getEncoder().setPosition(0);
 
     m_armPID.setTolerance(1);
   }
@@ -44,6 +45,7 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putString("Arm State", m_state.name());
+    SmartDashboard.putNumber("Arm Encoder", m_armMotor.getEncoder().getPosition());
 
     switch (m_state) {
       case UP:
@@ -54,7 +56,7 @@ public class ArmSubsystem extends SubsystemBase {
         break;
     }
 
-//    m_armMotor.set(m_armPID.calculate(m_armMotor.getEncoder().getPosition()));
+//32    m_armMotor.set(m_armPID.calculate(m_armMotor.getEncoder().getPosition()));
   }
 
   /**
