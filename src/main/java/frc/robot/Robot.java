@@ -13,7 +13,7 @@ import frc.robot.subsystems.NetworkTablesADStar;
 import frc.robot.utils.CommandLogger;
 
 public class Robot extends TimedRobot {
-	private Command m_autonomousCommand, m_teleopCommand;
+  private Command m_autonomousCommand, m_teleopCommand, m_testCommand;
 
 	private final RobotContainer m_robotContainer;
 
@@ -50,9 +50,8 @@ public class Robot extends TimedRobot {
 		}
 	}
 
-	@Override
-	public void autonomousPeriodic() {
-	}
+  @Override
+  public void autonomousPeriodic() {}
 
 	@Override
 	public void autonomousExit() {
@@ -84,36 +83,28 @@ public class Robot extends TimedRobot {
 	public void teleopExit() {
 	}
 
-	@Override
-	public void testInit() {
-		CommandScheduler.getInstance().cancelAll();
-	}
+  @Override
+  public void testInit() {
+    m_testCommand = m_robotContainer.getTestCommand();
+    if (m_testCommand != null)
+    {
+      m_testCommand.schedule();
+    }
+  }
+
 
 	@Override
 	public void testPeriodic() {
 	}
 
-	@Override
-	public void testExit() {
-	}
+  @Override
+  public void testExit() {}
 
-	/** This function is called once when the robot is first started up. */
-	@Override
-	public void simulationInit() {
-		// m_teleopCommand = m_robotContainer.getTeleopCommand();
+  @Override
+  public void simulationInit() {}
 
-		// m_robotContainer.findStartingVisionPose();
-		// m_robotContainer.getNetworkTablesReceiver().runMain();
-		// m_robotContainer.startAutoPathThread();
-		// System.out.println("Teleop init");
-
-		// if (m_teleopCommand != null) {
-		// m_teleopCommand.schedule();
-		// }
-	}
-
-	/** This function is called periodically whilst in simulation. */
-	@Override
-	public void simulationPeriodic() {
-	}
+  @Override
+  public void simulationPeriodic() {
+    CommandScheduler.getInstance().run();
+  }
 }
