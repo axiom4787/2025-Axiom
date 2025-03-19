@@ -65,20 +65,20 @@ public class Constants {
 
         public static final double ELEVATOR_KP = 0.15;
         public static final double ELEVATOR_KI = 0.0;
-        public static final double ELEVATOR_KD = 0.0;
+        public static final double ELEVATOR_KD = 0.0015;
     }
 
     public static class PivotConstants {
         public static final int PIVOT_MOTOR_ID = 11;
 
         // in degrees
-        public static final double PIVOT_UP_ANGLE = 55;
-        public static final double PIVOT_DOWN_ANGLE = -35;
+        public static final double PIVOT_UP_ANGLE = 315;
+        public static final double PIVOT_DOWN_ANGLE = 35;
         public static final double PIVOT_NEUTRAL_ANGLE = 0;
 
-        public static final double PIVOT_KP = 0.1;
+        public static final double PIVOT_KP = 0.025;
         public static final double PIVOT_KI = 0.0;
-        public static final double PIVOT_KD = 0.0;
+        public static final double PIVOT_KD = 0.0025;
     }
 
     
