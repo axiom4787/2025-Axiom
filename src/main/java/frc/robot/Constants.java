@@ -22,12 +22,18 @@ public class Constants {
     public static final class ArmConstants {
         public static final int ARM_MOTOR_ID = 13;
 
-        public static final double ARM_UP_ANGLE = 90;
-        public static final double ARM_DOWN_ANGLE = 45;
+        public static final double ARM_DOWN_DUTYCYCLE = 0.4;
+        public static final double ARM_UP_DUTYCYCLE = -0.4;
 
-        public static final double ARM_KP = 0.1;
-        public static final double ARM_KI = 0.0;
-        public static final double ARM_KD = 0.0;
+        public static final double ARM_HOLD_DOWN_DUTYCYCLE = 0.1;
+        public static final double ARM_HOLD_UP_DUTYCYCLE = -0.15;
+
+        // public static final double ARM_UP_ANGLE = 90;
+        // public static final double ARM_DOWN_ANGLE = 45;
+
+        // public static final double ARM_KP = 0.1;
+        // public static final double ARM_KI = 0.0;
+        // public static final double ARM_KD = 0.0;
     }
 
     public static class ClimberConstants {

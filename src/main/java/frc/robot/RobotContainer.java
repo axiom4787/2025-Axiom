@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.PivotSubsystem;
+import frc.robot.subsystems.AlgaeSubsystem.AlgaeState;
 import frc.robot.subsystems.ClimberSubsystem.ClimberState;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
@@ -76,25 +77,29 @@ public class RobotContainer {
     // --- Coral Button Binds ---
 
     // Runs the coral manipulator to intake or score a coral.
-    Trigger intakeCoral = m_controller.x().onTrue(m_coralSubsystem.coralIntakeCommand()); // Command ends when Time of Flight detects a coral
+    Trigger intakeCoral = m_controller.b().onTrue(m_coralSubsystem.coralIntakeCommand()); // Command ends when Time of Flight detects a coral
     Trigger scoreCoral = m_controller.y().onTrue(m_coralSubsystem.coralScoreCommand()); // Command ends when Time of Flight no longer detects a coral
 
     // --- Algae/Arm Button Binds ---
 
-    // When the A button is pressed, the arm will extend, and the algae manipulator will intake until it detects an algae.
-    // Retracts the arm at the end to pull the algae into the robot.
-    // Trigger intakeAlgae = m_controller.a().onTrue(m_armSubsystem.armDownCommand()
-    //     .andThen(m_algaeSubsystem.algaeIntakeCommand()).andThen(m_armSubsystem.armUpCommand()));
-    // When the X button is pressed, the arm will retract (just in case, though it should already be retracted) and then outtake the algae to score.
-    // Trigger scoreAlgae = m_controller.x()
-    //     .onTrue(m_armSubsystem.armUpCommand().andThen(m_algaeSubsystem.algaeScoreCommand()));
+    // Runs the algae rollers on intake/score when the a or x buttons are pressed, respectively.
+    Trigger intakeAlgae = m_controller.a().onTrue(m_algaeSubsystem.algaeIntakeCommand());
+    Trigger scoreAlgae = m_controller.x().onTrue(m_algaeSubsystem.algaeScoreCommand());
+    // If neither button is being pressed, disable the algae roller.
+    intakeAlgae.or(scoreAlgae).onFalse(m_algaeSubsystem.algaeOffCommand());
+
+    // Runs the arm up or down when the right or left triggers are pressed, respectively.
+    Trigger armUp = m_controller.rightTrigger().onTrue(m_armSubsystem.armUpCommand());
+    Trigger armDown = m_controller.leftTrigger().onTrue(m_armSubsystem.armDownCommand());
+    // If neither the right or the left trigger is being pressed, set the arm to idle.
+    armUp.or(armDown).onFalse(m_armSubsystem.armHoldCommand());
 
     // --- Climber Button Binds ---
 
-    // Runs the climber up or down when the right or left triggers are pressed, respectively.
-    Trigger climberUp = m_controller.rightTrigger().onTrue(new InstantCommand(() -> m_climberSubsystem.setState(ClimberState.UP)));
-    Trigger climberDown = m_controller.leftTrigger().onTrue(new InstantCommand(() -> m_climberSubsystem.setState(ClimberState.DOWN)));
-    // If neither the right or the left trigger is being pressed, disable the climber.
+    // Runs the climber up or down when the right or left bumpers are pressed, respectively.
+    Trigger climberUp = m_controller.rightBumper().onTrue(new InstantCommand(() -> m_climberSubsystem.setState(ClimberState.UP)));
+    Trigger climberDown = m_controller.leftBumper().onTrue(new InstantCommand(() -> m_climberSubsystem.setState(ClimberState.DOWN)));
+    // If neither the right or the left bumper is being pressed, disable the climber.
     climberUp.or(climberDown).onFalse(new InstantCommand(() -> m_climberSubsystem.setState(ClimberState.OFF)));
 
     // --- Drive Button Binds ---
@@ -119,10 +124,6 @@ public class RobotContainer {
             .andThen(m_pivotSubsystem.pivotUpCommand()));
     NamedCommands.registerCommand("Intake Coral", m_coralSubsystem.coralIntakeCommand());
     NamedCommands.registerCommand("Score Coral", m_coralSubsystem.coralScoreCommand());
-    NamedCommands.registerCommand("Intake Algae", m_armSubsystem.armDownCommand()
-        .andThen(m_algaeSubsystem.algaeIntakeCommand()).andThen(m_armSubsystem.armUpCommand()));
-    NamedCommands.registerCommand("Score Algae",
-        m_armSubsystem.armUpCommand().andThen(m_algaeSubsystem.algaeScoreCommand()));
   }
 
   public Command getTeleopCommand() {

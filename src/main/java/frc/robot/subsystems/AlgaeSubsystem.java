@@ -53,11 +53,10 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   /**
    * Command to intake algae.
-   * @return A command that sets the algae state to INTAKE until the algae is no longer detected and then disables. (currently runs for 3 seconds since our sensor is not attached yet)
+   * @return A command that sets the algae state to INTAKE until the algae is no longer detected and then disables. (currently uses algaeOffCommand to disable since there is no Time of Flight)
    */
   public Command algaeIntakeCommand() {
-    Command algaeIntake = new InstantCommand(() -> m_state = AlgaeState.INTAKE).andThen(new WaitCommand(3))
-        .andThen(new InstantCommand(() -> m_state = AlgaeState.OFF));
+    Command algaeIntake = new InstantCommand(() -> m_state = AlgaeState.INTAKE);
     
     // command for when sensor is attached:
     // Command algaeIntake = new InstantCommand(() -> m_state = AlgaeState.INTAKE)
@@ -68,17 +67,27 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   /**
    * Command to score algae.
-   * @return A command that sets the algae state to SCORE until the algae is no longer detected and then disables. (currently runs for 3 seconds since our sensor is not attached yet)
+   * @return A command that sets the algae state to SCORE until the algae is no longer detected and then disables. (currently uses algaeOffCommand to disable since there is no Time of Flight)
    */
   public Command algaeScoreCommand() {
-    Command algaeScore = new InstantCommand(() -> m_state = AlgaeState.SCORE).andThen(new WaitCommand(3))
-        .andThen(new InstantCommand(() -> m_state = AlgaeState.OFF));
+    Command algaeScore = new InstantCommand(() -> m_state = AlgaeState.SCORE);
 
     // command for when sensor is attached:
     // Command algaeScore = new InstantCommand(() -> m_state = AlgaeState.SCORE)
     //     .andThen(new WaitUntilCommand(() -> !hasAlgae())).andThen(new InstantCommand(() -> m_state = AlgaeState.OFF));
     algaeScore.addRequirements(this);
     return algaeScore;
+  }
+
+  /**
+   * Command to disable the algae rollers.
+   * @return A command that sets the algae state to OFF to disable the subsystem.
+   */
+  public Command algaeOffCommand() {
+    Command algaeOff = new InstantCommand(() -> m_state = AlgaeState.SCORE);
+
+    algaeOff.addRequirements(this);
+    return algaeOff;
   }
 
   /**
