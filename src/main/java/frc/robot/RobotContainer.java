@@ -50,9 +50,9 @@ public class RobotContainer {
   private void configureBindings() {
     // --- Elevator/Pivot Button Binds ---
 
-    // Makes the robot ready to score a coral in L1/L2/L3 or intake from source
-    // Pivots the pivot to neutral first, to make sure the coral manipulator doesn't get caught on the elevator carriage
-    // Then brings the elevator to the correct setpoint
+    // // Makes the robot ready to score a coral in L1/L2/L3 or intake from source
+    // // Pivots the pivot to neutral first, to make sure the coral manipulator doesn't get caught on the elevator carriage
+    // // Then brings the elevator to the correct setpoint
     Trigger gotoL1 = m_controller.povDown()
         .onTrue(m_pivotSubsystem.pivotNeutralCommand()
             .andThen(m_elevatorSubsystem.elevatorL1Command()));
@@ -68,6 +68,10 @@ public class RobotContainer {
         .onTrue(m_pivotSubsystem.pivotNeutralCommand()
             .andThen(m_elevatorSubsystem.elevatorSourceCommand()).andThen(m_pivotSubsystem.pivotUpCommand()));
 
+    // Trigger pivotDown = m_controller.povDown().onTrue(m_pivotSubsystem.pivotDownCommand());
+    // Trigger pivotNeutral = m_controller.povLeft().onTrue(m_pivotSubsystem.pivotNeutralCommand());
+    // Trigger pivotUp = m_controller.povUp().onTrue(m_pivotSubsystem.pivotUpCommand());
+
     // Will be used once the Time of Flight is mounted. Runs the coral intake after getting the manipulator in position.
     // Trigger gotoSourceAndIntake = m_controller.povRight()
     // .onTrue(m_pivotSubsystem.pivotNeutralCommand()
@@ -79,6 +83,7 @@ public class RobotContainer {
     // Runs the coral manipulator to intake or score a coral.
     Trigger intakeCoral = m_controller.b().onTrue(m_coralSubsystem.coralIntakeCommand()); // Command ends when Time of Flight detects a coral
     Trigger scoreCoral = m_controller.y().onTrue(m_coralSubsystem.coralScoreCommand()); // Command ends when Time of Flight no longer detects a coral
+    intakeCoral.or(scoreCoral).onFalse(m_coralSubsystem.coralOffCommand());
 
     // --- Algae/Arm Button Binds ---
 

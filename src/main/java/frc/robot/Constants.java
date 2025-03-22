@@ -17,16 +17,20 @@ public class Constants {
 
         public static final double ALGAE_INTAKE_DUTYCYCLE = -0.8;
         public static final double ALGAE_SCORE_DUTYCYCLE = 0.4;
+        
+        // Game piece detection constants
+        public static final double ALGAE_AMPERAGE_THRESHOLD = 10.0; // Adjust based on testing
+        public static final int ALGAE_AMPERAGE_SAMPLE_SIZE = 10;
     }
 
     public static final class ArmConstants {
         public static final int ARM_MOTOR_ID = 13;
 
-        public static final double ARM_DOWN_DUTYCYCLE = 0.4;
-        public static final double ARM_UP_DUTYCYCLE = -0.4;
+        public static final double ARM_DOWN_DUTYCYCLE = -0.4;
+        public static final double ARM_UP_DUTYCYCLE = 0.4;
 
-        public static final double ARM_HOLD_DOWN_DUTYCYCLE = 0.1;
-        public static final double ARM_HOLD_UP_DUTYCYCLE = -0.15;
+        public static final double ARM_HOLD_DOWN_DUTYCYCLE = -0.0;
+        public static final double ARM_HOLD_UP_DUTYCYCLE = 0.0;
 
         // public static final double ARM_UP_ANGLE = 90;
         // public static final double ARM_DOWN_ANGLE = 45;
@@ -48,15 +52,19 @@ public class Constants {
 
         public static final double CORAL_INTAKE_DUTYCYCLE = -0.25; // Check
         public static final double CORAL_SCORE_DUTYCYCLE = 0.25; // Check
+        
+        // Game piece detection constants
+        public static final double CORAL_AMPERAGE_THRESHOLD = 12.0; // Adjust based on testing
+        public static final int CORAL_AMPERAGE_SAMPLE_SIZE = 10;
     }
 
     public static class ElevatorConstants {
         public static final int ELEVATOR_MOTOR_ID_R = 9;
         public static final int ELEVATOR_MOTOR_ID_L = 10;
 
-        // in relative encoder rotations
-        public static final double ELEVATOR_L3_POSITION = -52; // 121 cm or 3 ft 11 5/8 in above carpet
-        public static final double ELEVATOR_L2_POSITION = -25; // 81 cm or 2 ft 7/8 in above carpet
+        // in relative encoder rotations-56.64345169067383
+        public static final double ELEVATOR_L3_POSITION = -55; // 121 cm or 3 ft 11 5/8 in above carpet
+        public static final double ELEVATOR_L2_POSITION = -28; // 81 cm or 2 ft 7/8 in above carpet
         public static final double ELEVATOR_L1_POSITION = 0.0;
         public static final double ELEVATOR_SOURCE_POSITION = -20.75;
 
@@ -70,11 +78,11 @@ public class Constants {
 
         // in degrees
         public static final double PIVOT_UP_ANGLE = 315;
-        public static final double PIVOT_DOWN_ANGLE = 35;
+        public static final double PIVOT_DOWN_ANGLE = 15;
         public static final double PIVOT_NEUTRAL_ANGLE = 0;
 
         public static final double PIVOT_KP = 0.025;
         public static final double PIVOT_KI = 0.0;
-        public static final double PIVOT_KD = 0.0025;
+        public static final double PIVOT_KD = 0.005;
     }
 }

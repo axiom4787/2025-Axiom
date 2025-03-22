@@ -23,58 +23,70 @@ import frc.robot.Constants.AlgaeConstants;
 // This subsystem controls the roller on the algae manipulator.
 public class AlgaeSubsystem extends SubsystemBase {
   private AlgaeState m_state = AlgaeState.OFF;
-  // private SparkMax m_rollerMotor = new SparkMax(AlgaeConstants.ROLLER_MOTOR_ID, MotorType.kBrushless);
+  private SparkMax m_rollerMotor = new SparkMax(AlgaeConstants.ROLLER_MOTOR_ID, MotorType.kBrushless);
+  
+  // Amperage tracking variables
+  private double[] m_amperageReadings = new double[AlgaeConstants.ALGAE_AMPERAGE_SAMPLE_SIZE];
+  private int m_readingIndex = 0;
 
   /** Creates a new AlgaeSubsystem. */
   public AlgaeSubsystem() {
-    // m_rollerMotor.setCANTimeout(250);
+    m_rollerMotor.setCANTimeout(250);
 
     SparkMaxConfig rollerMotorConfig = new SparkMaxConfig();
     rollerMotorConfig.voltageCompensation(10);
     rollerMotorConfig.smartCurrentLimit(40);
     rollerMotorConfig.idleMode(IdleMode.kBrake);
-    // m_rollerMotor.configure(rollerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);    
+    m_rollerMotor.configure(rollerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);    
   }
 
   @Override
   public void periodic() {
     SmartDashboard.putString("Algae State", m_state.name());
-    // switch (m_state) {
-    //   case INTAKE:
-    //     m_rollerMotor.set(AlgaeConstants.ALGAE_INTAKE_DUTYCYCLE);
-    //     break;
-    //   case SCORE:
-    //     m_rollerMotor.set(AlgaeConstants.ALGAE_SCORE_DUTYCYCLE);
-    //     break;
-    //   case OFF:
-    //     m_rollerMotor.set(0);
-    // }
+    
+    // Update amperage readings
+    double currentAmperage = m_rollerMotor.getOutputCurrent();
+    m_amperageReadings[m_readingIndex] = currentAmperage;
+    m_readingIndex = (m_readingIndex + 1) % AlgaeConstants.ALGAE_AMPERAGE_SAMPLE_SIZE;
+    
+    // Display average amperage on dashboard
+    SmartDashboard.putNumber("Algae Avg Amperage", calculateAverageAmperage());
+    SmartDashboard.putBoolean("Has Algae", hasAlgae());
+    
+    switch (m_state) {
+      case INTAKE:
+        m_rollerMotor.set(AlgaeConstants.ALGAE_INTAKE_DUTYCYCLE);
+        break;
+      case SCORE:
+        m_rollerMotor.set(AlgaeConstants.ALGAE_SCORE_DUTYCYCLE);
+        break;
+      case OFF:
+        m_rollerMotor.set(0);
+    }
   }
 
   /**
    * Command to intake algae.
-   * @return A command that sets the algae state to INTAKE until the algae is no longer detected and then disables. (currently uses algaeOffCommand to disable since there is no Time of Flight)
+   * @return A command that sets the algae state to INTAKE until the algae is detected and then disables.
    */
   public Command algaeIntakeCommand() {
-    Command algaeIntake = new InstantCommand(() -> m_state = AlgaeState.INTAKE);
+    Command algaeIntake = new InstantCommand(() -> m_state = AlgaeState.INTAKE)
+        .andThen(new WaitUntilCommand(() -> hasAlgae()))
+        .andThen(new InstantCommand(() -> m_state = AlgaeState.OFF));
     
-    // command for when sensor is attached:
-    // Command algaeIntake = new InstantCommand(() -> m_state = AlgaeState.INTAKE)
-    //     .andThen(new WaitUntilCommand(() -> hasAlgae())).andThen(new InstantCommand(() -> m_state = AlgaeState.OFF));
     algaeIntake.addRequirements(this);
     return algaeIntake;
   }
 
   /**
    * Command to score algae.
-   * @return A command that sets the algae state to SCORE until the algae is no longer detected and then disables. (currently uses algaeOffCommand to disable since there is no Time of Flight)
+   * @return A command that sets the algae state to SCORE until the algae is no longer detected and then disables.
    */
   public Command algaeScoreCommand() {
-    Command algaeScore = new InstantCommand(() -> m_state = AlgaeState.SCORE);
-
-    // command for when sensor is attached:
-    // Command algaeScore = new InstantCommand(() -> m_state = AlgaeState.SCORE)
-    //     .andThen(new WaitUntilCommand(() -> !hasAlgae())).andThen(new InstantCommand(() -> m_state = AlgaeState.OFF));
+    Command algaeScore = new InstantCommand(() -> m_state = AlgaeState.SCORE)
+        .andThen(new WaitUntilCommand(() -> !hasAlgae()))
+        .andThen(new InstantCommand(() -> m_state = AlgaeState.OFF));
+        
     algaeScore.addRequirements(this);
     return algaeScore;
   }
@@ -84,20 +96,32 @@ public class AlgaeSubsystem extends SubsystemBase {
    * @return A command that sets the algae state to OFF to disable the subsystem.
    */
   public Command algaeOffCommand() {
-    Command algaeOff = new InstantCommand(() -> m_state = AlgaeState.SCORE);
+    Command algaeOff = new InstantCommand(() -> m_state = AlgaeState.OFF);
 
     algaeOff.addRequirements(this);
     return algaeOff;
   }
 
   /**
-   * Method to determine if algae is present with Time of Flight sensor.
+   * Method to determine if algae is present by monitoring motor amperage.
    * @return True if algae is present, false otherwise.
    */
-  // public boolean hasAlgae() {
-  // // TODO: use time of flight to determine if algae is present
-  // return false;
-  // }
+  public boolean hasAlgae() {
+    double averageAmperage = calculateAverageAmperage();
+    return averageAmperage > AlgaeConstants.ALGAE_AMPERAGE_THRESHOLD;
+  }
+  
+  /**
+   * Calculates the average amperage over the sample window.
+   * @return The average amperage reading.
+   */
+  private double calculateAverageAmperage() {
+    double sum = 0;
+    for (double reading : m_amperageReadings) {
+      sum += reading;
+    }
+    return sum / AlgaeConstants.ALGAE_AMPERAGE_SAMPLE_SIZE;
+  }
 
   public enum AlgaeState {
     INTAKE,

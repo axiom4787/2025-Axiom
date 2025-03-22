@@ -28,7 +28,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       ElevatorConstants.ELEVATOR_KI, ElevatorConstants.ELEVATOR_KD);
 
   public ElevatorSubsystem() {
-    m_elevatorPID.setTolerance(0.05);
+    m_elevatorPID.setTolerance(0.05, 0.05);
 
     SparkMaxConfig elevatorMotorL_Config = new SparkMaxConfig();
     elevatorMotorL_Config.inverted(true);
@@ -52,10 +52,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putString("Elevator State", m_state.name());
-    SmartDashboard.putNumber("Left Elevator Encoder", m_elevatorMotorL.getEncoder().getPosition());
-
-    // dont bother looking at this tbh it wont be useful
-    SmartDashboard.putNumber("Right Elevator Encoder", m_elevatorMotorR.getEncoder().getPosition());
+    SmartDashboard.putNumber("Elevator Encoder", m_elevatorMotorL.getEncoder().getPosition());
+    SmartDashboard.putNumber("Elevator Position Error", m_elevatorPID.getError());
 
     switch (m_state) {
       case L1:

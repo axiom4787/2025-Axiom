@@ -22,7 +22,7 @@ import frc.robot.Constants.ArmConstants;
 
 // This subsystem controls the arm that extends and retracts the algae manipulator.
 public class ArmSubsystem extends SubsystemBase {
-  private ArmState m_state = ArmState.UP;
+  private ArmState m_state = ArmState.HOLD_UP;
   private SparkMax m_armMotor = new SparkMax(ArmConstants.ARM_MOTOR_ID, MotorType.kBrushless);
   // private PIDController m_armPID = new PIDController(ArmConstants.ARM_KP,
   // ArmConstants.ARM_KI, ArmConstants.ARM_KD);

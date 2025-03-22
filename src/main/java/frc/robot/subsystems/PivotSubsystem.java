@@ -5,6 +5,9 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
+
+import java.util.Optional;
+
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -39,7 +42,7 @@ public class PivotSubsystem extends SubsystemBase {
 
     m_pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    m_pivotPID.setTolerance(1);
+    m_pivotPID.setTolerance(1, 0.01);
     m_pivotPID.enableContinuousInput(0, 360);
   }
 
@@ -47,7 +50,8 @@ public class PivotSubsystem extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putString("Pivot State", m_state.name());
     SmartDashboard.putNumber("Pivot Encoder", m_pivotMotor.getAbsoluteEncoder().getPosition());
-    SmartDashboard.putNumber("PID Error", m_pivotPID.getError());
+    SmartDashboard.putNumber("Pivot Position Error", m_pivotPID.getError());
+    SmartDashboard.putNumber("Pivot Velocity", m_pivotMotor.getAbsoluteEncoder().getVelocity());
 
     switch (m_state) {
       case UP:
