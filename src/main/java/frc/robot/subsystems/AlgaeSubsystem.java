@@ -23,32 +23,32 @@ import frc.robot.Constants.AlgaeConstants;
 // This subsystem controls the roller on the algae manipulator.
 public class AlgaeSubsystem extends SubsystemBase {
   private AlgaeState m_state = AlgaeState.OFF;
-  // private SparkMax m_rollerMotor = new SparkMax(AlgaeConstants.ROLLER_MOTOR_ID, MotorType.kBrushless);
+  private SparkMax m_rollerMotor = new SparkMax(AlgaeConstants.ROLLER_MOTOR_ID, MotorType.kBrushless);
 
   /** Creates a new AlgaeSubsystem. */
   public AlgaeSubsystem() {
-    // m_rollerMotor.setCANTimeout(250);
+    m_rollerMotor.setCANTimeout(250);
 
     SparkMaxConfig rollerMotorConfig = new SparkMaxConfig();
     rollerMotorConfig.voltageCompensation(10);
     rollerMotorConfig.smartCurrentLimit(40);
     rollerMotorConfig.idleMode(IdleMode.kBrake);
-    // m_rollerMotor.configure(rollerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);    
+    m_rollerMotor.configure(rollerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);    
   }
 
   @Override
   public void periodic() {
     SmartDashboard.putString("Algae State", m_state.name());
-    // switch (m_state) {
-    //   case INTAKE:
-    //     m_rollerMotor.set(AlgaeConstants.ALGAE_INTAKE_DUTYCYCLE);
-    //     break;
-    //   case SCORE:
-    //     m_rollerMotor.set(AlgaeConstants.ALGAE_SCORE_DUTYCYCLE);
-    //     break;
-    //   case OFF:
-    //     m_rollerMotor.set(0);
-    // }
+    switch (m_state) {
+      case INTAKE:
+        m_rollerMotor.set(AlgaeConstants.ALGAE_INTAKE_DUTYCYCLE);
+        break;
+      case SCORE:
+        m_rollerMotor.set(AlgaeConstants.ALGAE_SCORE_DUTYCYCLE);
+        break;
+      case OFF:
+        m_rollerMotor.set(0);
+    }
   }
 
   /**

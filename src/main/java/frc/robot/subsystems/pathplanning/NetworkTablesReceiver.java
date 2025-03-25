@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.pathplanning;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;

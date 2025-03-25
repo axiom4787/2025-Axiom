@@ -8,6 +8,15 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
+// Add swervelib directory as a source package
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', 'swervelib']
+        }
+    }
+}
+
 def ROBOT_MAIN_CLASS = "frc.robot.Main"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
@@ -57,6 +66,7 @@ dependencies {
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
     implementation 'com.google.code.gson:gson:2.12.1'
+
 
     roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
     roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)

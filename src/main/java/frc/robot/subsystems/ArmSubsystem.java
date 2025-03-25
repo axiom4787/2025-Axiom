@@ -15,6 +15,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -56,7 +57,9 @@ public class ArmSubsystem extends SubsystemBase {
         break;
     }
 
-//32    m_armMotor.set(m_armPID.calculate(m_armMotor.getEncoder().getPosition()));
+    double pidOutput = m_armPID.calculate(m_armMotor.getEncoder().getPosition());
+    double limitedOutput = Math.max(-0.4, Math.min(0.4, pidOutput)); // Limit to max 0.4 power
+    m_armMotor.set(limitedOutput);
   }
 
   /**
@@ -77,6 +80,11 @@ public class ArmSubsystem extends SubsystemBase {
     Command armDown = new InstantCommand(() -> m_state = ArmState.DOWN).andThen(new WaitUntilCommand(() -> m_armPID.atSetpoint())); // code for when encoder is attached
     armDown.addRequirements(this);
     return armDown;
+  }
+
+  public void armManual(double set) {
+    // set = Math.max(-0.4, Math.min(0.4, set));
+    m_armMotor.set(set);
   }
 
   public enum ArmState {

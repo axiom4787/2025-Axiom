@@ -1,4 +1,4 @@
-package frc.robot.sim.vision;
+package frc.robot.subsystems.vision;
 
 import java.lang.Cloneable;
 import java.lang.Override;

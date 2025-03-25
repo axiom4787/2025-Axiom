@@ -15,10 +15,12 @@ public class Constants {
     // DEADBAND is the minimum value for the controller to register as a movement
     
     public static class DriveConstants {
-        public static final double MAX_SPEED_MS = 4.92;
+        public static final double MAX_SPEED_MS = 5.740;
         public static final double CONTROLLER_DEADBAND = 0.5;
-        public static final double kMaxSpeedMetersPerSecond = 5;
-        public static final double kGyroOffsetX = 5.25;
+        
+        // Simulation-specific constants
+        public static final double SIM_VELOCITY_DEADBAND = 0.001; // 1 mm/s
+        public static final double SIM_ROTATION_DEADBAND = 0.001; // ~0.06 deg/s
     }
 
     public static final class AlgaeConstants {
@@ -31,8 +33,8 @@ public class Constants {
     public static final class ArmConstants {
         public static final int ARM_MOTOR_ID = 13;
 
-        public static final double ARM_UP_ANGLE = 90;
-        public static final double ARM_DOWN_ANGLE = 45;
+        public static final double ARM_UP_ANGLE = 0;
+        public static final double ARM_DOWN_ANGLE = -7;
 
         public static final double ARM_KP = 0.1;
         public static final double ARM_KI = 0.0;
@@ -58,8 +60,8 @@ public class Constants {
         public static final int ELEVATOR_MOTOR_ID_L = 10;
 
         // in relative encoder rotations
-        public static final double ELEVATOR_L3_POSITION = -52; // 121 cm or 3 ft 11 5/8 in above carpet
-        public static final double ELEVATOR_L2_POSITION = -25; // 81 cm or 2 ft 7/8 in above carpet
+        public static final double ELEVATOR_L3_POSITION = -55; // 121 cm or 3 ft 11 5/8 in above carpet
+        public static final double ELEVATOR_L2_POSITION = -29; // 81 cm or 2 ft 7/8 in above carpet
         public static final double ELEVATOR_L1_POSITION = 0.0;
         public static final double ELEVATOR_SOURCE_POSITION = -20.75;
 
@@ -72,18 +74,20 @@ public class Constants {
         public static final int PIVOT_MOTOR_ID = 11;
 
         // in degrees
-        public static final double PIVOT_UP_ANGLE = 315;
-        public static final double PIVOT_DOWN_ANGLE = 35;
-        public static final double PIVOT_NEUTRAL_ANGLE = 0;
+        public static final double PIVOT_UP_ANGLE = 40;
+        public static final double PIVOT_DOWN_ANGLE = 100;
+        public static final double PIVOT_NEUTRAL_ANGLE = 76;
 
         public static final double PIVOT_KP = 0.025;
         public static final double PIVOT_KI = 0.0;
         public static final double PIVOT_KD = 0.0025;
     }
 
+    public static final class Drivetrain {
+        public static final double ROBOT_WIDTH = 0.85; // meters - adjust to your robot's width
+        public static final double ROBOT_LENGTH = 0.85; // meters - adjust to your robot's length
+    }
     
-    
-
     public static class ControllerConstants {
         public static final int kDriverControllerPort = 0;
         public static final int kOperatorControllerPort = 1;
@@ -92,7 +96,7 @@ public class Constants {
     }
 
     // setpoints for auto paths
-    public static final Pose2d noteCenterPose = new Pose2d(1.55, 5.37, Rotation2d.fromDegrees(180.00));
+    public static final Pose2d noteCenterPose = new Pose2d(16, 4, Rotation2d.fromDegrees(180.00));
     public static final Pose2d noteTopPose = new Pose2d(0.62, 6.60, Rotation2d.fromDegrees(60.00));
     public static final Pose2d noteBottomPose = new Pose2d(0.62, 4.48, Rotation2d.fromDegrees(-60.00));
 

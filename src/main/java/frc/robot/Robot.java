@@ -4,12 +4,14 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.NetworkTablesADStar;
+import frc.robot.subsystems.pathplanning.NetworkTablesADStar;
+import frc.robot.subsystems.pathplanning.OkayPlan;
 import frc.robot.utils.CommandLogger;
 
 public class Robot extends TimedRobot {
@@ -20,6 +22,8 @@ public class Robot extends TimedRobot {
 	public Robot() {
 		m_robotContainer = new RobotContainer();
 		Pathfinding.setPathfinder(new NetworkTablesADStar(m_robotContainer.getDriveSubsystem()));
+		// Pathfinding.setPathfinder(new OkayPlan(Constants.Drivetrain.ROBOT_WIDTH, Constants.Drivetrain.ROBOT_LENGTH));
+		m_robotContainer.getDriveSubsystem().newWarmupCommand().schedule(); // Wamup the pathfinding command. Source: https://pathplanner.dev/pplib-pathfinding.html#java-warmup
 
 		new CommandLogger();
 	}
@@ -43,10 +47,15 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
+		// Get the selected autonomous command
 		m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
+		// Schedule it if it exists
 		if (m_autonomousCommand != null) {
+			System.out.println("Scheduling autonomous command: " + m_autonomousCommand.getName());
 			m_autonomousCommand.schedule();
+		} else {
+			System.out.println("No autonomous command selected!");
 		}
 	}
 
@@ -65,7 +74,13 @@ public class Robot extends TimedRobot {
 
 		m_teleopCommand = m_robotContainer.getTeleopCommand();
 
-		m_robotContainer.findStartingVisionPose();
+		try {
+			m_robotContainer.findStartingVisionPose();
+		} catch (Exception e) {
+			System.err.println("Failed to initialize pose with vision: " + e.getMessage());
+			// Continue without vision initialization
+		}
+		
 		m_robotContainer.startAutoPathThread();
 		// System.out.println("Teleop init");
 
@@ -85,11 +100,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
-    m_testCommand = m_robotContainer.getTestCommand();
-    if (m_testCommand != null)
-    {
-      m_testCommand.schedule();
-    }
+    // m_testCommand = m_robotContainer.getTestCommand();
+    // if (m_testCommand != null)
+    // {
+    //   m_testCommand.schedule();
+    // }
   }
 
 
