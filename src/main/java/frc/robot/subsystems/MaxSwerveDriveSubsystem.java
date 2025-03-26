@@ -24,7 +24,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command; 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -131,34 +131,52 @@ public class MaxSwerveDriveSubsystem extends SubsystemBase {
     }
 
     // --- Core Periodic Updates ---
-
     @Override
     public void periodic() {
         // Update the odometry in the periodic block
         m_odometry.update(
                 getGyroRotation2d(),
                 getModulePositions());
-
+    
+        // Send data to Advantage Scope for visualization
+        NetworkTableInstance instance = NetworkTableInstance.getDefault();
+        NetworkTable table = instance.getTable("AdvantageScope");
         
-
-        // --- Debug Logging (Optional - from original code) ---
-        // System.out.println("=== SWERVE DEBUG INFO ===");
-        // System.out.println("Current Pose: " + getPose());
-        // System.out.println("Heading: " + getHeading().getDegrees() + " degrees");
-        // System.out.println("Raw Gyro: " + getGyroRotation2d().getDegrees());
-        // System.out.println("Robot Velocity: " + getRobotVelocity());
-        // System.out.println("Field Velocity: " + getFieldVelocity());
-        // var states = getModuleStates();
-        // var desiredStates = getDesiredModuleStates(); // Need to implement getDesiredModuleStates if needed
-        // for (int i = 0; i < states.length; i++) {
-        //     System.out.println("Module " + i +
-        //             " - Actual: [" + states[i].angle.getDegrees() + "°, " +
-        //             states[i].speedMetersPerSecond + " m/s]" //+
-        //            // " - Desired: [" + desiredStates[i].angle.getDegrees() + "°, " +
-        //            // desiredStates[i].speedMetersPerSecond + " m/s]"
-        //            );
-        // }
-        // --- End Debug Logging ---
+        // Send robot pose
+        Pose2d currentPose = getPose();
+        double[] poseData = new double[] {
+            currentPose.getX(),
+            currentPose.getY(),
+            currentPose.getRotation().getRadians()
+        };
+        table.getEntry("robotPose").setDoubleArray(poseData);
+        
+        // Send gyro data
+        double[] gyroData = new double[] {
+            getGyroRotation2d().getDegrees(),   // Yaw (heading)
+            m_gyro.getPitch(),                  // Pitch
+            m_gyro.getRoll()                    // Roll
+        };
+        table.getEntry("gyro").setDoubleArray(gyroData);
+        
+        // Send module states (actual)
+        SwerveModuleState[] states = getModuleStates();
+        double[] moduleActual = new double[8]; // 4 modules x (angle, speed)
+        for (int i = 0; i < 4; i++) {
+            moduleActual[i*2] = states[i].angle.getDegrees();      // Angle in degrees
+            moduleActual[i*2+1] = states[i].speedMetersPerSecond;  // Speed in m/s
+        }
+        table.getEntry("moduleStatesActual").setDoubleArray(moduleActual);
+        
+        // Try to get desired states from modules
+        double[] moduleDesired = new double[8];
+        for (int i = 0; i < 4; i++) {
+            // Access the desired state from each module
+            SwerveModuleState desiredState = m_modules[i].getDesiredState();
+            moduleDesired[i*2] = desiredState.angle.getDegrees();
+            moduleDesired[i*2+1] = desiredState.speedMetersPerSecond;
+        }
+        table.getEntry("moduleStatesDesired").setDoubleArray(moduleDesired);
     }
 
     @Override
@@ -698,7 +716,7 @@ public class MaxSwerveDriveSubsystem extends SubsystemBase {
 
     /**
      * Checks if the alliance is red, defaults to false if alliance isn't available.
-     *
+     *a
      * @return true if the red alliance, false if blue. Defaults to false.
      */
     private boolean isRedAlliance() {
@@ -761,7 +779,7 @@ public class MaxSwerveDriveSubsystem extends SubsystemBase {
      * @return The robot's heading.
      */
     public Rotation2d getHeading() {
-        return getPose().getRotation(); // Use odometry heading which might be fused/corrected
+        return m_gyro.getRotation2d(); // Use odometry heading which might be fused/corrected
     }
 
     /**
@@ -861,7 +879,7 @@ public class MaxSwerveDriveSubsystem extends SubsystemBase {
      */
     public Pose2d getVisionPose() {
         // Example using Limelight's "botpose_wpiblue" or "botpose_wpired"
-        NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight"); // Adjust table name if needed
+        NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-left"); // Adjust table name if needed
         String poseEntryName = isRedAlliance() ? "botpose_wpired" : "botpose_wpiblue";
         double[] values = table.getEntry(poseEntryName).getDoubleArray(new double[0]);
 

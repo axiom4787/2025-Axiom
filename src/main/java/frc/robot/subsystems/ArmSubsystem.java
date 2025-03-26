@@ -57,9 +57,9 @@ public class ArmSubsystem extends SubsystemBase {
         break;
     }
 
-    double pidOutput = m_armPID.calculate(m_armMotor.getEncoder().getPosition());
-    double limitedOutput = Math.max(-0.4, Math.min(0.4, pidOutput)); // Limit to max 0.4 power
-    m_armMotor.set(limitedOutput);
+    // double pidOutput = m_armPID.calculate(m_armMotor.getEncoder().getPosition());
+    // double limitedOutput = Math.max(-0.4, Math.min(0.4, pidOutput)); // Limit to max 0.4 power
+    // m_armMotor.set(limitedOutput);
   }
 
   /**

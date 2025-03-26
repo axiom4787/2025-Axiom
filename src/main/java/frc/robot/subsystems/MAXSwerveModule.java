@@ -110,6 +110,10 @@ public class MAXSwerveModule {
 		m_desiredState = desiredState;
 	}
 
+	public SwerveModuleState getDesiredState() {
+		return m_desiredState;
+	}
+
 	/** Zeroes all the SwerveModule encoders. */
 	public void resetEncoders() {
 		m_drivingEncoder.setPosition(0);

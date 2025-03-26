@@ -825,7 +825,7 @@ public class DriveSubsystem extends SubsystemBase {
 	/**
 	 * Use vision to find and set the starting pose of the robot.
 	 */
-	public void resetOdometryWithVision() {
+	public void findStartingVisionPose() {
 		Pose2d visionPose = getVisionPose();
 		if (visionPose.getX() != 0.0 && visionPose.getY() != 0.0) {
 			swerveDrive.resetOdometry(visionPose);

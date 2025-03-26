@@ -21,6 +21,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -32,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.Drivetrain;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ClimberSubsystem.ClimberState;
 import frc.robot.subsystems.pathplanning.NetworkTablesReceiver;
@@ -102,14 +104,11 @@ public class RobotContainer {
 	private final SendableChooser<Command> autoChooser;
 
 	public RobotContainer() {
-		// autoChooser = AutoBuilder.buildAutoChooser();
-		// SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		// double driveConversionFactor =
 		// SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(3), 4.71);
 		// System.out.println("[RobotContainer] Drive Conversion Factor: " +
 		// driveConversionFactor);
-
 		// Setup the PathPlanner auto chooser
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -228,6 +227,10 @@ public class RobotContainer {
 			System.out.println("Resetting pose using Limelight vision data");
 			m_driveSubsystem.resetOdometryWithVision();
 		}));
+		m_controller.cross().onTrue(Commands.runOnce(() -> {
+			System.out.println("Zero Gyro");
+			m_driveSubsystem.zeroGyro();
+		}));
 	}
 
 	private void registerNamedCommands() {
@@ -263,11 +266,18 @@ public class RobotContainer {
 	}
 
 	public Command getTeleopCommand() {
-		return m_driveSubsystem.driveCommand(
+		return m_driveSubsystem.driveFieldRelativeCommand(
 			() -> MathUtil.applyDeadband(-m_controller.getLeftY(), DriveConstants.CONTROLLER_DEADBAND, 1),
 			() -> MathUtil.applyDeadband(-m_controller.getLeftX(), DriveConstants.CONTROLLER_DEADBAND, 1),
 			() -> MathUtil.applyDeadband(-m_controller.getRightX(), DriveConstants.CONTROLLER_DEADBAND, 1))
 			.withName("TeleopCommand")
+		// return m_driveSubsystem.driveWithSetpointGeneratorFieldRelative(
+		// 	() -> new ChassisSpeeds(
+		// 		MathUtil.applyDeadband(-m_controller.getLeftY(), DriveConstants.CONTROLLER_DEADBAND) * Drivetrain.kMaxSpeed,
+		// 		MathUtil.applyDeadband(-m_controller.getLeftX(), DriveConstants.CONTROLLER_DEADBAND) * Drivetrain.kMaxSpeed,
+		// 		MathUtil.applyDeadband(-m_controller.getRightX(), DriveConstants.CONTROLLER_DEADBAND) * Drivetrain.kMaxAngularSpeed
+		// 	)
+		// )
 			// .alongWith(new RunCommand(() -> {
 			// 	// Use R2 for arm up (positive) and L2 for arm down (negative)
 			// 	// Map triggers from 0-1 range to -1 to 1 range

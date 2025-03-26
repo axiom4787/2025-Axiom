@@ -65,8 +65,8 @@ public class Constants {
         public static final int ELEVATOR_MOTOR_ID_L = 10;
 
         // in relative encoder rotations
-        public static final double ELEVATOR_L3_POSITION = -52; // 121 cm or 3 ft 11 5/8 in above carpet
-        public static final double ELEVATOR_L2_POSITION = -25; // 81 cm or 2 ft 7/8 in above carpet
+        public static final double ELEVATOR_L3_POSITION = -56; // 121 cm or 3 ft 11 5/8 in above carpet
+        public static final double ELEVATOR_L2_POSITION = -29; // 81 cm or 2 ft 7/8 in above carpet
         public static final double ELEVATOR_L1_POSITION = 0.0;
         public static final double ELEVATOR_SOURCE_POSITION = -20.75;
 
@@ -77,11 +77,11 @@ public class Constants {
 
     public static class PivotConstants {
         public static final int PIVOT_MOTOR_ID = 11;
-
+        private static final double PIVOT_OFFSET = 20;
         // in degrees
-        public static final double PIVOT_UP_ANGLE = 315;
-        public static final double PIVOT_DOWN_ANGLE = 35;
-        public static final double PIVOT_NEUTRAL_ANGLE = 0;
+        public static final double PIVOT_UP_ANGLE = 86-PIVOT_OFFSET;
+        public static final double PIVOT_DOWN_ANGLE = 142-PIVOT_OFFSET;
+        public static final double PIVOT_NEUTRAL_ANGLE = 122-PIVOT_OFFSET;
 
         public static final double PIVOT_KP = 0.025;
         public static final double PIVOT_KI = 0.0;
@@ -92,17 +92,18 @@ public class Constants {
         public static final double ROBOT_WIDTH = 0.85; // meters - adjust to your robot's width
         public static final double ROBOT_LENGTH = 0.85; // meters - adjust to your robot's length
 
+        
         // Driving Parameters - Note that these are not the maximum capable speeds of
         // the robot, rather the allowed maximum speeds
-        public static final double kMaxSpeed = 4.8;
+        public static final double kMaxSpeed = 5;
         public static final double kMaxAcceleration = 5;
-        public static final double kMaxAngularSpeed = 1.5 * Math.PI; // radians per second
+        public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
         public static final double kMaxAngularAcceleration = 2 * Math.PI; // radians per second squared
 
         // Chassis configuration
-        public static final double kTrackWidth = Units.inchesToMeters(26.5);
+        public static final double kTrackWidth = Units.inchesToMeters(31);
         // Distance between centers of right and left wheels on robot
-        public static final double kWheelBase = Units.inchesToMeters(26.5);
+        public static final double kWheelBase = Units.inchesToMeters(31);
         // Distance between front and back wheels on robot
         public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
                 new Translation2d(kWheelBase / 2, kTrackWidth / 2),
@@ -111,10 +112,10 @@ public class Constants {
                 new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
         // Angular offsets of the modules relative to the chassis in radians
-        public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2;
+        public static final double kFrontLeftChassisAngularOffset = Math.PI;
         public static final double kFrontRightChassisAngularOffset = 0;
         public static final double kBackLeftChassisAngularOffset = Math.PI;
-        public static final double kBackRightChassisAngularOffset = Math.PI / 2;
+        public static final double kBackRightChassisAngularOffset = 0;
 
         // SPARK MAX CAN IDs
         public static final int kFrontLeftDrivingCanId = 5;
@@ -142,14 +143,14 @@ public class Constants {
     }
 
     public static final class NeoMotorConstants {
-        public static final double kFreeSpeedRpm = 5676;
+        public static final double kFreeSpeedRpm = 6784;
     }
 
     public static final class ModuleConstants {
         // The MAXSwerve module can be configured with one of three pinion gears: 12T,
         // 13T, or 14T. This changes the drive speed of the module (a pinion gear with
         // more teeth will result in a robot that drives faster).
-        public static final int kDrivingMotorPinionTeeth = 14;
+        public static final int kDrivingMotorPinionTeeth = 12;
 
         // Calculations required for driving motor conversion factors and feed forward
         public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
