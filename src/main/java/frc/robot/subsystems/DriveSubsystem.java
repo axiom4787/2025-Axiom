@@ -9,7 +9,6 @@ import static edu.wpi.first.units.Units.Meter;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
-import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -24,7 +23,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
@@ -56,7 +54,6 @@ import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import frc.robot.utils.SwerveModuleStateLogger;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -97,16 +94,16 @@ public class DriveSubsystem extends SubsystemBase {
 			throw new RuntimeException(e);
 		}
 		swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot
-												// via angle.
-		swerveDrive.setCosineCompensator(true);// !SwerveDriveTelemetry.isSimulation); // Disables cosine compensation
+													// via angle.
+		swerveDrive.setCosineCompensator(false);// !SwerveDriveTelemetry.isSimulation); // Disables cosine compensation
 												// for simulations since it causes discrepancies not seen in real life.
-		swerveDrive.setAngularVelocityCompensation(false,
-				false,
+		swerveDrive.setAngularVelocityCompensation(true,
+				true,
 				0.1); // Correct for skew that gets worse as angular velocity increases. Start with a
 						// coefficient of 0.1.
-		// swerveDrive.setChassisDiscretization(true, 0.1); // Discretize the chassis to 0.1 meters
-		// swerveDrive.setModuleEncoderAutoSynchronize(true,
-				// 1); // Enable if you want to resynchronize your absolute encoders and motor encoders
+		swerveDrive.setChassisDiscretization(true, 0.1); // Discretize the chassis to 0.1 meters
+		swerveDrive.setModuleEncoderAutoSynchronize(true,
+				1); // Enable if you want to resynchronize your absolute encoders and motor encoders
 					// periodically when they are not moving.
 		// swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used
 		// over the internal encoder and push the offsets onto it. Throws warning if not
@@ -137,29 +134,25 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// When vision is enabled we must manually update odometry in SwerveDrive
-		// swerveDrive.addVisionMeasurement(Limelight.getBotPose2d("limelight"),Timer.getFPGATimestamp());
 		swerveDrive.updateOdometry();
 
 		// Debug logging for module states
-		// System.out.println("=== SWERVE DEBUG INFO ===");
-		// System.out.println("Current Pose: " + getPose());
-		// System.out.println("Heading: " + getHeading().getDegrees() + " degrees");
-		// System.out.println("Robot Velocity: " + getRobotVelocity());
-		// System.out.println("Field Velocity: " + getFieldVelocity());
+		System.out.println("=== SWERVE DEBUG INFO ===");
+		System.out.println("Current Pose: " + getPose());
+		System.out.println("Heading: " + getHeading().getDegrees() + " degrees");
+		System.out.println("Robot Velocity: " + getRobotVelocity());
+		System.out.println("Field Velocity: " + getFieldVelocity());
 
 		// Log individual module states
 		var states = swerveDrive.getStates();
 		var desiredStates = swerveDrive.getStates();
-		// for (int i = 0; i < states.length; i++) {
-		// System.out.println("Module " + i +
-		// " - Actual: [" + states[i].angle.getDegrees() + "°, " +
-		// states[i].speedMetersPerSecond + " m/s]" +
-		// " - Desired: [" + desiredStates[i].angle.getDegrees() + "°, " +
-		// desiredStates[i].speedMetersPerSecond + " m/s]");
-
-		// Display robot pose data on ShuffleBoard
-		SmartDashboard.putString("Robot Pose", getPose().toString());
-		SmartDashboard.putNumber("Robot Heading", getHeading().getDegrees());
+		for (int i = 0; i < states.length; i++) {
+			System.out.println("Module " + i +
+					" - Actual: [" + states[i].angle.getDegrees() + "°, " +
+					states[i].speedMetersPerSecond + " m/s]" +
+					" - Desired: [" + desiredStates[i].angle.getDegrees() + "°, " +
+					desiredStates[i].speedMetersPerSecond + " m/s]");
+		}
 	}
 
 	@Override
@@ -225,7 +218,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 						var alliance = DriverStation.getAlliance();
 						if (alliance.isPresent()) {
-							return alliance.get() == DriverStation.Alliance.Blue;
+							return alliance.get() == DriverStation.Alliance.Red;
 						}
 						return false;
 					},
@@ -240,7 +233,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 		// Preload PathPlanner Path finding
 		// IF USING CUSTOM PATHFINDER ADD BEFORE THIS LINE
-		// newWarmupCommand().schedule();
+		PathfindingCommand.warmupCommand().schedule();
 	}
 
 	/**
@@ -253,31 +246,6 @@ public class DriveSubsystem extends SubsystemBase {
 		// Create a path following command using AutoBuilder. This will also trigger
 		// event markers.
 		return new PathPlannerAuto(pathName);
-	}
-
-	/**
-	 * Create a command to warmup the pathfinder and pathfinding command
-	 *
-	 * @return Pathfinding warmup command
-	 */
-	public Command newWarmupCommand() {
-		return new PathfindingCommand(
-				new Pose2d(2.0, 4.0, Rotation2d.k180deg),
-				new PathConstraints(4, 3, 4, 4),
-				() -> new Pose2d(1.5, 4, Rotation2d.kZero),
-				ChassisSpeeds::new,
-				(speeds, feedforwards) -> {
-				},
-				new PPHolonomicDriveController(
-						new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
-				new RobotConfig(
-						75,
-						6.8,
-						new ModuleConfig(
-								0.048, 5.0, 1.2, DCMotor.getKrakenX60(1).withReduction(6.14), 60.0, 1),
-						0.55))
-				.andThen(Commands.print("[PathPlanner] PathfindingCommand finished warmup"))
-				.ignoringDisable(true);
 	}
 
 	/**
@@ -438,7 +406,7 @@ public class DriveSubsystem extends SubsystemBase {
 					translationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(),
 					translationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()), 0.8),
 					Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumChassisAngularVelocity(),
-					false,
+					true,
 					true);
 		});
 	}
@@ -844,63 +812,23 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * Use vision to find and set the starting pose of the robot.
+	 * Get the current vision pose, if available.
+	 * 
+	 * @return The vision-based Pose2d
 	 */
-	public void findStartingVisionPose() {
-		// Fix null pointer exception by adding proper null checking
-		Pose2d visionPose = getVisionPose();
-		if (visionPose != null &&
-				(Math.abs(visionPose.getX()) > 0.01 || Math.abs(visionPose.getY()) > 0.01)) {
-			// Only update if we got a valid pose with non-zero values
-			System.out.println("Found valid vision pose: " + visionPose);
-			swerveDrive.resetOdometry(visionPose);
-		} else {
-			System.out.println("No valid vision pose available for initialization");
-		}
+	public Pose2d getVisionPose() {
+		NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-front");
+		double[] values = table.getEntry("botpose_wpiblue").getDoubleArray(new double[6]);
+		return new Pose2d(values[0], values[1], Rotation2d.fromDegrees(values[5]));
 	}
 
 	/**
-	 * Get the current vision pose, if available.
-	 * 
-	 * @return The vision-based Pose2d or null if not available
+	 * Use vision to find and set the starting pose of the robot.
 	 */
-	public Pose2d getVisionPose() {
-		try {
-			NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-left");
-
-			// First check if we have a valid target
-			double tv = table.getEntry("tv").getDouble(0);
-			if (tv < 1.0) {
-				// No valid target detected
-				return null;
-			}
-
-			double[] values = table.getEntry("botpose_wpiblue").getDoubleArray(new double[6]);
-
-			// Check for valid values - all zeros or very small values aren't useful
-			boolean validData = false;
-			for (double val : values) {
-				if (Math.abs(val) > 0.001) {
-					validData = true;
-					break;
-				}
-			}
-
-			if (!validData || values.length < 6) {
-				return null;
-			}
-
-			// Additional validity checks for NaN values or other anomalies
-			for (double val : values) {
-				if (Double.isNaN(val) || Double.isInfinite(val)) {
-					return null;
-				}
-			}
-
-			return new Pose2d(values[0], values[1], Rotation2d.fromDegrees(values[5]));
-		} catch (Exception e) {
-			System.err.println("Exception in getVisionPose: " + e.getMessage());
-			return null;
+	public void resetOdometryWithVision() {
+		Pose2d visionPose = getVisionPose();
+		if (visionPose.getX() != 0.0 && visionPose.getY() != 0.0) {
+			swerveDrive.resetOdometry(visionPose);
 		}
 	}
 
@@ -920,67 +848,5 @@ public class DriveSubsystem extends SubsystemBase {
 	 */
 	public boolean isPathCommandRunning() {
 		return currentPathCommand != null && currentPathCommand.isScheduled();
-	}
-
-	/**
-	 * Reset the robot's pose and gyro based on Limelight vision data.
-	 * This should be called when a reliable AprilTag is visible.
-	 */
-	public void resetPoseWithVision() {
-		Pose2d visionPose = getVisionPose();
-
-		// Only reset if we have valid vision data (non-zero values)
-		if (visionPose != null &&
-				(Math.abs(visionPose.getX()) > 0.01 || Math.abs(visionPose.getY()) > 0.01)) {
-
-			// Log the reset action
-			System.out.println("Resetting odometry with vision pose: " + visionPose);
-			SmartDashboard.putString("Last Vision Reset", visionPose.toString());
-
-			// Reset the odometry with the vision pose
-			resetOdometry(visionPose);
-		} else {
-			System.out.println("Cannot reset pose: No valid vision data available");
-			SmartDashboard.putString("Last Vision Reset", "Failed - No valid data");
-		}
-	}
-
-	/**
-	 * Get the current vision pose from Limelight, if available.
-	 * 
-	 * @return The vision-based Pose2d, or null if no valid data
-	 */
-	// public Pose2d getVisionPose() {
-	// NetworkTable table =
-	// NetworkTableInstance.getDefault().getTable("limelight-front");
-	// double tv = table.getEntry("tv").getDouble(0);
-
-	// // Check if we have a valid target
-	// if (tv < 1.0) {
-	// return null;
-	// }
-
-	// double[] values = table.getEntry("botpose_wpiblue").getDoubleArray(new
-	// double[6]);
-
-	// // Check for NaN or other invalid values
-	// for (double val : values) {
-	// if (Double.isNaN(val)) {
-	// return null;
-	// }
-	// }
-
-	// // Create the pose if we have valid data
-	// return new Pose2d(values[0], values[1], Rotation2d.fromDegrees(values[5]));
-	// }
-
-	/**
-	 * Gets the current tx value (horizontal offset) from the Limelight
-	 * 
-	 * @return The tx value in degrees, or 0 if no target
-	 */
-	public double getLimelightTx() {
-		NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-front");
-		return table.getEntry("tx").getDouble(0.0);
 	}
 }

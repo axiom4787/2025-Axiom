@@ -46,6 +46,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.MaxSwerveDriveSubsystem;
 import frc.robot.utils.NavGridCounter;
 import swervelib.math.SwerveMath;
 import swervelib.telemetry.SwerveDriveTelemetry;
@@ -65,8 +66,7 @@ public class RobotContainer {
 
 	private final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
 	private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
-	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem(new File(Filesystem.getDeployDirectory(),
-			"swerve"));
+	private final MaxSwerveDriveSubsystem m_driveSubsystem = new MaxSwerveDriveSubsystem();
 	private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
 
 	private final NetworkTablesReceiver m_networkTablesReceiver = new NetworkTablesReceiver();
@@ -226,7 +226,7 @@ public class RobotContainer {
 		// Reset the pose and gyro based on Limelight data when the options button is pressed
 		m_controller.options().onTrue(Commands.runOnce(() -> {
 			System.out.println("Resetting pose using Limelight vision data");
-			m_driveSubsystem.resetPoseWithVision();
+			m_driveSubsystem.resetOdometryWithVision();
 		}));
 	}
 
@@ -426,7 +426,7 @@ public class RobotContainer {
 	 */
 	public void findStartingVisionPose() {
 		try {
-			m_driveSubsystem.findStartingVisionPose();
+			m_driveSubsystem.resetOdometryWithVision();
 		} catch (Exception e) {
 			System.err.println("Error finding starting vision pose: " + e.getMessage());
 			// Continue with default pose rather than crashing
@@ -470,7 +470,7 @@ public class RobotContainer {
 	 *
 	 * @return The DriveSubsystem.
 	 */
-	public DriveSubsystem getDriveSubsystem() {
+	public MaxSwerveDriveSubsystem getDriveSubsystem() {
 		return m_driveSubsystem;
 	}
 
