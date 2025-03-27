@@ -103,15 +103,15 @@ public class RobotContainer {
 	// Simple boolean flag instead of AtomicBoolean
 	private boolean isCurrentlyFollowingPath = false;
 
-	private final SendableChooser<Command> autoChooser;
 
 	// Constant to choose autonomous mode: 1, 2, or 3.
 	private static final int AUTO_MODE = 1; // Change to 2 or 3 for different autos
 
 	public RobotContainer() {
 		// Setup the PathPlanner auto chooser
-		autoChooser = AutoBuilder.buildAutoChooser();
-		SmartDashboard.putData("Auto Chooser", autoChooser);
+		// autoChooser = AutoBuilder.buildAutoChooser();
+		// SmartDashboard.putData("Auto Chooser", autoChooser);
+		SmartDashboard.putNumber("Auto Id", 1);
 
 		// Register named commands before configuring bindings
 		NamedCommands.registerCommand("L1",
@@ -433,7 +433,10 @@ public class RobotContainer {
 				m_pivotSubsystem.pivotNeutralCommand().andThen(m_elevatorSubsystem.elevatorL1Command()),
 				m_coralSubsystem.coralScoreCommand(),
 				new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
-						m_driveSubsystem));
+						m_driveSubsystem),
+				new WaitCommand(1),
+				m_coralSubsystem.coralOffCommand());
+
 
 		// Auto 3: Wait 5 seconds, strafe right for 1 second, then perform Auto 2.
 		Command auto3 = new SequentialCommandGroup(
@@ -444,7 +447,7 @@ public class RobotContainer {
 						m_driveSubsystem),
 				auto2);
 
-		switch (AUTO_MODE) {
+		switch ((int) SmartDashboard.getNumber("Auto Id", 1)) {
 			case 1:
 				System.out.println("Running Auto 1");
 				return auto1;
