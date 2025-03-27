@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Drivetrain;
@@ -61,6 +62,11 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
 public class RobotContainer {
+	// double driveConversionFactor =
+	// SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(3), 4.71);
+	// System.out.println("[RobotContainer] Drive Conversion Factor: " +
+	// driveConversionFactor);
+
 	private final CommandPS5Controller m_controller = new CommandPS5Controller(0);
 	private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
 	private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
@@ -103,17 +109,15 @@ public class RobotContainer {
 
 	private final SendableChooser<Command> autoChooser;
 
-	public RobotContainer() {
+	// Constant to choose autonomous mode: 1, 2, or 3.
+	private static final int AUTO_MODE = 1; // Change to 2 or 3 for different autos
 
-		// double driveConversionFactor =
-		// SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(3), 4.71);
-		// System.out.println("[RobotContainer] Drive Conversion Factor: " +
-		// driveConversionFactor);
+	public RobotContainer() {
 		// Setup the PathPlanner auto chooser
-        autoChooser = AutoBuilder.buildAutoChooser();
-        SmartDashboard.putData("Auto Chooser", autoChooser);
-        
-        // Register named commands before configuring bindings
+		autoChooser = AutoBuilder.buildAutoChooser();
+		SmartDashboard.putData("Auto Chooser", autoChooser);
+
+		// Register named commands before configuring bindings
 		NamedCommands.registerCommand("L1",
 				m_pivotSubsystem.pivotNeutralCommand().andThen(m_elevatorSubsystem.elevatorL1Command()));
 		NamedCommands.registerCommand("L2",
@@ -131,25 +135,22 @@ public class RobotContainer {
 				.andThen(m_algaeSubsystem.algaeIntakeCommand()).andThen(m_armSubsystem.armUpCommand()));
 		NamedCommands.registerCommand("Score Algae",
 				m_armSubsystem.armUpCommand().andThen(m_algaeSubsystem.algaeScoreCommand()));
-        // registerNamedCommands();
+		// registerNamedCommands();
 		NamedCommands.registerCommand(";alskdjf", currentPathCommand);
-        
-        // Configure PathPlanner logging to display on Field2d
-        
-        // ...existing code...
-        configureBindings();
-        
-        // Start periodic update of Limelight values on ShuffleBoard
-        startLimelightUpdates();
+
+		// Configure PathPlanner logging to display on Field2d
+		// ...existing code...
+		configureBindings();
+
+		// Start periodic update of Limelight values on ShuffleBoard
+		startLimelightUpdates();
 	}
 
 	/**
-	 * Configures {@link Trigger} objects for buttons on the xbox controller to run
-	 * commands for the robot.
+	 * Configures {@link Trigger} objects for buttons on the controller.
 	 */
 	private void configureBindings() {
 		// --- Elevator/Pivot Button Binds ---
-
 		// Makes the robot ready to score a coral in L1/L2/L3 or intake from source
 		// Pivots the pivot to neutral first, to make sure the coral manipulator doesn't
 		// get caught on the elevator carriage
@@ -182,40 +183,38 @@ public class RobotContainer {
 		// --- Coral Button Binds ---
 
 		// Runs the coral manipulator to intake or score a coral.
-		Trigger intakeCoral = m_controller.square().onTrue(m_coralSubsystem.coralIntakeCommand()); // Command ends when Time
-																								// of Flight detects a
-																								// coral
-		Trigger scoreCoral = m_controller.triangle().onTrue(m_coralSubsystem.coralScoreCommand()); // Command ends when Time of
-																							// Flight no longer detects
-																							// a coral
+		Trigger intakeCoral = m_controller.square().onTrue(m_coralSubsystem.coralIntakeCommand()); // Command ends when
+																									// Time of Flight
+																									// detects a coral
+		Trigger scoreCoral = m_controller.triangle().onTrue(m_coralSubsystem.coralScoreCommand()); // Command ends when
+																									// Time of Flight no
+																									// longer detects a
+																									// coral
 
 		// --- Algae/Arm Button Binds ---
 
 		// When the A button is pressed, the arm will extend, and the algae manipulator
 		// will intake until it detects an algae.
 		// Retracts the arm at the end to pull the algae into the robot.
-		// Trigger intakeAlgae = m_controller.cross().onTrue(m_armSubsystem.armDownCommand()
+		// Trigger intakeAlgae =
+		// m_controller.cross().onTrue(m_armSubsystem.armDownCommand()
 		// .andThen(m_algaeSubsystem.algaeIntakeCommand()).andThen(m_armSubsystem.armUpCommand()));
-		// // When the X button is pressed, the arm will retract (just in case, though it
+		// // When the X button is pressed, the arm will retract (just in case, though
+		// it
 		// // should already be retracted) and then outtake the algae to score.
 		// Trigger scoreAlgae = m_controller.circle()
 		// .onTrue(m_armSubsystem.armUpCommand().andThen(m_algaeSubsystem.algaeScoreCommand()));
 
 		// --- Climber Button Binds ---
-
-		// Runs the climber up or down when the right or left triggers are pressed,
-		// respectively.
+		// Runs the climber up or down when the right or left triggers are pressed, respectively.
 		Trigger climberUp = new Trigger(() -> m_controller.getR2Axis() > 0.5)
-			.onTrue(new InstantCommand(() -> m_climberSubsystem.setState(ClimberState.UP)));
+				.onTrue(new InstantCommand(() -> m_climberSubsystem.setState(ClimberState.UP)));
 		Trigger climberDown = new Trigger(() -> m_controller.getL2Axis() > 0.5)
-			.onTrue(new InstantCommand(() -> m_climberSubsystem.setState(ClimberState.DOWN)));
-		// If neither the right or the left trigger is being pressed, disable the
-		// climber.
+				.onTrue(new InstantCommand(() -> m_climberSubsystem.setState(ClimberState.DOWN)));
+		// If neither the right or the left trigger is being pressed, disable the climber.
 		climberUp.or(climberDown).onFalse(new InstantCommand(() -> m_climberSubsystem.setState(ClimberState.OFF)));
 
-		
 		// --- Drive Button Binds ---
-
 		// TODO: Add field/robot relative toggle.
 
 		// Zeroes the gyro (sets the new "forward" direction to wherever the robot is
@@ -251,62 +250,18 @@ public class RobotContainer {
 				.andThen(m_algaeSubsystem.algaeIntakeCommand()).andThen(m_armSubsystem.armUpCommand()));
 		NamedCommands.registerCommand("Score Algae",
 				m_armSubsystem.armUpCommand().andThen(m_algaeSubsystem.algaeScoreCommand()));
-
-		// m_controller.square()
-		// .onTrue(new InstantCommand(() -> {
-		// autoPathEnabled = !autoPathEnabled;
-		// System.out.println("[RobotContainer] Auto Path Enabled: " + autoPathEnabled);
-
-		// if (autoPathEnabled) {
-		// startAutoPathThread();
-		// } else {
-		// stopAutoPathThread();
-		// }
-		// }));
+		// Example toggle for auto path thread can be added here if desired.
 	}
 
 	public Command getTeleopCommand() {
 		return m_driveSubsystem.driveFieldRelativeCommand(
-			() -> MathUtil.applyDeadband(-m_controller.getLeftY(), DriveConstants.CONTROLLER_DEADBAND, 1),
-			() -> MathUtil.applyDeadband(-m_controller.getLeftX(), DriveConstants.CONTROLLER_DEADBAND, 1),
-			() -> MathUtil.applyDeadband(-m_controller.getRightX(), DriveConstants.CONTROLLER_DEADBAND, 1))
-			.withName("TeleopCommand")
-		// return m_driveSubsystem.driveWithSetpointGeneratorFieldRelative(
-		// 	() -> new ChassisSpeeds(
-		// 		MathUtil.applyDeadband(-m_controller.getLeftY(), DriveConstants.CONTROLLER_DEADBAND) * Drivetrain.kMaxSpeed,
-		// 		MathUtil.applyDeadband(-m_controller.getLeftX(), DriveConstants.CONTROLLER_DEADBAND) * Drivetrain.kMaxSpeed,
-		// 		MathUtil.applyDeadband(-m_controller.getRightX(), DriveConstants.CONTROLLER_DEADBAND) * Drivetrain.kMaxAngularSpeed
-		// 	)
-		// )
-			// .alongWith(new RunCommand(() -> {
-			// 	// Use R2 for arm up (positive) and L2 for arm down (negative)
-			// 	// Map triggers from 0-1 range to -1 to 1 range
-			// 	double r2Value = m_controller.getR2Axis() * 2 - 1;
-			// 	double l2Value = m_controller.getL2Axis() * 2 - 1;
-			// 	System.out.println("R2: " + r2Value);
-			// 	System.out.println("L2: " + l2Value);
-
-			// 	double armPower = r2Value - l2Value;
-			// 	m_armSubsystem.armManual(armPower * 0.4); // Scale to match arm's max power limit
-			// }, m_armSubsystem))
-			// .alongWith(
-			// 	Commands.runOnce(() -> {
-			// 		// Cross button (X) intakes algae
-			// 		m_controller.cross().onTrue(m_algaeSubsystem.algaeIntakeCommand());
-			// 		// Circle button (O) scores/outtakes algae
-			// 		m_controller.circle().onTrue(m_algaeSubsystem.algaeScoreCommand());
-			// 	})
-			// )
-			;
+				() -> MathUtil.applyDeadband(-m_controller.getLeftY(), DriveConstants.CONTROLLER_DEADBAND, 1),
+				() -> MathUtil.applyDeadband(-m_controller.getLeftX(), DriveConstants.CONTROLLER_DEADBAND, 1),
+				() -> MathUtil.applyDeadband(-m_controller.getRightX(), DriveConstants.CONTROLLER_DEADBAND, 1))
+				.withName("TeleopCommand");
 	}
 
-	// public Command getTestCommand() {
-	// 	return m_driveSubsystem.sysIdDriveMotorCommand();
-	// }
-
-	/**
-	 * Starts the auto path following thread.
-	 */
+	// --- Auto Path Thread (unchanged) ---
 	public synchronized void startAutoPathThread() {
 		if (autoPathThread == null || !autoPathThread.isAlive()) {
 			System.out.println("[RobotContainer] Starting Auto Path Thread...");
@@ -348,12 +303,8 @@ public class RobotContainer {
 
 					// Retrieve the current key press from NetworkTables.
 					String currentKey = m_networkTablesReceiver.getLastKeyPressed();
-					// System.out.println("currentkey: " + currentKey);
-					// System.out.println("[AutoPathThread] Retrieved key from NT: " + currentKey);
-
-					// If the key has changed, schedule a new auto-path command.
 					if (!currentKey.equals(lastProcessedKey)) {
-						System.out.println("[AutoPathThread] New key detected: " + currentKey);
+						System.out.println("[RobotContainer] New key detected: " + currentKey);
 						lastProcessedKey = currentKey;
 
 						if (currentPathCommand != null && currentPathCommand.isScheduled()) {
@@ -361,10 +312,9 @@ public class RobotContainer {
 							System.out.println("[RobotContainer] Canceled existing path command.");
 						}
 
-						// Map the key to a target pose.
 						Pose2d targetPose = getPoseFromKey(currentKey);
 						if (targetPose != null) {
-							System.out.println("[AutoPathThread] Creating path to " + targetPose);
+							System.out.println("[RobotContainer] Creating path to " + targetPose);
 							Command pathCommand = m_driveSubsystem.driveToPose(targetPose)
 									.andThen(getTeleopCommand());
 							currentPathCommand = pathCommand;
@@ -372,12 +322,12 @@ public class RobotContainer {
 							System.out.println(
 									"[RobotContainer] Scheduled Auto Path Following Command to " + currentKey + ".");
 						} else {
-							System.out.println("[AutoPathThread] No pose mapped for key: " + currentKey);
+							System.out.println("[RobotContainer] No pose mapped for key: " + currentKey);
 						}
 					}
 
 					try {
-						Thread.sleep(100); // Check every 10ms.
+						Thread.sleep(100);
 					} catch (InterruptedException e) {
 						System.out.println("[RobotContainer] Auto Path Thread interrupted during normal operation.");
 						break;
@@ -403,14 +353,12 @@ public class RobotContainer {
 			System.out.println("[RobotContainer] Auto Path Thread interrupted and stopped.");
 		}
 
-		// Cancel any existing path command
 		if (currentPathCommand != null && currentPathCommand.isScheduled()) {
 			currentPathCommand.cancel();
 			System.out.println("[RobotContainer] Canceled existing path command.");
 			currentPathCommand = null;
 		}
 
-		// Reset previous target coordinates
 		previousTargetX = Double.NaN;
 		previousTargetY = Double.NaN;
 	}
@@ -439,7 +387,6 @@ public class RobotContainer {
 			m_driveSubsystem.resetOdometryWithVision();
 		} catch (Exception e) {
 			System.err.println("Error finding starting vision pose: " + e.getMessage());
-			// Continue with default pose rather than crashing
 		}
 	}
 
@@ -454,25 +401,61 @@ public class RobotContainer {
 		poseMap.put("q", Constants.noteTopPose);
 		poseMap.put("w", Constants.noteCenterPose);
 		poseMap.put("e", Constants.noteBottomPose);
-
 		return poseMap.get(key);
 	}
 
 	/**
 	 * Retrieves the selected autonomous command.
-	 *
-	 * @return The selected autonomous command.
+	 * This version replaces the auto chooser with three simple timer-based autos.
 	 */
 	public Command getAutonomousCommand() {
-		// return autoChooser.getSelected();
-		Command selectedAuto = autoChooser.getSelected();
-        if (selectedAuto != null) {
-            System.out.println("Running auto: " + autoChooser.getSelected().getName());
-            return selectedAuto;
-        } else {
-            System.out.println("No auto selected - defaulting to nothing");
-            return Commands.none();
-        }
+		// Define speeds (adjust as necessary)
+		double mediumForwardSpeed = 0.5; // meters per second
+		double mediumSideSpeed = 0.5; // meters per second
+
+		// Auto 1: Drive forward for 3 seconds at medium speed.
+		Command auto1 = new SequentialCommandGroup(
+				new RunCommand(
+						() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(mediumForwardSpeed, 0.0, 0.0)),
+						m_driveSubsystem).withTimeout(3.0),
+				new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
+						m_driveSubsystem));
+
+		// Auto 2: Drive forward for 1 second, then move arm to L1 position and shoot.
+		Command auto2 = new SequentialCommandGroup(
+				new RunCommand(
+						() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(mediumForwardSpeed, 0.0, 0.0)),
+						m_driveSubsystem).withTimeout(1.0),
+				new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
+						m_driveSubsystem),
+				m_pivotSubsystem.pivotNeutralCommand().andThen(m_elevatorSubsystem.elevatorL1Command()),
+				m_coralSubsystem.coralScoreCommand(),
+				new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
+						m_driveSubsystem));
+
+		// Auto 3: Wait 5 seconds, strafe right for 1 second, then perform Auto 2.
+		Command auto3 = new SequentialCommandGroup(
+				new WaitCommand(5.0),
+				new RunCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, mediumSideSpeed, 0.0)),
+						m_driveSubsystem).withTimeout(1.0),
+				new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
+						m_driveSubsystem),
+				auto2);
+
+		switch (AUTO_MODE) {
+			case 1:
+				System.out.println("Running Auto 1");
+				return auto1;
+			case 2:
+				System.out.println("Running Auto 2");
+				return auto2;
+			case 3:
+				System.out.println("Running Auto 3");
+				return auto3;
+			default:
+				System.out.println("Invalid AUTO_MODE, defaulting to no auto.");
+				return Commands.none();
+		}
 	}
 
 	/**
@@ -496,9 +479,9 @@ public class RobotContainer {
 	public Limelight getLimelight() {
 		return m_limelight;
 	}
-	
+
 	/**
-	 * Starts a thread to periodically update Limelight values on ShuffleBoard
+	 * Starts a thread to periodically update Limelight values on ShuffleBoard.
 	 */
 	private void startLimelightUpdates() {
 		// Create a thread that updates Limelight values on ShuffleBoard
@@ -508,24 +491,19 @@ public class RobotContainer {
 					// Get tx value directly from NetworkTables
 					NetworkTable limelightTable = NetworkTableInstance.getDefault()
 							.getTable("limelight-left");
-					
-					// Batch the network table access to reduce overhead
 					double tv = limelightTable.getEntry("tv").getDouble(0);
 					double tx = limelightTable.getEntry("tx").getDouble(0.0);
-					
 					// Put the tx value on ShuffleBoard
 					SmartDashboard.putNumber("Limelight TX", tx);
-					
 					// Also display whether there's a valid target
 					boolean hasTarget = tv >= 1.0;
 					SmartDashboard.putBoolean("Limelight Has Target", hasTarget);
-					
 					// Sleep longer to reduce CPU usage - 250ms is still 4 updates per second
 					Thread.sleep(250);
 				} catch (Exception e) {
 					System.err.println("Error in limelight thread: " + e.getMessage());
 					try {
-						Thread.sleep(1000); // On error, sleep longer before retrying
+						Thread.sleep(1000); // On error, sleep longesr before retrying
 					} catch (InterruptedException ex) {
 						Thread.currentThread().interrupt();
 						break;
@@ -533,12 +511,10 @@ public class RobotContainer {
 				}
 			}
 		});
-		
 		limelightUpdateThread.setDaemon(true);
 		limelightUpdateThread.setPriority(Thread.MIN_PRIORITY); // Lower priority to avoid interfering with critical robot functions
 		limelightUpdateThread.setName("Limelight Update Thread");
 		limelightUpdateThread.start();
-		
 		System.out.println("Started Limelight update thread");
 	}
 }
