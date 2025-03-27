@@ -62,12 +62,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
 public class RobotContainer {
-	// double driveConversionFactor =
-	// SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(3), 4.71);
-	// System.out.println("[RobotContainer] Drive Conversion Factor: " +
-	// driveConversionFactor);
-
-	private final CommandPS5Controller m_controller = new CommandPS5Controller(0);
+	// private final CommandPS5Controller m_controller = new CommandPS5Controller(0);
+  	private final CommandXboxController m_controller = new CommandXboxController(0);
 	private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
 	private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
 	private final PivotSubsystem m_pivotSubsystem = new PivotSubsystem();
@@ -155,20 +151,20 @@ public class RobotContainer {
 		// Pivots the pivot to neutral first, to make sure the coral manipulator doesn't
 		// get caught on the elevator carriage
 		// Then brings the elevator to the correct setpoint
-		Trigger gotoL1 = m_controller.povDown()
+		Trigger gotoL1 = m_controller.pov(180)
 				.onTrue(m_pivotSubsystem.pivotNeutralCommand()
 						.andThen(m_elevatorSubsystem.elevatorL1Command()));
 		// For L2 and L3, the pivot pivots down at the end to face the manipulator
 		// toward the reef branch
-		Trigger gotoL2 = m_controller.povLeft()
+		Trigger gotoL2 = m_controller.pov(270)
 				.onTrue(m_pivotSubsystem.pivotNeutralCommand()
 						.andThen(m_elevatorSubsystem.elevatorL2Command()).andThen(m_pivotSubsystem.pivotDownCommand()));
-		Trigger gotoL3 = m_controller.povUp()
+		Trigger gotoL3 = m_controller.pov(0)
 				.onTrue(m_pivotSubsystem.pivotNeutralCommand()
 						.andThen(m_elevatorSubsystem.elevatorL3Command()).andThen(m_pivotSubsystem.pivotDownCommand()));
 		// For source, the pivot pivots up at the end to face the manipulator toward the
 		// human player station
-		Trigger gotoSource = m_controller.povRight()
+		Trigger gotoSource = m_controller.pov(90)
 				.onTrue(m_pivotSubsystem.pivotNeutralCommand()
 						.andThen(m_elevatorSubsystem.elevatorSourceCommand())
 						.andThen(m_pivotSubsystem.pivotUpCommand()));
@@ -183,35 +179,41 @@ public class RobotContainer {
 		// --- Coral Button Binds ---
 
 		// Runs the coral manipulator to intake or score a coral.
-		Trigger intakeCoral = m_controller.square().onTrue(m_coralSubsystem.coralIntakeCommand()); // Command ends when
-																									// Time of Flight
-																									// detects a coral
-		Trigger scoreCoral = m_controller.triangle().onTrue(m_coralSubsystem.coralScoreCommand()); // Command ends when
-																									// Time of Flight no
-																									// longer detects a
-																									// coral
+		Trigger intakeCoral = m_controller.b().onTrue(m_coralSubsystem.coralIntakeCommand()); // Command ends when Time
+																								// of Flight detects a
+																								// coral
+		Trigger scoreCoral = m_controller.y().onTrue(m_coralSubsystem.coralScoreCommand()); // Command ends when Time of
+																							// Flight no longer detects
+																							// a coral
+    intakeCoral.or(scoreCoral).onFalse(m_coralSubsystem.coralOffCommand());
 
 		// --- Algae/Arm Button Binds ---
 
 		// When the A button is pressed, the arm will extend, and the algae manipulator
 		// will intake until it detects an algae.
 		// Retracts the arm at the end to pull the algae into the robot.
-		// Trigger intakeAlgae =
-		// m_controller.cross().onTrue(m_armSubsystem.armDownCommand()
-		// .andThen(m_algaeSubsystem.algaeIntakeCommand()).andThen(m_armSubsystem.armUpCommand()));
-		// // When the X button is pressed, the arm will retract (just in case, though
-		// it
-		// // should already be retracted) and then outtake the algae to score.
-		// Trigger scoreAlgae = m_controller.circle()
-		// .onTrue(m_armSubsystem.armUpCommand().andThen(m_algaeSubsystem.algaeScoreCommand()));
+		Trigger intakeAlgae = m_controller.a().onTrue(m_algaeSubsystem.algaeIntakeCommand());
+		// When the X button is pressed, the arm will retract (just in case, though it
+		// should already be retracted) and then outtake the algae to score.
+		Trigger scoreAlgae = m_controller.x().onTrue(m_algaeSubsystem.algaeScoreCommand());
+    intakeAlgae.or(scoreAlgae).onFalse(m_algaeSubsystem.algaeOffCommand());
+
+
+    Trigger armUp = m_controller.rightTrigger().onTrue(m_armSubsystem.armUpCommand());
+    Trigger armDown = m_controller.leftTrigger().onTrue(m_armSubsystem.armDownCommand());
+    // If neither the right or the left trigger is being pressed, set the arm to idle.
+    armUp.or(armDown).onFalse(m_armSubsystem.armHoldCommand());
 
 		// --- Climber Button Binds ---
-		// Runs the climber up or down when the right or left triggers are pressed, respectively.
-		Trigger climberUp = new Trigger(() -> m_controller.getR2Axis() > 0.5)
-				.onTrue(new InstantCommand(() -> m_climberSubsystem.setState(ClimberState.UP)));
-		Trigger climberDown = new Trigger(() -> m_controller.getL2Axis() > 0.5)
-				.onTrue(new InstantCommand(() -> m_climberSubsystem.setState(ClimberState.DOWN)));
-		// If neither the right or the left trigger is being pressed, disable the climber.
+
+		// Runs the climber up or down when the right or left triggers are pressed,
+		// respectively.
+		Trigger climberUp = m_controller.rightBumper()
+			.onTrue(new InstantCommand(() -> m_climberSubsystem.setState(ClimberState.UP)));
+		Trigger climberDown = m_controller.leftBumper()
+			.onTrue(new InstantCommand(() -> m_climberSubsystem.setState(ClimberState.DOWN)));
+		// If neither the right or the left trigger is being pressed, disable the
+		// climber.
 		climberUp.or(climberDown).onFalse(new InstantCommand(() -> m_climberSubsystem.setState(ClimberState.OFF)));
 
 		// --- Drive Button Binds ---
@@ -222,11 +224,11 @@ public class RobotContainer {
 		// Trigger gyroReset = m_controller.a().onTrue(new InstantCommand(m_driveSubsystem::zeroGyro));
 		
 		// Reset the pose and gyro based on Limelight data when the options button is pressed
-		m_controller.options().onTrue(Commands.runOnce(() -> {
+		m_controller.start().onTrue(Commands.runOnce(() -> {
 			System.out.println("Resetting pose using Limelight vision data");
 			m_driveSubsystem.resetOdometryWithVision();
 		}));
-		m_controller.cross().onTrue(Commands.runOnce(() -> {
+		m_controller.back().onTrue(Commands.runOnce(() -> {
 			System.out.println("Zero Gyro");
 			m_driveSubsystem.zeroGyro();
 		}));
