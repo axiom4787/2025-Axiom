@@ -427,7 +427,7 @@ public class RobotContainer {
 		Command auto2 = new SequentialCommandGroup(
 				new RunCommand(
 						() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(mediumForwardSpeed, 0.0, 0.0)),
-						m_driveSubsystem).withTimeout(1.0),
+						m_driveSubsystem).withTimeout(3.0),
 				new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
 						m_driveSubsystem),
 				m_pivotSubsystem.pivotNeutralCommand().andThen(m_elevatorSubsystem.elevatorL1Command()),
