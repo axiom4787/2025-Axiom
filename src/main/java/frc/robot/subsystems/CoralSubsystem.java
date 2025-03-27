@@ -67,10 +67,7 @@ public class CoralSubsystem extends SubsystemBase {
    * @return A command that sets the coral state to INTAKE until the coral is no longer detected and then disables. (currently runs for 1 second since our sensor is not attached yet)
    */
   public Command coralIntakeCommand() {
-    Command intake = new InstantCommand(() -> m_state = CoralState.INTAKE)
-        .andThen(new WaitCommand(1))
-        .andThen(new InstantCommand(() -> m_state = CoralState.OFF));
-
+    Command intake = new InstantCommand(() -> m_state = CoralState.INTAKE);
     // command for when sensor is attached:
     // Command intake = new InstantCommand(() -> m_state = CoralState.INTAKE)
     // .andThen(new WaitUntilCommand(() -> hasCoral()))
@@ -84,16 +81,19 @@ public class CoralSubsystem extends SubsystemBase {
    * @return A command that sets the coral state to SCORE until the coral is no longer detected and then disables. (currently runs for 1 second since our sensor is not attached yet)
    */
   public Command coralScoreCommand() {
-    Command score = new InstantCommand(() -> m_state = CoralState.SCORE)
-        .andThen(new WaitCommand(1))
-        .andThen(new InstantCommand(() -> m_state = CoralState.OFF));
-
+    Command score = new InstantCommand(() -> m_state = CoralState.SCORE);
     // command for when sensor is attached:
     // Command outtake = new InstantCommand(() -> m_state = CoralState.SCORE)
     // .andThen(new WaitUntilCommand(() -> !hasCoral()))
     // .andThen(new InstantCommand(() -> m_state = CoralState.OFF));
     score.addRequirements(this);
     return score;
+  }
+
+  public Command coralOffCommand() {
+    Command off = new InstantCommand(() -> m_state = CoralState.OFF);
+    off.addRequirements(this);
+    return off;
   }
 
   /**

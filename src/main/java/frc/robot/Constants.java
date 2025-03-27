@@ -38,18 +38,17 @@ public class Constants {
     public static final class ArmConstants {
         public static final int ARM_MOTOR_ID = 13;
 
-        public static final double ARM_UP_ANGLE = 90;
-        public static final double ARM_DOWN_ANGLE = 45;
+        public static final double ARM_DOWN_DUTYCYCLE = -0.4;
+        public static final double ARM_UP_DUTYCYCLE = 0.4;
 
-        public static final double ARM_KP = 0.1;
-        public static final double ARM_KI = 0.0;
-        public static final double ARM_KD = 0.0;
+        public static final double ARM_HOLD_DOWN_DUTYCYCLE = -0.0;
+        public static final double ARM_HOLD_UP_DUTYCYCLE = 0.05;
     }
 
     public static class ClimberConstants {
         public static final int CLIMBER_MOTOR_ID = 14;
-        public static final double CLIMBER_UP_DUTYCYCLE = -0.5;
-        public static final double CLIMBER_DOWN_DUTYCYCLE = 0.5;
+        public static final double CLIMBER_UP_DUTYCYCLE = -0.75;
+        public static final double CLIMBER_DOWN_DUTYCYCLE = 0.75;
     }
 
     public static class CoralConstants {
@@ -77,11 +76,14 @@ public class Constants {
 
     public static class PivotConstants {
         public static final int PIVOT_MOTOR_ID = 11;
-        private static final double PIVOT_OFFSET = 20;
+        //private static final double PIVOT_OFFSET = 20;
         // in degrees
-        public static final double PIVOT_UP_ANGLE = 86-PIVOT_OFFSET;
-        public static final double PIVOT_DOWN_ANGLE = 142-PIVOT_OFFSET;
-        public static final double PIVOT_NEUTRAL_ANGLE = 122-PIVOT_OFFSET;
+        // public static final double PIVOT_UP_ANGLE = 86-PIVOT_OFFSET;
+        // public static final double PIVOT_DOWN_ANGLE = 142-PIVOT_OFFSET;
+        // public static final double PIVOT_NEUTRAL_ANGLE = 122-PIVOT_OFFSET;
+        public static final double PIVOT_UP_ANGLE = 315;
+        public static final double PIVOT_DOWN_ANGLE = 15;
+        public static final double PIVOT_NEUTRAL_ANGLE = 0;
 
         public static final double PIVOT_KP = 0.025;
         public static final double PIVOT_KI = 0.0;

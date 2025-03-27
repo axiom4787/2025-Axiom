@@ -33,6 +33,7 @@ public class AlgaeSubsystem extends SubsystemBase {
     rollerMotorConfig.voltageCompensation(10);
     rollerMotorConfig.smartCurrentLimit(40);
     rollerMotorConfig.idleMode(IdleMode.kBrake);
+    rollerMotorConfig.inverted(true);
     m_rollerMotor.configure(rollerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);    
   }
 
@@ -56,8 +57,7 @@ public class AlgaeSubsystem extends SubsystemBase {
    * @return A command that sets the algae state to INTAKE until the algae is no longer detected and then disables. (currently runs for 3 seconds since our sensor is not attached yet)
    */
   public Command algaeIntakeCommand() {
-    Command algaeIntake = new InstantCommand(() -> m_state = AlgaeState.INTAKE).andThen(new WaitCommand(3))
-        .andThen(new InstantCommand(() -> m_state = AlgaeState.OFF));
+    Command algaeIntake = new InstantCommand(() -> m_state = AlgaeState.INTAKE);
     
     // command for when sensor is attached:
     // Command algaeIntake = new InstantCommand(() -> m_state = AlgaeState.INTAKE)
@@ -71,14 +71,16 @@ public class AlgaeSubsystem extends SubsystemBase {
    * @return A command that sets the algae state to SCORE until the algae is no longer detected and then disables. (currently runs for 3 seconds since our sensor is not attached yet)
    */
   public Command algaeScoreCommand() {
-    Command algaeScore = new InstantCommand(() -> m_state = AlgaeState.SCORE).andThen(new WaitCommand(3))
-        .andThen(new InstantCommand(() -> m_state = AlgaeState.OFF));
-
-    // command for when sensor is attached:
-    // Command algaeScore = new InstantCommand(() -> m_state = AlgaeState.SCORE)
-    //     .andThen(new WaitUntilCommand(() -> !hasAlgae())).andThen(new InstantCommand(() -> m_state = AlgaeState.OFF));
+    Command algaeScore = new InstantCommand(() -> m_state = AlgaeState.SCORE);
     algaeScore.addRequirements(this);
     return algaeScore;
+  }
+
+  public Command algaeOffCommand()
+  {
+    Command algaeOff = new InstantCommand(() -> m_state = AlgaeState.OFF);
+    algaeOff.addRequirements(this);
+    return algaeOff;
   }
 
   /**
