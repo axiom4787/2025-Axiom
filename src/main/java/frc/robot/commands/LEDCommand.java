@@ -31,9 +31,9 @@ public class LEDCommand extends Command{
   public void initialize() {
 
     //set up default patterns
-    m_LEDSubsystem.setPattern(Constants.LEDPresets.LEDS_OFF, this::LedOff);
-    m_LEDSubsystem.setPattern(Constants.LEDPresets.LEDS_RAINBOW, this::LedRainbow);
-    m_LEDSubsystem.setPattern(Constants.LEDPresets.LEDS_TEAM_COLOR, this::LedTeamColor);
+    m_LEDSubsystem.putPattern(Constants.LEDPresets.LEDS_OFF, this::LedOff);
+    m_LEDSubsystem.putPattern(Constants.LEDPresets.LEDS_RAINBOW, this::LedRainbow);
+    m_LEDSubsystem.putPattern(Constants.LEDPresets.LEDS_TEAM_COLOR, this::LedTeamColor);
 
   }
 

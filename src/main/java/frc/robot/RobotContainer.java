@@ -19,7 +19,8 @@ public class RobotContainer {
     ledSubsystem = new LEDSubsystem(Constants.LEDConstants.LED_PORT);
   }
 
-  private void configureBindings() {}
+  private void configureBindings() {
+  }
 
   public Command getDisabledCommand() {
 

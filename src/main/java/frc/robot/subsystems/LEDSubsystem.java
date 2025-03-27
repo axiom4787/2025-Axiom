@@ -30,22 +30,47 @@ public class LEDSubsystem extends SubsystemBase {
             startLEDS();
       }
 
-      public void setPattern(Constants.LEDPresets state, Runnable function) {
+      /**
+       * putPattern
+       * 
+       * @param state Member of the LEDPresets enum to assign the pattern to
+       * @param function Runnable object that sets the LED pattern, see LEDCommand.java for examples
+       */
+      public void putPattern(Constants.LEDPresets state, Runnable function) {
             LedMap.put(state, function);
       }
 
+      /**
+       * getPattern
+       * 
+       * @param state Member of the LEDPresets enum to get the pattern from
+       * @return Runnable object that sets the LED pattern
+       */
       public Runnable getPattern(Constants.LEDPresets state) {
             return LedMap.get(state);
       }
 
+      /**
+       * getBuffer
+       * 
+       * @return AddressableLEDBuffer object
+       */
       public AddressableLEDBuffer getBuffer() {
             return buffer;
       }
 
+      /*
+       * setBuffer
+       * 
+       * @param buffer AddressableLEDBuffer object to set the buffer to
+       */
       public void setBuffer(AddressableLEDBuffer buffer) {
             leds.setData(buffer);
       }
 
+      /**
+       * startLEDS
+       */
       public void startLEDS() {
             leds.start();
       }
