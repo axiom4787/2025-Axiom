@@ -58,6 +58,7 @@ import java.util.concurrent.TimeUnit;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.util.sendable.Sendable;
 
 import com.pathplanner.lib.util.PathPlannerLogging;
 
@@ -103,6 +104,7 @@ public class RobotContainer {
 	// Simple boolean flag instead of AtomicBoolean
 	private boolean isCurrentlyFollowingPath = false;
 
+	private SendableChooser<Integer> autoChooser = new SendableChooser<Integer>();
 
 	// Constant to choose autonomous mode: 1, 2, or 3.
 	private static final int AUTO_MODE = 1; // Change to 2 or 3 for different autos
@@ -111,7 +113,10 @@ public class RobotContainer {
 		// Setup the PathPlanner auto chooser
 		// autoChooser = AutoBuilder.buildAutoChooser();
 		// SmartDashboard.putData("Auto Chooser", autoChooser);
-		SmartDashboard.putNumber("Auto Id", 1);
+		autoChooser.addOption("Auto 1", 1);
+		autoChooser.addOption("Auto 2", 2);
+		autoChooser.addOption("Auto 3", 3);
+		SmartDashboard.putData("Auto Mode", autoChooser);
 
 		// Register named commands before configuring bindings
 		NamedCommands.registerCommand("L1",
@@ -426,7 +431,8 @@ public class RobotContainer {
 		// Auto 2: Drive forward for 1 second, then move arm to L1 position and shoot.
 		Command auto2 = new SequentialCommandGroup(
 				new RunCommand(
-						() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(mediumForwardSpeed, 0.0, 0.0)),
+					() -> m_driveSubsystem.driveRobotRelative(
+						new ChassisSpeeds(mediumForwardSpeed, 0.0, 0.0)), 
 						m_driveSubsystem).withTimeout(3.0),
 				new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
 						m_driveSubsystem),
@@ -435,7 +441,11 @@ public class RobotContainer {
 				new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
 						m_driveSubsystem),
 				new WaitCommand(1),
-				m_coralSubsystem.coralOffCommand());
+				m_coralSubsystem.coralOffCommand(),
+				new RunCommand(
+					() -> m_driveSubsystem.driveRobotRelative(
+						new ChassisSpeeds(-mediumForwardSpeed, 0.0, 0.0)),
+						m_driveSubsystem).withTimeout(2.0)); // Ensures the robot stops before executing the next command
 
 
 		// Auto 3: Wait 5 seconds, strafe right for 1 second, then perform Auto 2.
@@ -445,9 +455,23 @@ public class RobotContainer {
 						m_driveSubsystem).withTimeout(1.0),
 				new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
 						m_driveSubsystem),
-				auto2);
-
-		switch ((int) SmartDashboard.getNumber("Auto Id", 1)) {
+						new RunCommand(
+							() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(mediumForwardSpeed, 0.0, 0.0)),
+							m_driveSubsystem).withTimeout(3.0),
+					new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
+							m_driveSubsystem),
+					m_pivotSubsystem.pivotNeutralCommand().andThen(m_elevatorSubsystem.elevatorL1Command()),
+					m_coralSubsystem.coralScoreCommand(),
+					new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
+							m_driveSubsystem),
+					new WaitCommand(1),
+					m_coralSubsystem.coralOffCommand(),
+				new RunCommand(
+					() -> m_driveSubsystem.driveRobotRelative(
+						new ChassisSpeeds(-mediumForwardSpeed, 0.0, 0.0)),
+						m_driveSubsystem).withTimeout(2.0));
+		Integer auto = autoChooser.getSelected();
+		switch (auto) {
 			case 1:
 				System.out.println("Running Auto 1");
 				return auto1;
