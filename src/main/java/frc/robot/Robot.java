@@ -15,38 +15,30 @@ import frc.robot.subsystems.pathplanning.OkayPlan;
 import frc.robot.utils.CommandLogger;
 
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
+	private Command m_autonomousCommand, m_teleopCommand;
+	private Command m_testCommand;
+
+	private RobotContainer m_robotContainer;
 
 	private CommandScheduler commandScheduler;
 
 	public Robot() {
 		m_robotContainer = new RobotContainer();
 		Pathfinding.setPathfinder(new NetworkTablesADStar(m_robotContainer.getDriveSubsystem()));
-		// Pathfinding.setPathfinder(new OkayPlan(Constants.Drivetrain.ROBOT_WIDTH, Constants.Drivetrain.ROBOT_LENGTH));
+		// Pathfinding.setPathfinder(new OkayPlan(Constants.Drivetrain.ROBOT_WIDTH,
+		// Constants.Drivetrain.ROBOT_LENGTH));
 		PathfindingCommand.warmupCommand().schedule();
-		// Wamup the pathfinding command. Source: https://pathplanner.dev/pplib-pathfinding.html#java-warmup
+		// Wamup the pathfinding command. Source:
+		// https://pathplanner.dev/pplib-pathfinding.html#java-warmup
 
 		new CommandLogger();
-    commandScheduler = CommandScheduler.getInstance();
-
 	}
 
 	@Override
 	public void robotPeriodic() {
-		commandScheduler.run();
+		CommandScheduler.getInstance().run();
 	}
 
-	@Override
-	public void disabledInit() {
-	}
-
-	@Override
-	public void disabledPeriodic() {
-	}
-
-	@Override
-	public void disabledExit() {
-	}
 
 	@Override
 	public void autonomousInit() {
@@ -62,8 +54,9 @@ public class Robot extends TimedRobot {
 		}
 	}
 
-  @Override
-  public void autonomousPeriodic() {}
+	@Override
+	public void autonomousPeriodic() {
+	}
 
 	@Override
 	public void autonomousExit() {
@@ -71,8 +64,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
-    m_teleopCommand = m_robotContainer.getTeleopCommand();
-
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();
 		}
@@ -85,47 +76,48 @@ public class Robot extends TimedRobot {
 			System.err.println("Failed to initialize pose with vision: " + e.getMessage());
 			// Continue without vision initialization
 		}
-		
+
 		m_robotContainer.startAutoPathThread();
 		// System.out.println("Teleop init");
 
 		if (m_teleopCommand != null) {
 			m_teleopCommand.schedule();
 		}
-
-    m_teleopCommand.schedule();
 	}
 
 	@Override
 	public void teleopPeriodic() {
 		// m_robotContainer.getNetworkTablesReceiver().runMain();
-	
-    m_teleopCommand.execute();
-  }
+	}
 
 	@Override
 	public void teleopExit() {
 	}
 
-  @Override
-  public void testInit() {
-    CommandScheduler.getInstance().cancelAll();
-  }
+	@Override
+	public void testInit() {
+		CommandScheduler.getInstance().cancelAll();
+
+		if (m_testCommand != null) {
+			m_testCommand.schedule();
+		}
+	}
 
 	@Override
 	public void testPeriodic() {
-	
-    m_testCommand.execute();
-  }
+		m_testCommand.execute();
+	}
 
-  @Override
-  public void testExit() {}
+	@Override
+	public void testExit() {
+	}
 
-  @Override
-  public void simulationInit() {}
+	@Override
+	public void simulationInit() {
+	}
 
-  @Override
-  public void simulationPeriodic() {
-    CommandScheduler.getInstance().run();
-  }
+	@Override
+	public void simulationPeriodic() {
+		CommandScheduler.getInstance().run();
+	}
 }
