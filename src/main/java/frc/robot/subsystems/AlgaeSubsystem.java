@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.AlgaeConstants;
 
 // This subsystem controls the roller on the algae manipulator.
+@SuppressWarnings("unused")
 public class AlgaeSubsystem extends SubsystemBase {
   private AlgaeState m_state = AlgaeState.OFF;
   private SparkMax m_rollerMotor = new SparkMax(AlgaeConstants.ROLLER_MOTOR_ID, MotorType.kBrushless);
@@ -34,7 +35,7 @@ public class AlgaeSubsystem extends SubsystemBase {
     rollerMotorConfig.smartCurrentLimit(40);
     rollerMotorConfig.idleMode(IdleMode.kBrake);
     rollerMotorConfig.inverted(true);
-    m_rollerMotor.configure(rollerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);    
+    m_rollerMotor.configure(rollerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
@@ -54,21 +55,28 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   /**
    * Command to intake algae.
-   * @return A command that sets the algae state to INTAKE until the algae is no longer detected and then disables. (currently runs for 3 seconds since our sensor is not attached yet)
+   * 
+   * @return A command that sets the algae state to INTAKE until the algae is no
+   *         longer detected and then disables. (currently runs for 3 seconds
+   *         since our sensor is not attached yet)
    */
   public Command algaeIntakeCommand() {
     Command algaeIntake = new InstantCommand(() -> m_state = AlgaeState.INTAKE);
-    
+
     // command for when sensor is attached:
     // Command algaeIntake = new InstantCommand(() -> m_state = AlgaeState.INTAKE)
-    //     .andThen(new WaitUntilCommand(() -> hasAlgae())).andThen(new InstantCommand(() -> m_state = AlgaeState.OFF));
+    // .andThen(new WaitUntilCommand(() -> hasAlgae())).andThen(new
+    // InstantCommand(() -> m_state = AlgaeState.OFF));
     algaeIntake.addRequirements(this);
     return algaeIntake;
   }
 
   /**
    * Command to score algae.
-   * @return A command that sets the algae state to SCORE until the algae is no longer detected and then disables. (currently runs for 3 seconds since our sensor is not attached yet)
+   * 
+   * @return A command that sets the algae state to SCORE until the algae is no
+   *         longer detected and then disables. (currently runs for 3 seconds
+   *         since our sensor is not attached yet)
    */
   public Command algaeScoreCommand() {
     Command algaeScore = new InstantCommand(() -> m_state = AlgaeState.SCORE);
@@ -76,8 +84,7 @@ public class AlgaeSubsystem extends SubsystemBase {
     return algaeScore;
   }
 
-  public Command algaeOffCommand()
-  {
+  public Command algaeOffCommand() {
     Command algaeOff = new InstantCommand(() -> m_state = AlgaeState.OFF);
     algaeOff.addRequirements(this);
     return algaeOff;
@@ -85,6 +92,7 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   /**
    * Method to determine if algae is present with Time of Flight sensor.
+   * 
    * @return True if algae is present, false otherwise.
    */
   // public boolean hasAlgae() {

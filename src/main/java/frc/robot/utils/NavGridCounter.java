@@ -36,14 +36,14 @@ public class NavGridCounter {
     public int[] calculateGridSize() {
         if (data == null || !data.has("grid")) {
             System.err.println("Error: Grid data is missing.");
-            return new int[]{0, 0};
+            return new int[] { 0, 0 };
         }
 
         JsonArray grid = data.getAsJsonArray("grid");
         int rows = grid.size();
         int columns = rows > 0 ? grid.get(0).getAsJsonArray().size() : 0;
 
-        return new int[]{rows, columns};
+        return new int[] { rows, columns };
     }
 
     /**
@@ -87,8 +87,7 @@ public class NavGridCounter {
         int totalPoints = countPoints();
 
         return String.format(
-            "Field Size: %.2f x %.2f\nGrid Size: %d rows x %d columns\nTotal Points: %d",
-            fieldSizeX, fieldSizeY, gridSize[0], gridSize[1], totalPoints
-        );
+                "Field Size: %.2f x %.2f\nGrid Size: %d rows x %d columns\nTotal Points: %d",
+                fieldSizeX, fieldSizeY, gridSize[0], gridSize[1], totalPoints);
     }
 }

@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.CoralConstants;
 
 // This subsystem controls the two rollers on the coral manipulator.
+@SuppressWarnings("unused")
 public class CoralSubsystem extends SubsystemBase {
   private CoralState m_state = CoralState.OFF;
 
@@ -26,15 +27,17 @@ public class CoralSubsystem extends SubsystemBase {
   public CoralSubsystem() {
     SparkMaxConfig topCoralMotorConfig = new SparkMaxConfig();
 
-    topCoralMotorConfig.inverted(true);
-    topCoralMotorConfig.smartCurrentLimit(20);
-    topCoralMotorConfig.idleMode(IdleMode.kCoast);
+    topCoralMotorConfig
+        .inverted(true)
+        .smartCurrentLimit(20)
+        .idleMode(IdleMode.kCoast);
 
     SparkMaxConfig bottomCoralMotorConfig = new SparkMaxConfig();
 
-    bottomCoralMotorConfig.idleMode(IdleMode.kCoast);
-    bottomCoralMotorConfig.smartCurrentLimit(20);
-    bottomCoralMotorConfig.follow(m_topCoralMotor, false);
+    bottomCoralMotorConfig
+        .idleMode(IdleMode.kCoast)
+        .smartCurrentLimit(20)
+        .follow(m_topCoralMotor, false);
 
     m_topCoralMotor.configure(topCoralMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     m_bottomCoralMotor.configure(bottomCoralMotorConfig, ResetMode.kResetSafeParameters,
@@ -64,7 +67,10 @@ public class CoralSubsystem extends SubsystemBase {
 
   /**
    * Command to intake coral.
-   * @return A command that sets the coral state to INTAKE until the coral is no longer detected and then disables. (currently runs for 1 second since our sensor is not attached yet)
+   * 
+   * @return A command that sets the coral state to INTAKE until the coral is no
+   *         longer detected and then disables. (currently runs for 1 second since
+   *         our sensor is not attached yet)
    */
   public Command coralIntakeCommand() {
     Command intake = new InstantCommand(() -> m_state = CoralState.INTAKE);
@@ -78,7 +84,10 @@ public class CoralSubsystem extends SubsystemBase {
 
   /**
    * Command to score coral.
-   * @return A command that sets the coral state to SCORE until the coral is no longer detected and then disables. (currently runs for 1 second since our sensor is not attached yet)
+   * 
+   * @return A command that sets the coral state to SCORE until the coral is no
+   *         longer detected and then disables. (currently runs for 1 second since
+   *         our sensor is not attached yet)
    */
   public Command coralScoreCommand() {
     Command score = new InstantCommand(() -> m_state = CoralState.SCORE);
@@ -98,11 +107,12 @@ public class CoralSubsystem extends SubsystemBase {
 
   /**
    * Method to determine if coral is present with Time of Flight sensor.
+   * 
    * @return True if coral is present, false otherwise.
    */
   // public boolean hasCoral() {
-  //   // TODO: use time of flight to determine if coral is present
-  //   return false;
+  // // TODO: use time of flight to determine if coral is present
+  // return false;
   // }
 
   public enum CoralState {

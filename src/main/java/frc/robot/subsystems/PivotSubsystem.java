@@ -26,18 +26,23 @@ public class PivotSubsystem extends SubsystemBase {
   private PivotState m_state = PivotState.NEUTRAL;
 
   private SparkMax m_pivotMotor = new SparkMax(PivotConstants.PIVOT_MOTOR_ID, MotorType.kBrushless);
-  private PIDController m_pivotPID = new PIDController(PivotConstants.PIVOT_KP, PivotConstants.PIVOT_KI, PivotConstants.PIVOT_KD);
+  private PIDController m_pivotPID = new PIDController(PivotConstants.PIVOT_KP, PivotConstants.PIVOT_KI,
+      PivotConstants.PIVOT_KD);
 
   /** Creates a new PivotSubsystem. */
   public PivotSubsystem() {
     SparkMaxConfig pivotMotorConfig = new SparkMaxConfig();
 
-    pivotMotorConfig.inverted(false);
-    pivotMotorConfig.smartCurrentLimit(20);
-    pivotMotorConfig.idleMode(IdleMode.kBrake);
-    pivotMotorConfig.absoluteEncoder.positionConversionFactor(360);
+    pivotMotorConfig
+        .inverted(false)
+        .smartCurrentLimit(20)
+        .idleMode(IdleMode.kBrake);
 
-    m_pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    pivotMotorConfig.absoluteEncoder
+        .positionConversionFactor(360);
+
+    m_pivotMotor
+        .configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     m_pivotPID.setTolerance(1);
     m_pivotPID.enableContinuousInput(0, 360);
@@ -50,18 +55,10 @@ public class PivotSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("PID Error", m_pivotPID.getError());
 
     switch (m_state) {
-      case UP:
-        m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition(), PivotConstants.PIVOT_UP_ANGLE);
-        break;
-      case DOWN:
-        m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition(), PivotConstants.PIVOT_DOWN_ANGLE);
-        break;
-      case NEUTRAL:
-        m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition(), PivotConstants.PIVOT_NEUTRAL_ANGLE);
-        break;
-      default:
-        m_pivotMotor.set(0);
-        break;
+      case UP -> m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition(), PivotConstants.PIVOT_UP_ANGLE);
+      case DOWN -> m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition(), PivotConstants.PIVOT_DOWN_ANGLE);
+      case NEUTRAL -> m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition(), PivotConstants.PIVOT_NEUTRAL_ANGLE);
+      default -> m_pivotMotor.set(0);
     }
 
     m_pivotMotor.set(MathUtil.clamp(m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition()), -0.1, 0.1));
@@ -69,17 +66,22 @@ public class PivotSubsystem extends SubsystemBase {
 
   /**
    * Command to pivot the pivot up.
+   * 
    * @return A command that pivots the pivot up until it reaches the setpoint.
    */
   public Command pivotUpCommand() {
     Command pivotUp = new InstantCommand(() -> m_state = PivotState.UP)
-        .andThen(new WaitUntilCommand(() -> m_pivotPID.atSetpoint())).andThen(new PrintCommand("Pivot Up Finished"));
+        .andThen(new WaitUntilCommand(() -> m_pivotPID.atSetpoint()))
+        .andThen(new PrintCommand("Pivot Up Finished"));
+        
     pivotUp.addRequirements(this);
+    
     return pivotUp;
   }
 
   /**
    * Command to pivot the pivot down.
+   * 
    * @return A command that pivots the pivot down until it reaches the setpoint.
    */
   public Command pivotDownCommand() {
@@ -91,11 +93,13 @@ public class PivotSubsystem extends SubsystemBase {
 
   /**
    * Command to pivot the pivot to neutral.
+   * 
    * @return A command that pivots the pivot to the neutral setpoint.
    */
   public Command pivotNeutralCommand() {
     Command pivotNeutral = new InstantCommand(() -> m_state = PivotState.NEUTRAL)
-        .andThen(new WaitUntilCommand(() -> m_pivotPID.atSetpoint())).andThen(new PrintCommand("Pivot Neutral Finished"));
+        .andThen(new WaitUntilCommand(() -> m_pivotPID.atSetpoint()))
+        .andThen(new PrintCommand("Pivot Neutral Finished"));
     pivotNeutral.addRequirements(this);
     return pivotNeutral;
   }

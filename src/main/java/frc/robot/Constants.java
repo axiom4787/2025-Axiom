@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
 /** Add your docs here. */
+@SuppressWarnings("unused")
 public class Constants {
     // MOTOR_ID are for the CAN ids of the motors used by each subsystem
     // DUTYCYCLE is the percentage of power sent to a motor for an action (between
@@ -24,20 +25,17 @@ public class Constants {
         public static final int LED_PORT = 0;
         public static final int BUFFER_LENGTH = 60;
         public static final double LED_SPACING = 1 / 120.0;
-      }
-    
-      public static enum LEDPresets{
-        //example presets
-        INTAKING,
-        SCORING,
-        CLIMBING,
-        IDLE,
-    
-        //testing presets
+    }
+
+    public static enum LEDPresets {
+        // testing presets
         LEDS_RAINBOW,
-        LEDS_OFF, 
+        LEDS_OFF,
         LEDS_TEAM_COLOR,
-      };
+        LEDS_RSL
+
+        //
+    };
 
     public static class DriveConstants {
         public static final double MAX_SPEED_MS = 5.740;
@@ -96,7 +94,7 @@ public class Constants {
 
     public static class PivotConstants {
         public static final int PIVOT_MOTOR_ID = 11;
-        //private static final double PIVOT_OFFSET = 20;
+        // private static final double PIVOT_OFFSET = 20;
         // in degrees
         // public static final double PIVOT_UP_ANGLE = 86-PIVOT_OFFSET;
         // public static final double PIVOT_DOWN_ANGLE = 142-PIVOT_OFFSET;
@@ -114,7 +112,6 @@ public class Constants {
         public static final double ROBOT_WIDTH = 0.85; // meters - adjust to your robot's width
         public static final double ROBOT_LENGTH = 0.85; // meters - adjust to your robot's length
 
-        
         // Driving Parameters - Note that these are not the maximum capable speeds of
         // the robot, rather the allowed maximum speeds
         public static final double kMaxSpeed = 5;
@@ -181,8 +178,7 @@ public class Constants {
         // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15
         // teeth on the bevel pinion
         public static final double kDrivingMotorReduction = (45.0 * 22) / (kDrivingMotorPinionTeeth * 15);
-        public static final double kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters)
-                / kDrivingMotorReduction;
+        public static final double kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters) / kDrivingMotorReduction;
     }
 
     // setpoints for auto paths

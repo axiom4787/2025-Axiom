@@ -674,23 +674,25 @@ public class NetworkTablesADStar implements Pathfinder {
         // Logging comprehensive information about collision checks
         boolean collisionDetected = false;
         // System.out.println("[DEBUG] Checking robot collision at pose: " +
-        //         "x=" + robotPose.getX() +
-        //         ", y=" + robotPose.getY() +
-        //         ", rot=" + robotPose.getRotation().getDegrees() + "°");
-        // System.out.println("[DEBUG] Robot dimensions: " + ROBOT_LENGTH + "m x " + ROBOT_WIDTH + "m");
+        // "x=" + robotPose.getX() +
+        // ", y=" + robotPose.getY() +
+        // ", rot=" + robotPose.getRotation().getDegrees() + "°");
+        // System.out.println("[DEBUG] Robot dimensions: " + ROBOT_LENGTH + "m x " +
+        // ROBOT_WIDTH + "m");
 
         // // Log the robot's corner positions for debugging
         // System.out.println("[DEBUG] Robot corners:");
         // for (int i = 0; i < corners.length; i++) {
-        //     System.out.println("[DEBUG]   Corner " + i + ": (" +
-        //             corners[i].getX() + ", " + corners[i].getY() + ")");
+        // System.out.println("[DEBUG] Corner " + i + ": (" +
+        // corners[i].getX() + ", " + corners[i].getY() + ")");
         // }
 
         // // Detailed logging about the bounding box
         // System.out.println("[DEBUG] Checking grid cells in bounding box: (" +
-        //         minGridX + "," + minGridY + ") to (" +
-        //         maxGridX + "," + maxGridY + ")");
-        // System.out.println("[DEBUG] Total obstacles to check against: " + obstacles.size());
+        // minGridX + "," + minGridY + ") to (" +
+        // maxGridX + "," + maxGridY + ")");
+        // System.out.println("[DEBUG] Total obstacles to check against: " +
+        // obstacles.size());
 
         int cellsChecked = 0;
         int potentialCollisions = 0;
@@ -721,9 +723,9 @@ public class NetworkTablesADStar implements Pathfinder {
                     // Check if robot polygon intersects with cell polygon
                     if (doPolygonsIntersect(robotPolygon, Arrays.asList(cellCorners))) {
                         // System.out.println("[DEBUG] COLLISION DETECTED with obstacle at (" +
-                        //         x + "," + y + ")!");
+                        // x + "," + y + ")!");
                         // System.out.println("[DEBUG] Distance from robot center to obstacle: " +
-                        //         robotPos.getDistance(cellCenter) + "m");
+                        // robotPos.getDistance(cellCenter) + "m");
                         collisionDetected = true;
                         return true;
                     }
@@ -731,9 +733,10 @@ public class NetworkTablesADStar implements Pathfinder {
             }
         }
 
-        // System.out.println("[DEBUG] Collision check complete - Checked " + cellsChecked +
-        //         " cells, " + potentialCollisions + " potential collisions, " +
-        //         "Result: " + (collisionDetected ? "COLLISION" : "NO COLLISION"));
+        // System.out.println("[DEBUG] Collision check complete - Checked " +
+        // cellsChecked +
+        // " cells, " + potentialCollisions + " potential collisions, " +
+        // "Result: " + (collisionDetected ? "COLLISION" : "NO COLLISION"));
 
         return false;
     }

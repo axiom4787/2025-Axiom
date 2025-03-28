@@ -25,14 +25,12 @@ public class VisionIOInputsAutoLogged extends VisionIO.VisionIOInputs implements
         table.put("TagIds", tagIds);
 
         // connectedPublisher = NetworkTableInstance.getDefault()
-        //         .getBooleanTopic("Limelight/Connected").publish();
+        // .getBooleanTopic("Limelight/Connected").publish();
 
         // latestTargetObservationPublisherTx = NetworkTableInstance.getDefault()
-        //         .getDoubleTopic("Limelight/TargetObservation/tx").publish();
+        // .getDoubleTopic("Limelight/TargetObservation/tx").publish();
         // latestTargetObservationPublisherTy = NetworkTableInstance.getDefault()
-        //         .getDoubleTopic("Limelight/TargetObservation/ty").publish();
-
-        
+        // .getDoubleTopic("Limelight/TargetObservation/ty").publish();
 
         // connectedPublisher.set(connected);
         // latestTargetObservationPublisherTx.set(latestTargetObservation.tx().getDegrees());

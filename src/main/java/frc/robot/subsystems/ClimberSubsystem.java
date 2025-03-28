@@ -49,6 +49,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   /**
    * Sets the state of the climber arm.
+   * 
    * @param desiredState The desired state of the climber arm. OFF, UP, or DOWN.
    */
   public void setState(ClimberState desiredState) {

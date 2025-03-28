@@ -7,13 +7,15 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
- * CommandLogger registers listeners with the WPILib CommandScheduler and prints out when a command is scheduled,
+ * CommandLogger registers listeners with the WPILib CommandScheduler and prints
+ * out when a command is scheduled,
  * interrupted/canceled, or finished.
  */
 public class CommandLogger {
 
     /**
-     * Creates a new CommandLogger that registers event listeners with the CommandScheduler.
+     * Creates a new CommandLogger that registers event listeners with the
+     * CommandScheduler.
      * Call this early in your robot initialization.
      */
     public CommandLogger() {

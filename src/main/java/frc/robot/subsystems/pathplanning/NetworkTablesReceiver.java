@@ -69,26 +69,26 @@ public class NetworkTablesReceiver {
         try {
             // Get the obstacles string from the NetworkTable
             String obstacleData = table.getEntry("obstacles").getString("[]"); // Default to an empty list
-    
+
             // Parse the string into a JSON array
             JSONArray jsonArray = (JSONArray) new JSONParser().parse(obstacleData);
-    
+
             // Convert each JSON object into an expanded Translation2d
             for (Object obj : jsonArray) {
                 JSONObject jsonObject = (JSONObject) obj;
                 double x = ((Number) jsonObject.get("x")).doubleValue();
                 double y = ((Number) jsonObject.get("y")).doubleValue();
                 double size = ((Number) jsonObject.get("size")).doubleValue(); // Assuming the JSON has size data
-    
+
                 double expandedSize = size + (2 * this.driveBaseRadius); // Expand obstacle size by drivebase radius
                 double halfExpandedSize = expandedSize / 2.0;
-    
+
                 // Create expanded square bounds
                 double left = x - halfExpandedSize;
                 double right = x + halfExpandedSize;
                 double bottom = y - halfExpandedSize;
                 double top = y + halfExpandedSize;
-    
+
                 // Add the four corners of the expanded square as Translation2d
                 obstacles.add(new Translation2d(left, bottom)); // Bottom-left corner
                 obstacles.add(new Translation2d(right, bottom)); // Bottom-right corner

@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ArmConstants;
 
 // This subsystem controls the arm that extends and retracts the algae manipulator.
+@SuppressWarnings("unused")
 public class ArmSubsystem extends SubsystemBase {
   private ArmState m_state = ArmState.HOLD_UP;
   private SparkMax m_armMotor = new SparkMax(ArmConstants.ARM_MOTOR_ID, MotorType.kBrushless);
@@ -46,7 +47,8 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putString("Arm State", m_state.name());
-//    SmartDashboard.putNumber("Arm Encoder", m_armMotor.getEncoder().getPosition());
+    // SmartDashboard.putNumber("Arm Encoder",
+    // m_armMotor.getEncoder().getPosition());
 
     switch (m_state) {
       case UP:
@@ -93,9 +95,11 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   /**
-   * Command to hold the arm at its limit (up/down) while idle (no buttons pressed)
+   * Command to hold the arm at its limit (up/down) while idle (no buttons
+   * pressed)
    * 
-   * @return A command that sets the arm state to HOLD_DOWN if it was moving down, or HOLD_UP if it was moving up.
+   * @return A command that sets the arm state to HOLD_DOWN if it was moving down,
+   *         or HOLD_UP if it was moving up.
    */
   public Command armHoldCommand() {
     Command armHold = new InstantCommand(() -> m_state = switch (m_state) {
