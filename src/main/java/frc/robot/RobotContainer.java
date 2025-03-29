@@ -165,10 +165,13 @@ public class RobotContainer {
         // toward the reef branch
         Trigger gotoL2 = m_controller.pov(270)
                 .onTrue(m_pivotSubsystem.pivotNeutralCommand()
-                        .andThen(m_elevatorSubsystem.elevatorL2Command()).andThen(m_pivotSubsystem.pivotDownCommand()));
+                        .andThen(m_elevatorSubsystem.elevatorL2Command())
+                        .andThen(m_pivotSubsystem.pivotDownCommand()));
+
         Trigger gotoL3 = m_controller.pov(0)
                 .onTrue(m_pivotSubsystem.pivotNeutralCommand()
-                        .andThen(m_elevatorSubsystem.elevatorL3Command()).andThen(m_pivotSubsystem.pivotDownCommand()));
+                        .andThen(m_elevatorSubsystem.elevatorL3Command())
+                        .andThen(m_pivotSubsystem.pivotDownCommand()));
         // For source, the pivot pivots up at the end to face the manipulator toward the
         // human player station
         Trigger gotoSource = m_controller.pov(90)
@@ -245,22 +248,36 @@ public class RobotContainer {
 
     private void registerNamedCommands() {
         NamedCommands.registerCommand("L1",
-                m_pivotSubsystem.pivotNeutralCommand().andThen(m_elevatorSubsystem.elevatorL1Command()));
+                m_pivotSubsystem.pivotNeutralCommand()
+                        .andThen(m_elevatorSubsystem.elevatorL1Command()));
+
         NamedCommands.registerCommand("L2",
-                m_pivotSubsystem.pivotNeutralCommand().andThen(m_elevatorSubsystem.elevatorL2Command())
+                m_pivotSubsystem.pivotNeutralCommand()
+                        .andThen(m_elevatorSubsystem.elevatorL2Command())
                         .andThen(m_pivotSubsystem.pivotDownCommand()));
+
         NamedCommands.registerCommand("L3",
-                m_pivotSubsystem.pivotNeutralCommand().andThen(m_elevatorSubsystem.elevatorL3Command())
+                m_pivotSubsystem.pivotNeutralCommand()
+                        .andThen(m_elevatorSubsystem.elevatorL3Command())
                         .andThen(m_pivotSubsystem.pivotDownCommand()));
+
         NamedCommands.registerCommand("Source",
-                m_pivotSubsystem.pivotNeutralCommand().andThen(m_elevatorSubsystem.elevatorSourceCommand())
+                m_pivotSubsystem.pivotNeutralCommand()
+                        .andThen(m_elevatorSubsystem.elevatorSourceCommand())
                         .andThen(m_pivotSubsystem.pivotUpCommand()));
+
         NamedCommands.registerCommand("Intake Coral", m_coralSubsystem.coralIntakeCommand());
+
         NamedCommands.registerCommand("Score Coral", m_coralSubsystem.coralScoreCommand());
-        NamedCommands.registerCommand("Intake Algae", m_armSubsystem.armDownCommand()
-                .andThen(m_algaeSubsystem.algaeIntakeCommand()).andThen(m_armSubsystem.armUpCommand()));
+
+        NamedCommands.registerCommand("Intake Algae",
+                m_armSubsystem.armDownCommand()
+                        .andThen(m_algaeSubsystem.algaeIntakeCommand())
+                        .andThen(m_armSubsystem.armUpCommand()));
+
         NamedCommands.registerCommand("Score Algae",
-                m_armSubsystem.armUpCommand().andThen(m_algaeSubsystem.algaeScoreCommand()));
+                m_armSubsystem.armUpCommand()
+                        .andThen(m_algaeSubsystem.algaeScoreCommand()));
         // Example toggle for auto path thread can be added here if desired.
     }
 

@@ -23,90 +23,95 @@ import frc.robot.Constants.PivotConstants;
 
 // This subsystem controls the motor that angles the coral manipulator up or down.
 public class PivotSubsystem extends SubsystemBase {
-  private PivotState m_state = PivotState.NEUTRAL;
+    private PivotState m_state = PivotState.NEUTRAL;
 
-  private SparkMax m_pivotMotor = new SparkMax(PivotConstants.PIVOT_MOTOR_ID, MotorType.kBrushless);
-  private PIDController m_pivotPID = new PIDController(PivotConstants.PIVOT_KP, PivotConstants.PIVOT_KI,
-      PivotConstants.PIVOT_KD);
+    private SparkMax m_pivotMotor = new SparkMax(PivotConstants.PIVOT_MOTOR_ID, MotorType.kBrushless);
+    private PIDController m_pivotPID = new PIDController(PivotConstants.PIVOT_KP, PivotConstants.PIVOT_KI,
+            PivotConstants.PIVOT_KD);
 
-  /** Creates a new PivotSubsystem. */
-  public PivotSubsystem() {
-    SparkMaxConfig pivotMotorConfig = new SparkMaxConfig();
+    /** Creates a new PivotSubsystem. */
+    public PivotSubsystem() {
+        SparkMaxConfig pivotMotorConfig = new SparkMaxConfig();
 
-    pivotMotorConfig
-        .inverted(false)
-        .smartCurrentLimit(20)
-        .idleMode(IdleMode.kBrake);
+        pivotMotorConfig
+                .inverted(false)
+                .smartCurrentLimit(20)
+                .idleMode(IdleMode.kBrake);
+                
+        pivotMotorConfig.absoluteEncoder
+                .positionConversionFactor(360);
 
-    pivotMotorConfig.absoluteEncoder
-        .positionConversionFactor(360);
+        m_pivotMotor
+                .configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    m_pivotMotor
-        .configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-    m_pivotPID.setTolerance(1);
-    m_pivotPID.enableContinuousInput(0, 360);
-  }
-
-  @Override
-  public void periodic() {
-    SmartDashboard.putString("Pivot State", m_state.name());
-    SmartDashboard.putNumber("Pivot Encoder", m_pivotMotor.getAbsoluteEncoder().getPosition());
-    SmartDashboard.putNumber("PID Error", m_pivotPID.getError());
-
-    switch (m_state) {
-      case UP -> m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition(), PivotConstants.PIVOT_UP_ANGLE);
-      case DOWN -> m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition(), PivotConstants.PIVOT_DOWN_ANGLE);
-      case NEUTRAL -> m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition(), PivotConstants.PIVOT_NEUTRAL_ANGLE);
-      default -> m_pivotMotor.set(0);
+        m_pivotPID.setTolerance(1);
+        m_pivotPID.enableContinuousInput(0, 360);
     }
 
-    m_pivotMotor.set(MathUtil.clamp(m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition()), -0.1, 0.1));
-  }
+    @Override
+    public void periodic() {
+        SmartDashboard.putString("Pivot State", m_state.name());
+        SmartDashboard.putNumber("Pivot Encoder", m_pivotMotor.getAbsoluteEncoder().getPosition());
+        SmartDashboard.putNumber("PID Error", m_pivotPID.getError());
 
-  /**
-   * Command to pivot the pivot up.
-   * 
-   * @return A command that pivots the pivot up until it reaches the setpoint.
-   */
-  public Command pivotUpCommand() {
-    Command pivotUp = new InstantCommand(() -> m_state = PivotState.UP)
-        .andThen(new WaitUntilCommand(() -> m_pivotPID.atSetpoint()))
-        .andThen(new PrintCommand("Pivot Up Finished"));
-        
-    pivotUp.addRequirements(this);
-    
-    return pivotUp;
-  }
+        switch (m_state) {
+            case UP ->
+                m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition(), PivotConstants.PIVOT_UP_ANGLE);
+            case DOWN ->
+                m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition(), PivotConstants.PIVOT_DOWN_ANGLE);
+            case NEUTRAL -> m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition(),
+                    PivotConstants.PIVOT_NEUTRAL_ANGLE);
+            default -> m_pivotMotor.set(0);
+        }
 
-  /**
-   * Command to pivot the pivot down.
-   * 
-   * @return A command that pivots the pivot down until it reaches the setpoint.
-   */
-  public Command pivotDownCommand() {
-    Command pivotDown = new InstantCommand(() -> m_state = PivotState.DOWN)
-        .andThen(new WaitUntilCommand(() -> m_pivotPID.atSetpoint())).andThen(new PrintCommand("Pivot Down Finished"));
-    pivotDown.addRequirements(this);
-    return pivotDown;
-  }
+        m_pivotMotor
+                .set(MathUtil.clamp(m_pivotPID.calculate(m_pivotMotor.getAbsoluteEncoder().getPosition()), -0.1, 0.1));
+    }
 
-  /**
-   * Command to pivot the pivot to neutral.
-   * 
-   * @return A command that pivots the pivot to the neutral setpoint.
-   */
-  public Command pivotNeutralCommand() {
-    Command pivotNeutral = new InstantCommand(() -> m_state = PivotState.NEUTRAL)
-        .andThen(new WaitUntilCommand(() -> m_pivotPID.atSetpoint()))
-        .andThen(new PrintCommand("Pivot Neutral Finished"));
-    pivotNeutral.addRequirements(this);
-    return pivotNeutral;
-  }
+    /**
+     * Command to pivot the pivot up.
+     * 
+     * @return A command that pivots the pivot up until it reaches the setpoint.
+     */
+    public Command pivotUpCommand() {
+        Command pivotUp = new InstantCommand(() -> m_state = PivotState.UP)
+                .andThen(new WaitUntilCommand(() -> m_pivotPID.atSetpoint()))
+                .andThen(new PrintCommand("Pivot Up Finished"));
 
-  public enum PivotState {
-    UP,
-    DOWN,
-    NEUTRAL
-  }
+        pivotUp.addRequirements(this);
+
+        return pivotUp;
+    }
+
+    /**
+     * Command to pivot the pivot down.
+     * 
+     * @return A command that pivots the pivot down until it reaches the setpoint.
+     */
+    public Command pivotDownCommand() {
+        Command pivotDown = new InstantCommand(() -> m_state = PivotState.DOWN)
+                .andThen(new WaitUntilCommand(() -> m_pivotPID.atSetpoint()))
+                .andThen(new PrintCommand("Pivot Down Finished"));
+        pivotDown.addRequirements(this);
+        return pivotDown;
+    }
+
+    /**
+     * Command to pivot the pivot to neutral.
+     * 
+     * @return A command that pivots the pivot to the neutral setpoint.
+     */
+    public Command pivotNeutralCommand() {
+        Command pivotNeutral = new InstantCommand(() -> m_state = PivotState.NEUTRAL)
+                .andThen(new WaitUntilCommand(() -> m_pivotPID.atSetpoint()))
+                .andThen(new PrintCommand("Pivot Neutral Finished"));
+        pivotNeutral.addRequirements(this);
+        return pivotNeutral;
+    }
+
+    public enum PivotState {
+        UP,
+        DOWN,
+        NEUTRAL
+    }
 }
