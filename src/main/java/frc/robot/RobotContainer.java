@@ -50,7 +50,10 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.MaxSwerveDriveSubsystem;
+// import frc.robot.subsystems.MaxSwerveDriveSubsystem;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.NavGridCounter;
+import swervelib.SwerveInputStream;
 import swervelib.math.SwerveMath;
 import swervelib.telemetry.SwerveDriveTelemetry;
 
@@ -71,7 +74,8 @@ public class RobotContainer {
 
 	private final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
 	private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
-	private final MaxSwerveDriveSubsystem m_driveSubsystem = new MaxSwerveDriveSubsystem();
+	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem(new File(Filesystem.getDeployDirectory(),
+			"swerve"));
 	private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
 
 	private final NetworkTablesReceiver m_networkTablesReceiver = new NetworkTablesReceiver();
@@ -231,7 +235,7 @@ public class RobotContainer {
 		// Reset the pose and gyro based on Limelight data when the options button is pressed
 		m_controller.start().onTrue(Commands.runOnce(() -> {
 			System.out.println("Resetting pose using Limelight vision data");
-			m_driveSubsystem.resetOdometryWithVision();
+			m_driveSubsystem.resetPoseWithVision();
 		}));
 		m_controller.back().onTrue(Commands.runOnce(() -> {
 			System.out.println("Zero Gyro");
@@ -260,12 +264,21 @@ public class RobotContainer {
 		// Example toggle for auto path thread can be added here if desired.
 	}
 
+	public SwerveInputStream getSwerveInputStream() {
+		double scale = 0.4;
+		SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_driveSubsystem.getSwerveDrive(),
+                                                                () -> -m_controller.getLeftY() * scale,
+                                                                () -> -m_controller.getLeftX() * scale)
+                                                            .withControllerRotationAxis(() -> m_controller.getRightX() * scale)
+                                                            .deadband(DriveConstants.CONTROLLER_DEADBAND)
+                                                            .scaleTranslation(0.8)
+                                                            .allianceRelativeControl(true);
+
+		return driveAngularVelocity;
+	}
+
 	public Command getTeleopCommand() {
-		return m_driveSubsystem.driveFieldRelativeCommand(
-				() -> MathUtil.applyDeadband(-m_controller.getLeftY(), DriveConstants.CONTROLLER_DEADBAND, 1),
-				() -> MathUtil.applyDeadband(-m_controller.getLeftX(), DriveConstants.CONTROLLER_DEADBAND, 1),
-				() -> MathUtil.applyDeadband(-m_controller.getRightX(), DriveConstants.CONTROLLER_DEADBAND, 1))
-				.withName("TeleopCommand");
+		return m_driveSubsystem.driveFieldOriented(getSwerveInputStream());
 	}
 
 	// --- Auto Path Thread (unchanged) ---
@@ -391,7 +404,7 @@ public class RobotContainer {
 	 */
 	public void findStartingVisionPose() {
 		try {
-			m_driveSubsystem.resetOdometryWithVision();
+			m_driveSubsystem.resetPoseWithVision();
 		} catch (Exception e) {
 			System.err.println("Error finding starting vision pose: " + e.getMessage());
 		}
@@ -416,75 +429,76 @@ public class RobotContainer {
 	 * This version replaces the auto chooser with three simple timer-based autos.
 	 */
 	public Command getAutonomousCommand() {
-		// Define speeds (adjust as necessary)
-		double mediumForwardSpeed = 0.5; // meters per second
-		double mediumSideSpeed = 0.5; // meters per second
+		// // Define speeds (adjust as necessary)
+		// double mediumForwardSpeed = 0.5; // meters per second
+		// double mediumSideSpeed = 0.5; // meters per second
 
-		// Auto 1: Drive forward for 3 seconds at medium speed.
-		Command auto1 = new SequentialCommandGroup(
-				new RunCommand(
-						() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(mediumForwardSpeed, 0.0, 0.0)),
-						m_driveSubsystem).withTimeout(3.0),
-				new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
-						m_driveSubsystem));
+		// // Auto 1: Drive forward for 3 seconds at medium speed.
+		// Command auto1 = new SequentialCommandGroup(
+		// 		new RunCommand(
+		// 				() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(mediumForwardSpeed, 0.0, 0.0)),
+		// 				m_driveSubsystem).withTimeout(3.0),
+		// 		new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
+		// 				m_driveSubsystem));
 
-		// Auto 2: Drive forward for 1 second, then move arm to L1 position and shoot.
-		Command auto2 = new SequentialCommandGroup(
-				new RunCommand(
-					() -> m_driveSubsystem.driveRobotRelative(
-						new ChassisSpeeds(mediumForwardSpeed, 0.0, 0.0)), 
-						m_driveSubsystem).withTimeout(3.0),
-				new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
-						m_driveSubsystem),
-				m_pivotSubsystem.pivotNeutralCommand().andThen(m_elevatorSubsystem.elevatorL1Command()),
-				m_coralSubsystem.coralScoreCommand(),
-				new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
-						m_driveSubsystem),
-				new WaitCommand(1),
-				m_coralSubsystem.coralOffCommand(),
-				new RunCommand(
-					() -> m_driveSubsystem.driveRobotRelative(
-						new ChassisSpeeds(-mediumForwardSpeed, 0.0, 0.0)),
-						m_driveSubsystem).withTimeout(2.0)); // Ensures the robot stops before executing the next command
+		// // Auto 2: Drive forward for 1 second, then move arm to L1 position and shoot.
+		// Command auto2 = new SequentialCommandGroup(
+		// 		new RunCommand(
+		// 			() -> m_driveSubsystem.driveRobotRelative(
+		// 				new ChassisSpeeds(mediumForwardSpeed, 0.0, 0.0)), 
+		// 				m_driveSubsystem).withTimeout(3.0),
+		// 		new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
+		// 				m_driveSubsystem),
+		// 		m_pivotSubsystem.pivotNeutralCommand().andThen(m_elevatorSubsystem.elevatorL1Command()),
+		// 		m_coralSubsystem.coralScoreCommand(),
+		// 		new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
+		// 				m_driveSubsystem),
+		// 		new WaitCommand(1),
+		// 		m_coralSubsystem.coralOffCommand(),
+		// 		new RunCommand(
+		// 			() -> m_driveSubsystem.driveRobotRelative(
+		// 				new ChassisSpeeds(-mediumForwardSpeed, 0.0, 0.0)),
+		// 				m_driveSubsystem).withTimeout(2.0)); // Ensures the robot stops before executing the next command
 
 
-		// Auto 3: Wait 5 seconds, strafe right for 1 second, then perform Auto 2.
-		Command auto3 = new SequentialCommandGroup(
-				new WaitCommand(5.0),
-				new RunCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, mediumSideSpeed, 0.0)),
-						m_driveSubsystem).withTimeout(1.0),
-				new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
-						m_driveSubsystem),
-						new RunCommand(
-							() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(mediumForwardSpeed, 0.0, 0.0)),
-							m_driveSubsystem).withTimeout(3.0),
-					new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
-							m_driveSubsystem),
-					m_pivotSubsystem.pivotNeutralCommand().andThen(m_elevatorSubsystem.elevatorL1Command()),
-					m_coralSubsystem.coralScoreCommand(),
-					new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
-							m_driveSubsystem),
-					new WaitCommand(1),
-					m_coralSubsystem.coralOffCommand(),
-				new RunCommand(
-					() -> m_driveSubsystem.driveRobotRelative(
-						new ChassisSpeeds(-mediumForwardSpeed, 0.0, 0.0)),
-						m_driveSubsystem).withTimeout(2.0));
-		Integer auto = autoChooser.getSelected();
-		switch (auto) {
-			case 1:
-				System.out.println("Running Auto 1");
-				return auto1;
-			case 2:
-				System.out.println("Running Auto 2");
-				return auto2;
-			case 3:
-				System.out.println("Running Auto 3");
-				return auto3;
-			default:
-				System.out.println("Invalid AUTO_MODE, defaulting to no auto.");
-				return Commands.none();
-		}
+		// // Auto 3: Wait 5 seconds, strafe right for 1 second, then perform Auto 2.
+		// Command auto3 = new SequentialCommandGroup(
+		// 		new WaitCommand(5.0),
+		// 		new RunCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, mediumSideSpeed, 0.0)),
+		// 				m_driveSubsystem).withTimeout(1.0),
+		// 		new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
+		// 				m_driveSubsystem),
+		// 				new RunCommand(
+		// 					() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(mediumForwardSpeed, 0.0, 0.0)),
+		// 					m_driveSubsystem).withTimeout(3.0),
+		// 			new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
+		// 					m_driveSubsystem),
+		// 			m_pivotSubsystem.pivotNeutralCommand().andThen(m_elevatorSubsystem.elevatorL1Command()),
+		// 			m_coralSubsystem.coralScoreCommand(),
+		// 			new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
+		// 					m_driveSubsystem),
+		// 			new WaitCommand(1),
+		// 			m_coralSubsystem.coralOffCommand(),
+		// 		new RunCommand(
+		// 			() -> m_driveSubsystem.driveRobotRelative(
+		// 				new ChassisSpeeds(-mediumForwardSpeed, 0.0, 0.0)),
+		// 				m_driveSubsystem).withTimeout(2.0));
+		// Integer auto = autoChooser.getSelected();
+		// switch (auto) {
+		// 	case 1:
+		// 		System.out.println("Running Auto 1");
+		// 		return auto1;
+		// 	case 2:
+		// 		System.out.println("Running Auto 2");
+		// 		return auto2;
+		// 	case 3:
+		// 		System.out.println("Running Auto 3");
+		// 		return auto3;
+		// 	default:
+		// 		System.out.println("Invalid AUTO_MODE, defaulting to no auto.");
+		// 		return Commands.none();
+		// }
+		return Commands.none();
 	}
 
 	/**
@@ -492,7 +506,7 @@ public class RobotContainer {
 	 *
 	 * @return The DriveSubsystem.
 	 */
-	public MaxSwerveDriveSubsystem getDriveSubsystem() {
+	public DriveSubsystem getDriveSubsystem() {
 		return m_driveSubsystem;
 	}
 

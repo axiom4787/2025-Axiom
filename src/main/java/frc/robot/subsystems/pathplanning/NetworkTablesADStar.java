@@ -11,6 +11,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Filesystem;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.MaxSwerveDriveSubsystem;
 import pabeles.concurrency.IntOperatorTask.Max;
 
@@ -87,7 +88,7 @@ public class NetworkTablesADStar implements Pathfinder {
     private List<GridPosition> currentPathFull = new ArrayList<>();
 
     private final NetworkTable dynamicObstacleTable;
-    private final MaxSwerveDriveSubsystem driveSubsystem;
+    private final DriveSubsystem driveSubsystem;
 
     // New member variables for robot pose publishing
     private final NetworkTableEntry robotPoseEntry;
@@ -100,7 +101,7 @@ public class NetworkTablesADStar implements Pathfinder {
      * @param driveSubsystem The drive subsystem used to fetch the robot’s current
      *                       pose.
      */
-    public NetworkTablesADStar(MaxSwerveDriveSubsystem driveSubsystem) {
+    public NetworkTablesADStar(DriveSubsystem driveSubsystem) {
         this.driveSubsystem = driveSubsystem;
 
         planningThread = new Thread(this::runThread);

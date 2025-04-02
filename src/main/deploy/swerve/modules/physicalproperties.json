@@ -10,14 +10,14 @@
       "gearRatio": 46.42,
       "factor": 360
     },
-    "drive": {
+    "drive": { 
       "diameter": 3,
       "gearRatio": 4.71,
       "factor": 0.0435253382
     }
   },
   "rampRate": {
-    "drive": 0.1,
-    "angle": 0.1
+    "drive": 0.25,
+    "angle": 0.25
   }
 }

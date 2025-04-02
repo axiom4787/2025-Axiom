@@ -21,7 +21,7 @@ public class Robot extends TimedRobot {
 
 	public Robot() {
 		m_robotContainer = new RobotContainer();
-		Pathfinding.setPathfinder(new NetworkTablesADStar(m_robotContainer.getDriveSubsystem()));
+		// Pathfinding.setPathfinder(new NetworkTablesADStar(m_robotContainer.getDriveSubsystem()));
 		// Pathfinding.setPathfinder(new OkayPlan(Constants.Drivetrain.ROBOT_WIDTH, Constants.Drivetrain.ROBOT_LENGTH));
 		PathfindingCommand.warmupCommand().schedule();
 		// Wamup the pathfinding command. Source: https://pathplanner.dev/pplib-pathfinding.html#java-warmup
