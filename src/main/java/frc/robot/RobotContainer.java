@@ -4,66 +4,42 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.NamedCommands;
-
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import edu.wpi.first.wpilibj2.command.button.CommandStadiaController;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
-
-import java.io.File;
-import java.nio.channels.Pipe.SourceChannel;
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
 
-import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.Drivetrain;
 import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.LEDPresets;
-import frc.robot.subsystems.PivotSubsystem;
-import frc.robot.subsystems.ClimberSubsystem.ClimberState;
-import frc.robot.subsystems.pathplanning.NetworkTablesReceiver;
-import frc.robot.subsystems.vision.VisionConstants;
-import frc.robot.subsystems.vision.VisionIOLimelight;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.ClimberSubsystem.ClimberState;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.MaxSwerveDriveSubsystem;
-import frc.robot.utils.NavGridCounter;
-import swervelib.math.SwerveMath;
-import swervelib.telemetry.SwerveDriveTelemetry;
-
-import java.util.concurrent.TimeUnit;
-
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-
-import com.pathplanner.lib.util.PathPlannerLogging;
+import frc.robot.subsystems.PivotSubsystem;
+import frc.robot.subsystems.pathplanning.NetworkTablesReceiver;
+import frc.robot.subsystems.vision.Vision;
 
 @SuppressWarnings("unused")
 public class RobotContainer {
@@ -425,20 +401,28 @@ public class RobotContainer {
     }
 
     public Command getDisabledCommand() {
-        return Commands.run(() -> m_LedSubsystem.getPattern(LEDPresets.LEDS_RSL).run());
+
+        m_LedSubsystem.usePattern(LEDPresets.LEDS_OFF);
+
+        return Commands.none();
     }
 
     public Command getTeleopCommand() {
+
+        m_LedSubsystem.usePattern(LEDPresets.LEDS_TEAM_COLOR);
+
         return m_driveSubsystem.driveFieldRelativeCommand(
                 () -> MathUtil.applyDeadband(-m_controller.getLeftY(), DriveConstants.CONTROLLER_DEADBAND, 1),
                 () -> MathUtil.applyDeadband(-m_controller.getLeftX(), DriveConstants.CONTROLLER_DEADBAND, 1),
                 () -> MathUtil.applyDeadband(-m_controller.getRightX(), DriveConstants.CONTROLLER_DEADBAND, 1))
-                .withName("TeleopCommand")
-                .alongWith(Commands.run(m_LedSubsystem.getPattern(LEDPresets.LEDS_TEAM_COLOR)));
+                .withName("TeleopCommand");
     }
 
     public Command getTestCommand() {
-        return Commands.run(m_LedSubsystem.getPattern(LEDPresets.LEDS_RAINBOW));
+
+        m_LedSubsystem.usePattern(LEDPresets.LEDS_RSL);
+
+        return Commands.none();
     }
 
     /**
@@ -488,14 +472,19 @@ public class RobotContainer {
                         m_driveSubsystem),
                 auto2);
 
+        m_LedSubsystem.usePattern(LEDPresets.LEDS_RAINBOW);
+
         return (switch ((int) SmartDashboard.getNumber("Auto Id", 1)) {
             case 1 -> auto1.andThen(new PrintCommand("Running Auto 1"));
             case 2 -> auto2.andThen(new PrintCommand("Running Auto 2"));
             case 3 -> auto3.andThen(new PrintCommand("Running Auto 3"));
             default -> Commands.none().andThen(new PrintCommand("Invalid AUTO_MODE, defaulting to no auto."));
-        }).alongWith(Commands.run(m_LedSubsystem.getPattern(LEDPresets.LEDS_OFF)));
+        });
     }
 
+    public Command getLEDCommand() {
+        return m_LedSubsystem.LEDCommand();
+    }
     /**
      * Retrieves the DriveSubsystem instance.
      *

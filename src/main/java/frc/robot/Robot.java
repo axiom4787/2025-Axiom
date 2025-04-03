@@ -11,13 +11,13 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.pathplanning.NetworkTablesADStar;
-import frc.robot.subsystems.pathplanning.OkayPlan;
 import frc.robot.utils.CommandLogger;
 
-@SuppressWarnings("unused")
 public class Robot extends TimedRobot {
     private Command m_autonomousCommand, m_teleopCommand;
     private Command m_testCommand, m_disabledCommand;
+
+    private Command m_LEDCommand;
 
     private RobotContainer m_robotContainer;
 
@@ -26,6 +26,8 @@ public class Robot extends TimedRobot {
     public Robot() {
         m_robotContainer = new RobotContainer();
         commandScheduler = CommandScheduler.getInstance();
+
+        m_LEDCommand = m_robotContainer.getLEDCommand();
 
         Pathfinding.setPathfinder(new NetworkTablesADStar(m_robotContainer.getDriveSubsystem()));
         // Pathfinding.setPathfinder(new OkayPlan(Constants.Drivetrain.ROBOT_WIDTH,
@@ -39,7 +41,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        CommandScheduler.getInstance().run();
+        m_LEDCommand.execute();
+        commandScheduler.run();
+
     }
 
     @Override
@@ -88,6 +92,9 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
 
+        if (m_autonomousCommand != null) {
+            m_autonomousCommand.cancel();
+        }
         if (m_autonomousCommand != null) {
             m_autonomousCommand.cancel();
         }

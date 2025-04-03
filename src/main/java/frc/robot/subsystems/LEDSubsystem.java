@@ -1,24 +1,26 @@
 package frc.robot.subsystems;
 
+import java.util.HashMap;
+
+import static edu.wpi.first.units.Units.Percent;
+import static edu.wpi.first.units.Units.Second;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDConstants;
-import frc.robot.Constants;
+import frc.robot.Constants.LEDPresets;
 
-import static edu.wpi.first.units.Units.Percent;
-import static edu.wpi.first.units.Units.Second;
-
-import java.util.HashMap;
-
-public class LEDSubsystem extends SubsystemBase {
+public final class LEDSubsystem extends SubsystemBase {
     private final AddressableLED leds;
     private final AddressableLEDBuffer buffer; // Creates a new buffer object
-    private final HashMap<Constants.LEDPresets, Runnable> LedMap;
+    private final HashMap<LEDPresets, Runnable> LedMap;
+    private LEDPresets m_pattern;
 
     /**
      * LEDSubsystem
@@ -27,47 +29,55 @@ public class LEDSubsystem extends SubsystemBase {
      */
     public LEDSubsystem(int port) {
 
+        m_pattern = LEDPresets.LEDS_OFF;
         leds = new AddressableLED(port);
         leds.setLength(LEDConstants.BUFFER_LENGTH);
         buffer = new AddressableLEDBuffer(LEDConstants.BUFFER_LENGTH);
         LedMap = new HashMap<>();
 
+        putPattern(LEDPresets.LEDS_OFF, this::LedOff);
+        putPattern(LEDPresets.LEDS_RAINBOW, this::LedRainbow);
+        putPattern(LEDPresets.LEDS_TEAM_COLOR, this::LedTeamColor);
+        putPattern(LEDPresets.LEDS_RSL, this::LedRSL);
+
         setBuffer(buffer);
 
-        //default entries
-        putPattern(Constants.LEDPresets.LEDS_OFF, this::LedOff);
-        putPattern(Constants.LEDPresets.LEDS_RAINBOW, this::LedRainbow);
-        putPattern(Constants.LEDPresets.LEDS_TEAM_COLOR, this::LedTeamColor);
-        putPattern(Constants.LEDPresets.LEDS_RSL, this::LedRSL);
-
-        startLEDS();
+        leds.start();
     }
 
     /**
      * putPattern
      * 
-     * @param state    Member of the LEDPresets enum to assign the pattern to
+     * @param pattern  Member of the LEDPresets enum to assign the pattern to
      * @param function Runnable object that sets the LED pattern, see
-     *                 LEDSubsystem.java for examples
+     *                 LEDCommand.java for examples
      */
-    public void putPattern(Constants.LEDPresets state, Runnable function) {
-        LedMap.put(state, function);
+    public void putPattern(LEDPresets pattern, Runnable function) {
+        LedMap.put(pattern, function);
     }
 
     /**
      * getPattern
      * 
-     * @param state Member of the LEDPresets enum to get the pattern from
+     * @param pattern Member of the LEDPresets enum to get the pattern from
      * @return Runnable object that sets the LED pattern
      */
-    public Runnable getPattern(Constants.LEDPresets state) {
-        return LedMap.get(state);
+    public Runnable getPattern() {
+        return LedMap.get(m_pattern);
+    }
+
+    /**
+     * usePattern
+     * 
+     * @param pattern Tells the LEDCommand which preset to choose
+     */
+
+    public void usePattern(LEDPresets pattern) {
+        m_pattern = pattern;
     }
 
     /**
      * getBuffer
-     * 
-     * gets the buffer used to store LED data
      * 
      * @return AddressableLEDBuffer object
      */
@@ -75,31 +85,13 @@ public class LEDSubsystem extends SubsystemBase {
         return buffer;
     }
 
-    /**
+    /*
      * setBuffer
      * 
      * @param buffer AddressableLEDBuffer object to set the buffer to
      */
     public void setBuffer(AddressableLEDBuffer buffer) {
         leds.setData(buffer);
-    }
-
-    /**
-     * startLEDS
-     * 
-     * starts the LEDs
-     */
-    public void startLEDS() {
-        leds.start();
-    }
-
-    /**
-     * stopLEDS
-     * 
-     * stops the LEDs
-     */
-    public void stopLEDS() {
-        leds.stop();
     }
 
     private void LedTeamColor() {
@@ -117,8 +109,7 @@ public class LEDSubsystem extends SubsystemBase {
     private void LedOff() {
         var m_buffer = getBuffer();
 
-        LEDPattern
-                .solid(Color.kBlack)
+        LEDPattern.kOff
                 .applyTo(m_buffer);
 
         setBuffer(m_buffer);
@@ -139,9 +130,20 @@ public class LEDSubsystem extends SubsystemBase {
         var m_buffer = getBuffer();
 
         LEDPattern
-                .solid(Color.kCoral)
-                .synchronizedBlink(RobotController::getRSLState);
+            .solid(Color.kCoral)
+            .synchronizedBlink(RobotController::getRSLState)
+            .applyTo(m_buffer);
 
         setBuffer(m_buffer);
+    }
+
+    public Command LEDCommand() {
+        return new PrintCommand("LEDs Started!!");
+    }
+
+    @Override
+    public void periodic() {
+        System.out.println(m_pattern);
+        getPattern().run();
     }
 }
