@@ -9,83 +9,117 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand, m_teleopCommand;
-  private Command m_testCommand;
+    private Command m_autonomousCommand, m_teleopCommand;
+    private Command m_testCommand, m_disabledCommand;
 
-  private RobotContainer m_robotContainer;
+    private Command m_LEDCommand;
 
-  private CommandScheduler commandScheduler;
+    private final RobotContainer m_robotContainer;
 
-  public Robot() {
-    m_robotContainer = new RobotContainer();
-    commandScheduler = CommandScheduler.getInstance();
+    private final CommandScheduler commandScheduler;
 
-  }
+    public Robot() {
 
-  @Override
-  public void robotPeriodic() {
-    commandScheduler.run();
-  }
+        m_robotContainer = new RobotContainer();
 
-  @Override
-  public void disabledInit() {}
+        commandScheduler = CommandScheduler.getInstance();
 
-  @Override
-  public void disabledPeriodic() {}
+        m_LEDCommand = m_robotContainer.getLEDCommand();
 
-  @Override
-  public void disabledExit() {}
-
-  @Override
-  public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
-  }
-
-  @Override
-  public void autonomousPeriodic() {}
-
-  @Override
-  public void autonomousExit() {}
-
-  @Override
-  public void teleopInit() {
-    m_teleopCommand = m_robotContainer.getTeleopCommand();
-
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
     }
 
-    m_teleopCommand.schedule();
-  }
+    @Override
+    public void robotPeriodic() {
+        m_LEDCommand.execute();
+        commandScheduler.run();
 
-  @Override
-  public void teleopPeriodic() {
-    m_teleopCommand.execute();
-  }
-
-  @Override
-  public void teleopExit() {}
-
-  @Override
-  public void testInit() {
-    CommandScheduler.getInstance().cancelAll();
-
-    m_testCommand = m_robotContainer.getTestCommand();
-
-    if (m_testCommand != null) {
-      m_testCommand.schedule();
     }
-  }
 
-  @Override
-  public void testPeriodic() {
-    m_testCommand.execute();
-  }
+    @Override
+    public void disabledInit() {
 
-  @Override
-  public void testExit() {}
+        m_disabledCommand = m_robotContainer.getDisabledCommand();
+
+        if (m_disabledCommand != null) {
+            m_disabledCommand.schedule();
+        }
+
+    }
+
+    @Override
+    public void disabledPeriodic() {
+
+        m_disabledCommand.execute();
+
+    }
+
+    @Override
+    public void disabledExit() {
+
+        m_disabledCommand.cancel();
+
+    }
+
+    @Override
+    public void autonomousInit() {
+
+        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+
+        if (m_autonomousCommand != null) {
+            m_autonomousCommand.schedule();
+        }
+
+    }
+
+    @Override
+    public void autonomousPeriodic() {
+        m_autonomousCommand.execute();
+    }
+
+    @Override
+    public void autonomousExit() {
+        m_autonomousCommand.cancel();
+    }
+
+    @Override
+    public void teleopInit() {
+
+        m_teleopCommand = m_robotContainer.getTeleopCommand();
+
+        if (m_autonomousCommand != null) {
+            m_autonomousCommand.cancel();
+        }
+
+        m_teleopCommand.schedule();
+    }
+
+    @Override
+    public void teleopPeriodic() {
+        m_teleopCommand.execute();
+    }
+
+    @Override
+    public void teleopExit() {
+        m_teleopCommand.cancel();
+    }
+
+    @Override
+    public void testInit() {
+
+        m_testCommand = m_robotContainer.getTestCommand();
+
+        if (m_testCommand != null) {
+            m_testCommand.schedule();
+        }
+    }
+
+    @Override
+    public void testPeriodic() {
+        m_testCommand.execute();
+    }
+
+    @Override
+    public void testExit() {
+        m_testCommand.cancel();
+    }
 }

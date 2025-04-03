@@ -6,51 +6,65 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
-import frc.robot.commands.LEDCommand;
+import frc.robot.Constants.LEDPresets;
 import frc.robot.subsystems.LEDSubsystem;
 
 public class RobotContainer {
 
-  private LEDSubsystem ledSubsystem;
+    private final LEDSubsystem m_ledSubsystem;
+    private final Command ledCommand;
 
-  public RobotContainer() {
-    configureBindings();
+    public RobotContainer() {
+        configureBindings();
 
-    ledSubsystem = new LEDSubsystem(Constants.LEDConstants.LED_PORT);
-  }
+        m_ledSubsystem = new LEDSubsystem(Constants.LEDConstants.LED_PORT);
 
-  private void configureBindings() {
-  }
+        ledCommand = m_ledSubsystem.LEDCommand();
+    }
 
-  public Command getDisabledCommand() {
+    private void configureBindings() {
+    }
 
-    System.out.println("disabled command called");
+    public Command getDisabledCommand() {
 
-    return new LEDCommand(ledSubsystem, Constants.LEDPresets.LEDS_OFF);
+        System.out.println("disabled command called");
 
-  }
+        m_ledSubsystem.usePattern(LEDPresets.LEDS_OFF);
 
-  public Command getAutonomousCommand() {
+        return new PrintCommand("DISABLED COMMAND") ;
 
-    System.out.println("autonomous command called");
+    }
 
-    return new PrintCommand("autonomous command");
-  }
+    public Command getAutonomousCommand() {
 
-  public Command getTeleopCommand() {
+        System.out.println("autonomous command called");
 
-    System.out.println("teleop command called");
+        m_ledSubsystem.usePattern(LEDPresets.LEDS_TEAM_COLOR);
 
-    return new LEDCommand(ledSubsystem, Constants.LEDPresets.LEDS_TEAM_COLOR);
+        return new PrintCommand("AUTO COMMAND");
 
-  }
+    }
 
-  public Command getTestCommand() {
+    public Command getTeleopCommand() {
 
-    System.out.println("test command called");
+        System.out.println("teleop command called");
 
-    return new LEDCommand(ledSubsystem, Constants.LEDPresets.LEDS_RAINBOW);
+        m_ledSubsystem.usePattern(LEDPresets.LEDS_RAINBOW);
 
-  }
+        return new PrintCommand("TELEOP COMMAND");
+
+    }
+
+    public Command getTestCommand() {
+
+        System.out.println("test command called");
+
+        return new PrintCommand("TEST COMMAND");
+
+    }
+
+    public Command getLEDCommand() {
+        return ledCommand;
+    }
 
 }
