@@ -12,7 +12,7 @@ public class Robot extends TimedRobot {
     private Command m_autonomousCommand, m_teleopCommand;
     private Command m_testCommand, m_disabledCommand;
 
-    private Command m_LEDCommand;
+    private final Command m_LEDCommand;
 
     private final RobotContainer m_robotContainer;
 
