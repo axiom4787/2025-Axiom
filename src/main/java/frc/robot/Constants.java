@@ -21,7 +21,11 @@ public class Constants {
 
     public static class DriveConstants {
         public static final double MAX_SPEED_MS = 5.740;
+<<<<<<< Updated upstream
         public static final double CONTROLLER_DEADBAND = 0.3;
+=======
+        public static final double CONTROLLER_DEADBAND = 0.5;
+>>>>>>> Stashed changes
 
         // Simulation-specific constants
         public static final double SIM_VELOCITY_DEADBAND = 0.001; // 1 mm/s
@@ -82,12 +86,21 @@ public class Constants {
         // public static final double PIVOT_DOWN_ANGLE = 142-PIVOT_OFFSET;
         // public static final double PIVOT_NEUTRAL_ANGLE = 122-PIVOT_OFFSET;
         public static final double PIVOT_UP_ANGLE = 315;
+<<<<<<< Updated upstream
         public static final double PIVOT_DOWN_ANGLE = 15;
         public static final double PIVOT_NEUTRAL_ANGLE = 0;
 
         public static final double PIVOT_KP = 0.025;
         public static final double PIVOT_KI = 0.0;
         public static final double PIVOT_KD = 0.0025;
+=======
+        public static final double PIVOT_DOWN_ANGLE = 20;
+        public static final double PIVOT_NEUTRAL_ANGLE = 0;
+
+        public static final double PIVOT_KP = 0.01;
+        public static final double PIVOT_KI = 0.0;
+        public static final double PIVOT_KD = 0.0;
+>>>>>>> Stashed changes
     }
 
     public static final class Drivetrain {
@@ -114,10 +127,17 @@ public class Constants {
                 new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
         // Angular offsets of the modules relative to the chassis in radians
+<<<<<<< Updated upstream
         public static final double kFrontLeftChassisAngularOffset = Math.PI;
         public static final double kFrontRightChassisAngularOffset = 0;
         public static final double kBackLeftChassisAngularOffset = Math.PI;
         public static final double kBackRightChassisAngularOffset = 0;
+=======
+        public static final double kFrontLeftChassisAngularOffset = Math.PI*1.5;
+        public static final double kFrontRightChassisAngularOffset = 0;
+        public static final double kBackLeftChassisAngularOffset = Math.PI;
+        public static final double kBackRightChassisAngularOffset = Math.PI/2;
+>>>>>>> Stashed changes
 
         // SPARK MAX CAN IDs
         public static final int kFrontLeftDrivingCanId = 5;

@@ -5,12 +5,20 @@
   },
   "absoluteEncoderOffset": 0,
   "drive": {
+<<<<<<< Updated upstream
     "type": "sparkflex_vortex",
+=======
+    "type": "sparkflex",
+>>>>>>> Stashed changes
     "id": 1,
     "canbus": null
   },
   "angle": {
+<<<<<<< Updated upstream
     "type": "sparkmax_neo550",
+=======
+    "type": "sparkmax",
+>>>>>>> Stashed changes
     "id": 2,
     "canbus": null
   },

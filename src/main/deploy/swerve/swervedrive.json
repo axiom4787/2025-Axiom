@@ -1,6 +1,10 @@
 {
   "imu": {
+<<<<<<< Updated upstream
     "type": "navx_spi",
+=======
+    "type": "navx",
+>>>>>>> Stashed changes
     "id": 0,
     "canbus": null
   },

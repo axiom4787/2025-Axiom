@@ -10,14 +10,23 @@
       "gearRatio": 46.42,
       "factor": 360
     },
+<<<<<<< Updated upstream
     "drive": { 
+=======
+    "drive": {
+>>>>>>> Stashed changes
       "diameter": 3,
       "gearRatio": 4.71,
       "factor": 0.0435253382
     }
   },
   "rampRate": {
+<<<<<<< Updated upstream
     "drive": 0.25,
     "angle": 0.25
+=======
+    "drive": 0.1,
+    "angle": 0.1
+>>>>>>> Stashed changes
   }
 }

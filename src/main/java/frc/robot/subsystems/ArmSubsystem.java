@@ -45,7 +45,12 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+<<<<<<< Updated upstream
     SmartDashboard.putString("Arm State", m_state.name());
+=======
+    SmartDashboard.putString("Arm State (Name)", m_state.name());
+
+>>>>>>> Stashed changes
 //    SmartDashboard.putNumber("Arm Encoder", m_armMotor.getEncoder().getPosition());
 
     switch (m_state) {
@@ -107,9 +112,16 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public enum ArmState {
+<<<<<<< Updated upstream
     UP,
     DOWN,
     HOLD_UP,
     HOLD_DOWN
+=======
+    HOLD_UP,
+    HOLD_DOWN,
+    UP,
+    DOWN,
+>>>>>>> Stashed changes
   }
 }

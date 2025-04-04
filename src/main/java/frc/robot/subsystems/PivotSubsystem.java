@@ -39,15 +39,40 @@ public class PivotSubsystem extends SubsystemBase {
 
     m_pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
+<<<<<<< Updated upstream
     m_pivotPID.setTolerance(1);
     m_pivotPID.enableContinuousInput(0, 360);
+=======
+    m_pivotPID.setTolerance(3);
+    m_pivotPID.enableContinuousInput(0, 360);
+
+    SmartDashboard.putNumberArray("Set Pivot PID", new double[] {
+      PivotConstants.PIVOT_KP,
+      PivotConstants.PIVOT_KI,
+      PivotConstants.PIVOT_KD
+    });
+    SmartDashboard.putNumberArray("Current Pivot PID", new double[] {
+      m_pivotPID.getP(),
+      m_pivotPID.getI(),
+      m_pivotPID.getD(),
+    });
+>>>>>>> Stashed changes
   }
 
   @Override
   public void periodic() {
+<<<<<<< Updated upstream
     SmartDashboard.putString("Pivot State", m_state.name());
     SmartDashboard.putNumber("Pivot Encoder", m_pivotMotor.getAbsoluteEncoder().getPosition());
     SmartDashboard.putNumber("PID Error", m_pivotPID.getError());
+=======
+    setPID();
+    SmartDashboard.putString("Pivot State (Name)", m_state.name());
+    SmartDashboard.putNumber("Pivot Encoder", m_pivotMotor.getAbsoluteEncoder().getPosition());
+    SmartDashboard.putNumber("Pivot PID Setpoint", m_pivotPID.getSetpoint());
+    SmartDashboard.putNumber("Pivot Derivative Error", m_pivotPID.getErrorDerivative());
+    SmartDashboard.putNumber("Pivot PID Error", m_pivotPID.getError());
+>>>>>>> Stashed changes
 
     switch (m_state) {
       case UP:
@@ -78,6 +103,23 @@ public class PivotSubsystem extends SubsystemBase {
     return pivotUp;
   }
 
+<<<<<<< Updated upstream
+=======
+  public void setPID() {
+    double[] SDPivotPID = SmartDashboard.getNumberArray("Set Pivot PID", new double[3]);
+
+    m_pivotPID.setP(SDPivotPID[0]);
+    m_pivotPID.setI(SDPivotPID[1]);
+    m_pivotPID.setD(SDPivotPID[2]);
+
+    SmartDashboard.putNumberArray("Current Pivot PID", new double[] {
+      m_pivotPID.getP(),
+      m_pivotPID.getI(),
+      m_pivotPID.getD(),
+    });
+  }
+
+>>>>>>> Stashed changes
   /**
    * Command to pivot the pivot down.
    * @return A command that pivots the pivot down until it reaches the setpoint.
@@ -101,8 +143,14 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public enum PivotState {
+<<<<<<< Updated upstream
     UP,
     DOWN,
     NEUTRAL
+=======
+    DOWN,
+    NEUTRAL,
+    UP,
+>>>>>>> Stashed changes
   }
 }

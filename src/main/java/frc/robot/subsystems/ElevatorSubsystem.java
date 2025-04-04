@@ -51,11 +51,20 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+<<<<<<< Updated upstream
     SmartDashboard.putString("Elevator State", m_state.name());
     SmartDashboard.putNumber("Left Elevator Encoder", m_elevatorMotorL.getEncoder().getPosition());
 
     // dont bother looking at this tbh it wont be useful
     SmartDashboard.putNumber("Right Elevator Encoder", m_elevatorMotorR.getEncoder().getPosition());
+=======
+    SmartDashboard.putString("Elevator State (Name)", m_state.name());
+
+    SmartDashboard.putNumber("Elevator Encoder", m_elevatorMotorL.getEncoder().getPosition());
+    SmartDashboard.putNumber("Elevator PID Setpoint", m_elevatorPID.getSetpoint());
+    SmartDashboard.putNumber("Elevator PID Error", m_elevatorPID.getError());
+    SmartDashboard.putNumber("Elevator Derivative Error", m_elevatorPID.getErrorDerivative());
+>>>>>>> Stashed changes
 
     switch (m_state) {
       case L1:
@@ -124,9 +133,16 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public enum ElevatorState {
+<<<<<<< Updated upstream
     L1,
     L2,
     L3,
     SOURCE
+=======
+    SOURCE,
+    L1,
+    L2,
+    L3,
+>>>>>>> Stashed changes
   }
 }

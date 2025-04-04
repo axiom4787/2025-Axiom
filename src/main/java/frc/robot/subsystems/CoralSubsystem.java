@@ -43,7 +43,11 @@ public class CoralSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+<<<<<<< Updated upstream
     SmartDashboard.putString("Coral State", m_state.name());
+=======
+    SmartDashboard.putString("Coral State (Name)", m_state.name());
+>>>>>>> Stashed changes
 
     switch (m_state) {
       case INTAKE:
@@ -106,8 +110,14 @@ public class CoralSubsystem extends SubsystemBase {
   // }
 
   public enum CoralState {
+<<<<<<< Updated upstream
     INTAKE,
     SCORE,
     OFF
+=======
+    OFF,
+    INTAKE,
+    SCORE,
+>>>>>>> Stashed changes
   }
 }

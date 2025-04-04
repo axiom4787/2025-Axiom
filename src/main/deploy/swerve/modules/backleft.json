@@ -3,14 +3,24 @@
     "front": -11.75,
     "left": 11.75
   },
+<<<<<<< Updated upstream
   "absoluteEncoderOffset": 180,
   "drive": {
     "type": "sparkflex_vortex",
+=======
+  "absoluteEncoderOffset": 0,
+  "drive": {
+    "type": "sparkflex",
+>>>>>>> Stashed changes
     "id": 3,
     "canbus": null
   },
   "angle": {
+<<<<<<< Updated upstream
     "type": "sparkmax_neo550",
+=======
+    "type": "sparkmax",
+>>>>>>> Stashed changes
     "id": 4,
     "canbus": null
   },

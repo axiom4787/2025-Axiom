@@ -1,5 +1,9 @@
 {
+<<<<<<< Updated upstream
   "angleJoystickRadiusDeadband": 0.2,
+=======
+  "angleJoystickRadiusDeadband": 0.5,
+>>>>>>> Stashed changes
   "heading": {
     "p": 0.4,
     "i": 0,
