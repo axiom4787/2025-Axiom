@@ -39,10 +39,6 @@ public class PivotSubsystem extends SubsystemBase {
 
     m_pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-<<<<<<< Updated upstream
-    m_pivotPID.setTolerance(1);
-    m_pivotPID.enableContinuousInput(0, 360);
-=======
     m_pivotPID.setTolerance(3);
     m_pivotPID.enableContinuousInput(0, 360);
 
@@ -56,23 +52,16 @@ public class PivotSubsystem extends SubsystemBase {
       m_pivotPID.getI(),
       m_pivotPID.getD(),
     });
->>>>>>> Stashed changes
   }
 
   @Override
   public void periodic() {
-<<<<<<< Updated upstream
-    SmartDashboard.putString("Pivot State", m_state.name());
-    SmartDashboard.putNumber("Pivot Encoder", m_pivotMotor.getAbsoluteEncoder().getPosition());
-    SmartDashboard.putNumber("PID Error", m_pivotPID.getError());
-=======
     setPID();
     SmartDashboard.putString("Pivot State (Name)", m_state.name());
     SmartDashboard.putNumber("Pivot Encoder", m_pivotMotor.getAbsoluteEncoder().getPosition());
     SmartDashboard.putNumber("Pivot PID Setpoint", m_pivotPID.getSetpoint());
     SmartDashboard.putNumber("Pivot Derivative Error", m_pivotPID.getErrorDerivative());
     SmartDashboard.putNumber("Pivot PID Error", m_pivotPID.getError());
->>>>>>> Stashed changes
 
     switch (m_state) {
       case UP:
@@ -103,8 +92,6 @@ public class PivotSubsystem extends SubsystemBase {
     return pivotUp;
   }
 
-<<<<<<< Updated upstream
-=======
   public void setPID() {
     double[] SDPivotPID = SmartDashboard.getNumberArray("Set Pivot PID", new double[3]);
 
@@ -119,7 +106,6 @@ public class PivotSubsystem extends SubsystemBase {
     });
   }
 
->>>>>>> Stashed changes
   /**
    * Command to pivot the pivot down.
    * @return A command that pivots the pivot down until it reaches the setpoint.
@@ -143,14 +129,8 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public enum PivotState {
-<<<<<<< Updated upstream
-    UP,
-    DOWN,
-    NEUTRAL
-=======
     DOWN,
     NEUTRAL,
     UP,
->>>>>>> Stashed changes
   }
 }

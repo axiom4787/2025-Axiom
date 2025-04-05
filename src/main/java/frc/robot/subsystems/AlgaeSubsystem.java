@@ -39,11 +39,7 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-<<<<<<< Updated upstream
-    SmartDashboard.putString("Algae State", m_state.name());
-=======
     SmartDashboard.putString("Algae State (Name)", m_state.name());
->>>>>>> Stashed changes
     switch (m_state) {
       case INTAKE:
         m_rollerMotor.set(AlgaeConstants.ALGAE_INTAKE_DUTYCYCLE);
@@ -97,14 +93,8 @@ public class AlgaeSubsystem extends SubsystemBase {
   // }
 
   public enum AlgaeState {
-<<<<<<< Updated upstream
-    INTAKE,
-    SCORE,
-    OFF
-=======
     OFF,
     INTAKE,
     SCORE,
->>>>>>> Stashed changes
   }
 }

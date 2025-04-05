@@ -33,12 +33,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-<<<<<<< Updated upstream
-    SmartDashboard.putString("Climber State", m_state.name());
-=======
     SmartDashboard.putString("Climber State (Name)", m_state.name());
 
->>>>>>> Stashed changes
     switch (m_state) {
       case OFF:
         climbMotor.set(0);
