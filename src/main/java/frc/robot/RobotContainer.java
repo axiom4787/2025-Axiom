@@ -63,8 +63,9 @@ import edu.wpi.first.util.sendable.Sendable;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
 public class RobotContainer {
-	// private final CommandPS5Controller m_controller = new CommandPS5Controller(0);
-  	private final CommandXboxController m_controller = new CommandXboxController(0);
+	// private final CommandPS5Controller m_controller = new
+	// CommandPS5Controller(0);
+	private final CommandXboxController m_controller = new CommandXboxController(0);
 	private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
 	private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
 	private final PivotSubsystem m_pivotSubsystem = new PivotSubsystem();
@@ -191,7 +192,7 @@ public class RobotContainer {
 		Trigger scoreCoral = m_controller.y().onTrue(m_coralSubsystem.coralScoreCommand()); // Command ends when Time of
 																							// Flight no longer detects
 																							// a coral
-    intakeCoral.or(scoreCoral).onFalse(m_coralSubsystem.coralOffCommand());
+		intakeCoral.or(scoreCoral).onFalse(m_coralSubsystem.coralOffCommand());
 
 		// --- Algae/Arm Button Binds ---
 
@@ -202,22 +203,22 @@ public class RobotContainer {
 		// When the X button is pressed, the arm will retract (just in case, though it
 		// should already be retracted) and then outtake the algae to score.
 		Trigger scoreAlgae = m_controller.x().onTrue(m_algaeSubsystem.algaeScoreCommand());
-    intakeAlgae.or(scoreAlgae).onFalse(m_algaeSubsystem.algaeOffCommand());
+		intakeAlgae.or(scoreAlgae).onFalse(m_algaeSubsystem.algaeOffCommand());
 
-
-    Trigger armUp = m_controller.rightTrigger().onTrue(m_armSubsystem.armUpCommand());
-    Trigger armDown = m_controller.leftTrigger().onTrue(m_armSubsystem.armDownCommand());
-    // If neither the right or the left trigger is being pressed, set the arm to idle.
-    armUp.or(armDown).onFalse(m_armSubsystem.armHoldCommand());
+		Trigger armUp = m_controller.rightTrigger().onTrue(m_armSubsystem.armUpCommand());
+		Trigger armDown = m_controller.leftTrigger().onTrue(m_armSubsystem.armDownCommand());
+		// If neither the right or the left trigger is being pressed, set the arm to
+		// idle.
+		armUp.or(armDown).onFalse(m_armSubsystem.armHoldCommand());
 
 		// --- Climber Button Binds ---
 
 		// Runs the climber up or down when the right or left triggers are pressed,
 		// respectively.
 		Trigger climberUp = m_controller.rightBumper()
-			.onTrue(new InstantCommand(() -> m_climberSubsystem.setState(ClimberState.UP)));
+				.onTrue(new InstantCommand(() -> m_climberSubsystem.setState(ClimberState.UP)));
 		Trigger climberDown = m_controller.leftBumper()
-			.onTrue(new InstantCommand(() -> m_climberSubsystem.setState(ClimberState.DOWN)));
+				.onTrue(new InstantCommand(() -> m_climberSubsystem.setState(ClimberState.DOWN)));
 		// If neither the right or the left trigger is being pressed, disable the
 		// climber.
 		climberUp.or(climberDown).onFalse(new InstantCommand(() -> m_climberSubsystem.setState(ClimberState.OFF)));
@@ -227,12 +228,13 @@ public class RobotContainer {
 
 		// Zeroes the gyro (sets the new "forward" direction to wherever the robot is
 		// facing) in field relative mode.
-		// Trigger gyroReset = m_controller.a().onTrue(new InstantCommand(m_driveSubsystem::zeroGyro));
-		
-		// Reset the pose and gyro based on Limelight data when the options button is pressed
+		// Trigger gyroReset = m_controller.a().onTrue(new
+		// InstantCommand(m_driveSubsystem::zeroGyro));
+
+		// Swap robot/field relative
 		m_controller.start().onTrue(Commands.runOnce(() -> {
-			System.out.println("Resetting pose using Limelight vision data");
-			m_driveSubsystem.resetOdometryWithVision();
+			System.out.println("Swapping field relative/robot relative");
+			m_driveSubsystem.swapRobotFieldRelative();
 		}));
 		m_controller.back().onTrue(Commands.runOnce(() -> {
 			System.out.println("Zero Gyro");
@@ -432,8 +434,8 @@ public class RobotContainer {
 		// Auto 2: Drive forward for 1 second, then move arm to L1 position and shoot.
 		Command auto2 = new SequentialCommandGroup(
 				new RunCommand(
-					() -> m_driveSubsystem.driveRobotRelative(
-						new ChassisSpeeds(mediumForwardSpeed, 0.0, 0.0)), 
+						() -> m_driveSubsystem.driveRobotRelative(
+								new ChassisSpeeds(mediumForwardSpeed, 0.0, 0.0)),
 						m_driveSubsystem).withTimeout(7.0),
 				new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
 						m_driveSubsystem),
@@ -444,10 +446,10 @@ public class RobotContainer {
 				new WaitCommand(1),
 				m_coralSubsystem.coralOffCommand(),
 				new RunCommand(
-					() -> m_driveSubsystem.driveRobotRelative(
-						new ChassisSpeeds(-mediumForwardSpeed, 0.0, 0.0)),
-						m_driveSubsystem).withTimeout(2.0)); // Ensures the robot stops before executing the next command
-
+						() -> m_driveSubsystem.driveRobotRelative(
+								new ChassisSpeeds(-mediumForwardSpeed, 0.0, 0.0)),
+						m_driveSubsystem).withTimeout(2.0)); // Ensures the robot stops before executing the next
+																// command
 
 		// Auto 3: Wait 5 seconds, strafe right for 1 second, then perform Auto 2.
 		Command auto3 = new SequentialCommandGroup(
@@ -456,20 +458,20 @@ public class RobotContainer {
 						m_driveSubsystem).withTimeout(1.0),
 				new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
 						m_driveSubsystem),
-						new RunCommand(
-							() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(mediumForwardSpeed, 0.0, 0.0)),
-							m_driveSubsystem).withTimeout(3.0),
-					new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
-							m_driveSubsystem),
-					m_pivotSubsystem.pivotNeutralCommand().andThen(m_elevatorSubsystem.elevatorL1Command()),
-					m_coralSubsystem.coralScoreCommand(),
-					new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
-							m_driveSubsystem),
-					new WaitCommand(1),
-					m_coralSubsystem.coralOffCommand(),
 				new RunCommand(
-					() -> m_driveSubsystem.driveRobotRelative(
-						new ChassisSpeeds(-mediumForwardSpeed, 0.0, 0.0)),
+						() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(mediumForwardSpeed, 0.0, 0.0)),
+						m_driveSubsystem).withTimeout(3.0),
+				new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
+						m_driveSubsystem),
+				m_pivotSubsystem.pivotNeutralCommand().andThen(m_elevatorSubsystem.elevatorL1Command()),
+				m_coralSubsystem.coralScoreCommand(),
+				new InstantCommand(() -> m_driveSubsystem.driveRobotRelative(new ChassisSpeeds(0.0, 0.0, 0.0)),
+						m_driveSubsystem),
+				new WaitCommand(1),
+				m_coralSubsystem.coralOffCommand(),
+				new RunCommand(
+						() -> m_driveSubsystem.driveRobotRelative(
+								new ChassisSpeeds(-mediumForwardSpeed, 0.0, 0.0)),
 						m_driveSubsystem).withTimeout(2.0));
 		Integer auto = autoChooser.getSelected();
 		switch (auto) {
@@ -542,7 +544,8 @@ public class RobotContainer {
 			}
 		});
 		limelightUpdateThread.setDaemon(true);
-		limelightUpdateThread.setPriority(Thread.MIN_PRIORITY); // Lower priority to avoid interfering with critical robot functions
+		limelightUpdateThread.setPriority(Thread.MIN_PRIORITY); // Lower priority to avoid interfering with critical
+																// robot functions
 		limelightUpdateThread.setName("Limelight Update Thread");
 		limelightUpdateThread.start();
 		System.out.println("Started Limelight update thread");

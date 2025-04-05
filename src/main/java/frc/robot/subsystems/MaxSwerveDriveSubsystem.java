@@ -60,6 +60,8 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 public class MaxSwerveDriveSubsystem extends SubsystemBase {
+    private boolean fieldRelative = true; // Set to true for field-relative driving, false for robot-relative
+
     // Create MAXSwerveModules
     private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
             Drivetrain.kFrontLeftDrivingCanId,
@@ -592,9 +594,8 @@ public class MaxSwerveDriveSubsystem extends SubsystemBase {
      * @param xSpeedPercent Forward/backward input (-1 to 1). Positive is forward/field X+.
      * @param ySpeedPercent Strafe input (-1 to 1). Positive is left/field Y+.
      * @param rotPercent    Rotation input (-1 to 1). Positive is CCW.
-     * @param fieldRelative Whether the translation inputs are field-relative.
      */
-    public void drive(double xSpeedPercent, double ySpeedPercent, double rotPercent, boolean fieldRelative) {
+    public void drive(double xSpeedPercent, double ySpeedPercent, double rotPercent) {
         // Apply deadband/cubing if desired (e.g., inside driveCommand methods)
         double xSpeedDelivered = xSpeedPercent * Drivetrain.kMaxSpeed;
         double ySpeedDelivered = ySpeedPercent * Drivetrain.kMaxSpeed;
@@ -616,9 +617,8 @@ public class MaxSwerveDriveSubsystem extends SubsystemBase {
      * @param translation   {@link Translation2d} linear velocity vector (m/s). Interpretation
      * depends on `fieldRelative`.
      * @param rotation      Robot angular rate (rad/s). CCW positive.
-     * @param fieldRelative True for field-relative translation, false for robot-relative.
      */
-    public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
+    public void drive(Translation2d translation, double rotation) {
          ChassisSpeeds speeds = new ChassisSpeeds(translation.getX(), translation.getY(), rotation);
          if (fieldRelative) {
              driveFieldRelative(speeds);
@@ -753,6 +753,17 @@ public class MaxSwerveDriveSubsystem extends SubsystemBase {
         } else {
              System.out.println("Vision pose not valid for odometry reset.");
         }
+    }
+    
+
+    public void swapRobotFieldRelative() {
+        fieldRelative = !fieldRelative;
+
+        System.out.println("Field Relative Mode: " + (fieldRelative ? "Enabled" : "Disabled"));
+
+        NetworkTableInstance instance = NetworkTableInstance.getDefault();
+        NetworkTable table = instance.getTable("AdvantageScope");
+        table.getEntry("fieldRelative").setBoolean(fieldRelative);
     }
 
     /**
