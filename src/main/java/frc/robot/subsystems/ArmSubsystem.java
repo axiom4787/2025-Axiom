@@ -34,7 +34,7 @@ public class ArmSubsystem extends SubsystemBase {
     SparkMaxConfig armMotorConfig = new SparkMaxConfig();
     armMotorConfig.voltageCompensation(10);
     armMotorConfig.smartCurrentLimit(40);
-    armMotorConfig.idleMode(IdleMode.kBrake);
+    armMotorConfig.idleMode(IdleMode.kCoast);
     armMotorConfig.encoder.positionConversionFactor(1);
 
     m_armMotor.configure(armMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

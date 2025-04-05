@@ -24,6 +24,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command; 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -140,6 +141,8 @@ public class MaxSwerveDriveSubsystem extends SubsystemBase {
                 getGyroRotation2d(),
                 getModulePositions());
     
+        SmartDashboard.putBoolean("Field Relative", fieldRelative);
+
         // Send data to Advantage Scope for visualization
         NetworkTableInstance instance = NetworkTableInstance.getDefault();
         NetworkTable table = instance.getTable("AdvantageScope");
@@ -761,9 +764,6 @@ public class MaxSwerveDriveSubsystem extends SubsystemBase {
 
         System.out.println("Field Relative Mode: " + (fieldRelative ? "Enabled" : "Disabled"));
 
-        NetworkTableInstance instance = NetworkTableInstance.getDefault();
-        NetworkTable table = instance.getTable("AdvantageScope");
-        table.getEntry("fieldRelative").setBoolean(fieldRelative);
     }
 
     /**
