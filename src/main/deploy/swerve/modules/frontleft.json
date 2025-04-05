@@ -1,27 +1,12 @@
 {
-  "location": {
-    "front": 11.75,
-    "left": 11.75
-  },
-<<<<<<< Updated upstream
-  "absoluteEncoderOffset": 90,
-  "drive": {
-    "type": "sparkflex_vortex",
-=======
-  "absoluteEncoderOffset": 0,
   "drive": {
     "type": "sparkflex",
->>>>>>> Stashed changes
-    "id": 5,
+    "id": 1,
     "canbus": null
   },
   "angle": {
-<<<<<<< Updated upstream
-    "type": "sparkmax_neo550",
-=======
     "type": "sparkmax",
->>>>>>> Stashed changes
-    "id": 6,
+    "id": 2,
     "canbus": null
   },
   "encoder": {
@@ -29,9 +14,14 @@
     "id": 0,
     "canbus": null
   },
-  "absoluteEncoderInverted": true,
   "inverted": {
     "drive": false,
     "angle": false
+  },
+  "absoluteEncoderInverted": true,
+  "absoluteEncoderOffset": 0,
+  "location": {
+    "front": 11.5,
+    "left": 11.5
   }
 }

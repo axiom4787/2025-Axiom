@@ -4,67 +4,46 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.NamedCommands;
-
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import edu.wpi.first.wpilibj2.command.button.CommandStadiaController;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
-
-import java.io.File;
-import java.nio.channels.Pipe.SourceChannel;
-import java.util.HashMap;
-import java.util.function.BooleanSupplier;
+import frc.robot.subsystems.AlgaeSubsystem;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.ClimberSubsystem.ClimberState;
+import frc.robot.subsystems.CoralSubsystem;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.PivotSubsystem;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.Drivetrain;
-import frc.robot.subsystems.PivotSubsystem;
-import frc.robot.subsystems.ClimberSubsystem.ClimberState;
-import frc.robot.subsystems.pathplanning.NetworkTablesReceiver;
-import frc.robot.subsystems.vision.VisionConstants;
-import frc.robot.subsystems.vision.VisionIOLimelight;
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import frc.robot.subsystems.AlgaeSubsystem;
-import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.ClimberSubsystem;
-import frc.robot.subsystems.CoralSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.MaxSwerveDriveSubsystem;
-import frc.robot.utils.NavGridCounter;
-import swervelib.math.SwerveMath;
-import swervelib.telemetry.SwerveDriveTelemetry;
 
-import java.util.concurrent.TimeUnit;
-
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.util.sendable.Sendable;
-
-import com.pathplanner.lib.util.PathPlannerLogging;
-
+/**
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
+ * subsystems, commands, and trigger mappings) should be declared here.
+ */
 public class RobotContainer {
-	// private final CommandPS5Controller m_controller = new
-	// CommandPS5Controller(0);
+	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
+	private final SendableChooser<Command> autoChooser;
+	private final SendableChooser<Integer> timedAutoChooser;
 	private final CommandXboxController m_controller = new CommandXboxController(0);
 	private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
 	private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
@@ -72,54 +51,28 @@ public class RobotContainer {
 
 	private final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
 	private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
-	private final MaxSwerveDriveSubsystem m_driveSubsystem = new MaxSwerveDriveSubsystem();
 	private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
 
-	private final NetworkTablesReceiver m_networkTablesReceiver = new NetworkTablesReceiver();
-	private final Limelight m_limelight = new Limelight();
-	private static final String CAMERA_0_NAME = "limelight-front";
-	// private final NavGridCounter u_navGridAnalyzer = new
-	// NavGridCounter("src/main/deploy/pathplanner/navgrid.json");
-
-	// private final SendableChooser<Command> autoChooser;
-
-	private Command currentPathCommand;
-	private boolean tracking = false;
-	private boolean autoPathEnabled = true;
-
-	// Variables to store previous target coordinates
-	private double previousTargetX = Double.NaN;
-	private double previousTargetY = Double.NaN;
-
-	// Thread for auto path following
-	private Thread autoPathThread;
-
-	private boolean keyDebounce = false;
-	private String lastProcessedKey = "";
-	private long lastKeyPressTime = 0;
-	private final long KEY_DEBOUNCE_TIME = 500; // ms
-	private Translation2d lastRobotPosition = new Translation2d();
-	private final double POSITION_CHANGE_THRESHOLD = 0.3; // meters
-	private Vision vision;
-
-	// Simple boolean flag instead of AtomicBoolean
-	private boolean isCurrentlyFollowingPath = false;
-
-	private SendableChooser<Integer> autoChooser = new SendableChooser<Integer>();
-
-	// Constant to choose autonomous mode: 1, 2, or 3.
-	private static final int AUTO_MODE = 1; // Change to 2 or 3 for different autos
-
+	private boolean usePathPlanner = false;
+	/**
+	 * The container for the robot. Contains subsystems, OI devices, and commands.
+	 */
 	public RobotContainer() {
-		// Setup the PathPlanner auto chooser
-		// autoChooser = AutoBuilder.buildAutoChooser();
-		// SmartDashboard.putData("Auto Chooser", autoChooser);
-		autoChooser.addOption("Auto 1", 1);
-		autoChooser.addOption("Auto 2", 2);
-		autoChooser.addOption("Auto 3", 3);
+		registerNamedCommands();
+		autoChooser = AutoBuilder.buildAutoChooser();
 		SmartDashboard.putData("Auto Mode", autoChooser);
+		timedAutoChooser = new SendableChooser<Integer>();
+		timedAutoChooser.setDefaultOption("No Auto", 0);
+		timedAutoChooser.addOption("Auto 1", 1);
+		timedAutoChooser.addOption("Auto 2", 2);
+		timedAutoChooser.addOption("Auto 3", 3);
+		SmartDashboard.putData("Timed Auto Mode", timedAutoChooser);
+		SmartDashboard.putBoolean("Use PathPlanner", usePathPlanner);
 
-		// Register named commands before configuring bindings
+		configureBindings();
+	}
+
+	private void registerNamedCommands() {
 		NamedCommands.registerCommand("L1",
 				m_pivotSubsystem.pivotNeutralCommand().andThen(m_elevatorSubsystem.elevatorL1Command()));
 		NamedCommands.registerCommand("L2",
@@ -137,22 +90,10 @@ public class RobotContainer {
 				.andThen(m_algaeSubsystem.algaeIntakeCommand()).andThen(m_armSubsystem.armUpCommand()));
 		NamedCommands.registerCommand("Score Algae",
 				m_armSubsystem.armUpCommand().andThen(m_algaeSubsystem.algaeScoreCommand()));
-		// registerNamedCommands();
-		NamedCommands.registerCommand(";alskdjf", currentPathCommand);
-
-		// Configure PathPlanner logging to display on Field2d
-		// ...existing code...
-		configureBindings();
-
-		// Start periodic update of Limelight values on ShuffleBoard
-		startLimelightUpdates();
 	}
 
-	/**
-	 * Configures {@link Trigger} objects for buttons on the controller.
-	 */
 	private void configureBindings() {
-		// --- Elevator/Pivot Button Binds ---
+				// --- Elevator/Pivot Button Binds ---
 		// Makes the robot ready to score a coral in L1/L2/L3 or intake from source
 		// Pivots the pivot to neutral first, to make sure the coral manipulator doesn't
 		// get caught on the elevator carriage
@@ -234,7 +175,7 @@ public class RobotContainer {
 		// Swap robot/field relative
 		m_controller.start().onTrue(Commands.runOnce(() -> {
 			System.out.println("Swapping field relative/robot relative");
-			m_driveSubsystem.swapRobotFieldRelative();
+			m_driveSubsystem.toggleFieldRelative();
 		}));
 		m_controller.back().onTrue(Commands.runOnce(() -> {
 			System.out.println("Zero Gyro");
@@ -242,183 +183,16 @@ public class RobotContainer {
 		}));
 	}
 
-	private void registerNamedCommands() {
-		NamedCommands.registerCommand("L1",
-				m_pivotSubsystem.pivotNeutralCommand().andThen(m_elevatorSubsystem.elevatorL1Command()));
-		NamedCommands.registerCommand("L2",
-				m_pivotSubsystem.pivotNeutralCommand().andThen(m_elevatorSubsystem.elevatorL2Command())
-						.andThen(m_pivotSubsystem.pivotDownCommand()));
-		NamedCommands.registerCommand("L3",
-				m_pivotSubsystem.pivotNeutralCommand().andThen(m_elevatorSubsystem.elevatorL3Command())
-						.andThen(m_pivotSubsystem.pivotDownCommand()));
-		NamedCommands.registerCommand("Source",
-				m_pivotSubsystem.pivotNeutralCommand().andThen(m_elevatorSubsystem.elevatorSourceCommand())
-						.andThen(m_pivotSubsystem.pivotUpCommand()));
-		NamedCommands.registerCommand("Intake Coral", m_coralSubsystem.coralIntakeCommand());
-		NamedCommands.registerCommand("Score Coral", m_coralSubsystem.coralScoreCommand());
-		NamedCommands.registerCommand("Intake Algae", m_armSubsystem.armDownCommand()
-				.andThen(m_algaeSubsystem.algaeIntakeCommand()).andThen(m_armSubsystem.armUpCommand()));
-		NamedCommands.registerCommand("Score Algae",
-				m_armSubsystem.armUpCommand().andThen(m_algaeSubsystem.algaeScoreCommand()));
-		// Example toggle for auto path thread can be added here if desired.
-	}
-
-	public Command getTeleopCommand() {
-		return m_driveSubsystem.driveFieldRelativeCommand(
-				() -> MathUtil.applyDeadband(-m_controller.getLeftY(), DriveConstants.CONTROLLER_DEADBAND, 1),
-				() -> MathUtil.applyDeadband(-m_controller.getLeftX(), DriveConstants.CONTROLLER_DEADBAND, 1),
-				() -> MathUtil.applyDeadband(-m_controller.getRightX(), DriveConstants.CONTROLLER_DEADBAND, 1))
-				.withName("TeleopCommand");
-	}
-
-	// --- Auto Path Thread (unchanged) ---
-	public synchronized void startAutoPathThread() {
-		if (autoPathThread == null || !autoPathThread.isAlive()) {
-			System.out.println("[RobotContainer] Starting Auto Path Thread...");
-			autoPathThread = new Thread(() -> {
-				System.out.println("[RobotContainer] Auto Path Thread started.");
-				while (autoPathEnabled) {
-					// Define a BooleanSupplier to detect joystick movement on axes 0, 1, or 4.
-					BooleanSupplier joystickMoved = () -> {
-						double axis0 = m_controller.getLeftX();
-						double axis1 = m_controller.getLeftY();
-						double axis4 = m_controller.getRightX();
-						// System.out.printf("[AutoPathThread] Joystick axes: %.2f, %.2f, %.2f%n",
-						// axis0, axis1, axis4);
-						return Math.abs(axis0) > Constants.ControllerConstants.kIdleDeadzone ||
-								Math.abs(axis1) > Constants.ControllerConstants.kIdleDeadzone ||
-								Math.abs(axis4) > Constants.ControllerConstants.kIdleDeadzone;
-					};
-
-					// If joystick is moved, cancel any auto-path command and schedule teleop
-					// immediately.
-					if (joystickMoved.getAsBoolean()) {
-						// System.out.println("[AutoPathThread] Joystick moved detected!");
-						if (currentPathCommand != null && currentPathCommand.isScheduled()) {
-							currentPathCommand.cancel();
-							System.out.println("[RobotContainer] Auto path command canceled due to joystick movement.");
-							// Immediately schedule teleop command.
-							Command teleopCmd = getTeleopCommand();
-							teleopCmd.schedule();
-							System.out.println("Rerunning Teleop cmd");
-						}
-						try {
-							Thread.sleep(10);
-						} catch (InterruptedException e) {
-							System.out.println("[RobotContainer] Auto Path Thread interrupted during joystick check.");
-							break;
-						}
-						continue;
-					}
-
-					// Retrieve the current key press from NetworkTables.
-					String currentKey = m_networkTablesReceiver.getLastKeyPressed();
-					if (!currentKey.equals(lastProcessedKey)) {
-						System.out.println("[RobotContainer] New key detected: " + currentKey);
-						lastProcessedKey = currentKey;
-
-						if (currentPathCommand != null && currentPathCommand.isScheduled()) {
-							currentPathCommand.cancel();
-							System.out.println("[RobotContainer] Canceled existing path command.");
-						}
-
-						Pose2d targetPose = getPoseFromKey(currentKey);
-						if (targetPose != null) {
-							System.out.println("[RobotContainer] Creating path to " + targetPose);
-							Command pathCommand = m_driveSubsystem.driveToPose(targetPose)
-									.andThen(getTeleopCommand());
-							currentPathCommand = pathCommand;
-							currentPathCommand.schedule();
-							System.out.println(
-									"[RobotContainer] Scheduled Auto Path Following Command to " + currentKey + ".");
-						} else {
-							System.out.println("[RobotContainer] No pose mapped for key: " + currentKey);
-						}
-					}
-
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						System.out.println("[RobotContainer] Auto Path Thread interrupted during normal operation.");
-						break;
-					}
-				}
-				System.out.println("[RobotContainer] autothreadenabled is " + autoPathEnabled);
-				System.out.println("[RobotContainer] Auto Path Thread stopped.");
-			});
-			autoPathThread.setDaemon(true);
-			autoPathThread.setName("Auto Path Thread");
-			autoPathThread.start();
-			System.out.println("[RobotContainer] Started Auto Path Thread.");
-		}
-	}
-
-	/**
-	 * Stops the auto path following thread.
-	 */
-	private synchronized void stopAutoPathThread() {
-		if (autoPathThread != null && autoPathThread.isAlive()) {
-			autoPathThread.interrupt();
-			autoPathThread = null;
-			System.out.println("[RobotContainer] Auto Path Thread interrupted and stopped.");
-		}
-
-		if (currentPathCommand != null && currentPathCommand.isScheduled()) {
-			currentPathCommand.cancel();
-			System.out.println("[RobotContainer] Canceled existing path command.");
-			currentPathCommand = null;
-		}
-
-		previousTargetX = Double.NaN;
-		previousTargetY = Double.NaN;
-	}
-
-	/**
-	 * Toggles the tracking state.
-	 */
-	public void toggleTracking() {
-		tracking = !tracking;
-	}
-
-	/**
-	 * Retrieves the current tracking state.
-	 *
-	 * @return True if tracking is enabled, false otherwise.
-	 */
-	public boolean getTracking() {
-		return tracking;
-	}
-
-	/**
-	 * Finds the starting pose using vision data with error handling.
-	 */
 	public void findStartingVisionPose() {
-		try {
-			m_driveSubsystem.resetOdometryWithVision();
-		} catch (Exception e) {
-			System.err.println("Error finding starting vision pose: " + e.getMessage());
-		}
+		m_driveSubsystem.findStartingVisionPose();
 	}
 
-	/**
-	 * Maps a key to its corresponding Pose2d based on the keyBindings.
-	 *
-	 * @param key The key string (e.g., "p_noteTopPose").
-	 * @return The corresponding Pose2d, or null if no mapping exists.
-	 */
-	private Pose2d getPoseFromKey(String key) {
-		HashMap<String, Pose2d> poseMap = new HashMap<>();
-		poseMap.put("q", Constants.noteTopPose);
-		poseMap.put("w", Constants.noteCenterPose);
-		poseMap.put("e", Constants.noteBottomPose);
-		return poseMap.get(key);
-	}
-
-	/**
-	 * Retrieves the selected autonomous command.
-	 * This version replaces the auto chooser with three simple timer-based autos.
-	 */
 	public Command getAutonomousCommand() {
+		usePathPlanner = SmartDashboard.getBoolean("Use PathPlanner", false);
+		return usePathPlanner ? m_driveSubsystem.getAutonomousCommand(autoChooser.getSelected().getName()) : getTimedAutoCommand();
+	}
+
+	public Command getTimedAutoCommand() {
 		// Define speeds (adjust as necessary)
 		double mediumForwardSpeed = 0.5; // meters per second
 		double mediumSideSpeed = 0.5; // meters per second
@@ -473,8 +247,15 @@ public class RobotContainer {
 						() -> m_driveSubsystem.driveRobotRelative(
 								new ChassisSpeeds(-mediumForwardSpeed, 0.0, 0.0)),
 						m_driveSubsystem).withTimeout(2.0));
-		Integer auto = autoChooser.getSelected();
+		Integer auto = timedAutoChooser.getSelected();
+
+		if (auto == null) {
+			auto = 0;
+		}
+
+
 		switch (auto) {
+
 			case 1:
 				System.out.println("Running Auto 1");
 				return auto1;
@@ -490,64 +271,11 @@ public class RobotContainer {
 		}
 	}
 
-	/**
-	 * Retrieves the DriveSubsystem instance.
-	 *
-	 * @return The DriveSubsystem.
-	 */
-	public MaxSwerveDriveSubsystem getDriveSubsystem() {
-		return m_driveSubsystem;
-	}
-
-	/**
-	 * Retrieves the NetworkTablesReceiver instance.
-	 *
-	 * @return The NetworkTablesReceiver.
-	 */
-	public NetworkTablesReceiver getNetworkTablesReceiver() {
-		return m_networkTablesReceiver;
-	}
-
-	public Limelight getLimelight() {
-		return m_limelight;
-	}
-
-	/**
-	 * Starts a thread to periodically update Limelight values on ShuffleBoard.
-	 */
-	private void startLimelightUpdates() {
-		// Create a thread that updates Limelight values on ShuffleBoard
-		Thread limelightUpdateThread = new Thread(() -> {
-			while (true) {
-				try {
-					// Get tx value directly from NetworkTables
-					NetworkTable limelightTable = NetworkTableInstance.getDefault()
-							.getTable("limelight-left");
-					double tv = limelightTable.getEntry("tv").getDouble(0);
-					double tx = limelightTable.getEntry("tx").getDouble(0.0);
-					// Put the tx value on ShuffleBoard
-					SmartDashboard.putNumber("Limelight TX", tx);
-					// Also display whether there's a valid target
-					boolean hasTarget = tv >= 1.0;
-					SmartDashboard.putBoolean("Limelight Has Target", hasTarget);
-					// Sleep longer to reduce CPU usage - 250ms is still 4 updates per second
-					Thread.sleep(250);
-				} catch (Exception e) {
-					System.err.println("Error in limelight thread: " + e.getMessage());
-					try {
-						Thread.sleep(1000); // On error, sleep longesr before retrying
-					} catch (InterruptedException ex) {
-						Thread.currentThread().interrupt();
-						break;
-					}
-				}
-			}
-		});
-		limelightUpdateThread.setDaemon(true);
-		limelightUpdateThread.setPriority(Thread.MIN_PRIORITY); // Lower priority to avoid interfering with critical
-																// robot functions
-		limelightUpdateThread.setName("Limelight Update Thread");
-		limelightUpdateThread.start();
-		System.out.println("Started Limelight update thread");
+	public Command getTeleopCommand() {
+		return m_driveSubsystem.driveCommand(
+				() -> -m_controller.getLeftY(),
+				() -> -m_controller.getLeftX(),
+				() -> -m_controller.getRightX())
+				.withName("Drive Command");
 	}
 }

@@ -22,6 +22,7 @@ public class Constants {
     public static class DriveConstants {
         public static final double MAX_SPEED_MS = 5.740;
         public static final double CONTROLLER_DEADBAND = 0.3;
+        public static final double CONTROLLER_ADJUST_SPEED  = 1;
 
         // Simulation-specific constants
         public static final double SIM_VELOCITY_DEADBAND = 0.001; // 1 mm/s

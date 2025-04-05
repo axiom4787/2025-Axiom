@@ -4,123 +4,101 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.commands.PathfindingCommand;
-import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.pathplanning.NetworkTablesADStar;
-import frc.robot.subsystems.pathplanning.OkayPlan;
-import frc.robot.utils.CommandLogger;
 
-public class Robot extends TimedRobot {
+/**
+ * The VM is configured to automatically run this class, and to call the functions corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the name of this class or
+ * the package after creating this project, you must also update the build.gradle file in the
+ * project.
+ */
+public class Robot extends TimedRobot 
+{
   private Command m_autonomousCommand, m_teleopCommand, m_testCommand;
 
-	private final RobotContainer m_robotContainer;
+  private RobotContainer m_robotContainer;
 
-	public Robot() {
-		m_robotContainer = new RobotContainer();
-		Pathfinding.setPathfinder(new NetworkTablesADStar(m_robotContainer.getDriveSubsystem()));
-		// Pathfinding.setPathfinder(new OkayPlan(Constants.Drivetrain.ROBOT_WIDTH, Constants.Drivetrain.ROBOT_LENGTH));
-		PathfindingCommand.warmupCommand().schedule();
-		// Wamup the pathfinding command. Source: https://pathplanner.dev/pplib-pathfinding.html#java-warmup
+  /**
+   * This function is run when the robot is first started up and should be used for any
+   * initialization code.
+   */
+  @Override
+  public void robotInit() 
+  {
+    m_robotContainer = new RobotContainer();
+  }
 
-		new CommandLogger();
-	}
+  /**
+   * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
+   * that you want ran during disabled, autonomous, teleoperated and test.
+   *
+   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
+   * SmartDashboard integrated updating.
+   */
+  @Override
+  public void robotPeriodic() 
+  {
+    CommandScheduler.getInstance().run();
+  }
 
-	@Override
-	public void robotPeriodic() {
-		CommandScheduler.getInstance().run();
-	}
+  /** This function is called once each time the robot enters Disabled mode. */
+  @Override
+  public void disabledInit() {}
 
-	@Override
-	public void disabledInit() {
-	}
+  @Override
+  public void disabledPeriodic() {}
 
-	@Override
-	public void disabledPeriodic() {
-	}
+  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
+  @Override
+  public void autonomousInit() 
+  {
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-	@Override
-	public void disabledExit() {
-	}
+    // schedule the autonomous command (example)
+    if (m_autonomousCommand != null)
+      m_autonomousCommand.schedule();
+  }
 
-	@Override
-	public void autonomousInit() {
-		// Get the selected autonomous command
-		m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-		// Schedule it if it exists
-		if (m_autonomousCommand != null) {
-			System.out.println("Scheduling autonomous command: " + m_autonomousCommand.getName());
-			m_autonomousCommand.schedule();
-		} else {
-			System.out.println("No autonomous command selected!");
-		}
-	}
-
+  /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {}
 
-	@Override
-	public void autonomousExit() {
-	}
-
-	@Override
-	public void teleopInit() {
-		if (m_autonomousCommand != null) {
-			m_autonomousCommand.cancel();
-		}
-
-		m_teleopCommand = m_robotContainer.getTeleopCommand();
-
-		try {
-			m_robotContainer.findStartingVisionPose();
-		} catch (Exception e) {
-			System.err.println("Failed to initialize pose with vision: " + e.getMessage());
-			// Continue without vision initialization
-		}
-		
-		m_robotContainer.startAutoPathThread();
-		// System.out.println("Teleop init");
-
-		if (m_teleopCommand != null) {
-			m_teleopCommand.schedule();
-		}
-	}
-
-	@Override
-	public void teleopPeriodic() {
-		// m_robotContainer.getNetworkTablesReceiver().runMain();
-	}
-
-	@Override
-	public void teleopExit() {
-	}
-
   @Override
-  public void testInit() {
-    // m_testCommand = m_robotContainer.getTestCommand();
-    // if (m_testCommand != null)
-    // {
-    //   m_testCommand.schedule();
-    // }
+  public void teleopInit() 
+  {
+    if (m_autonomousCommand != null)
+      m_autonomousCommand.cancel();
+
+    m_teleopCommand = m_robotContainer.getTeleopCommand();
+    if (m_teleopCommand != null)
+      m_teleopCommand.schedule();
+
+    m_robotContainer.findStartingVisionPose();
   }
 
-
-	@Override
-	public void testPeriodic() {
-	}
+  /** This function is called periodically during operator control. */
+  @Override
+  public void teleopPeriodic() {}
 
   @Override
-  public void testExit() {}
+  public void testInit() 
+  {
+    CommandScheduler.getInstance().cancelAll();
+  }
 
+  /** This function is called periodically during test mode. */
+  @Override
+  public void testPeriodic() {}
+
+  /** This function is called once when the robot is first started up. */
   @Override
   public void simulationInit() {}
 
+  /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {
-    CommandScheduler.getInstance().run();
-  }
+  public void simulationPeriodic() {}
 }
